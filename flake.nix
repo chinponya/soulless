@@ -1,11 +1,27 @@
 {
-  outputs = { self, nixpkgs }: {
+  inputs = {
+    mach-nix.url = "github:DavHau/mach-nix/3.3.0";
+  };
+
+  outputs = { self, nixpkgs, mach-nix }: {
     devShell.x86_64-linux = let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      mach-nix-package = import mach-nix {
+        inherit pkgs;
+        python = "python39Full";
+      };
+      pyEnv = mach-nix-package.mkPython {
+        requirements = ''
+          black
+          pylint
+        '';
+      };
     in pkgs.mkShell {
       buildInputs = with pkgs; [
         git
         inotify-tools
+        
+        pyEnv
 
         elixir
         elixir_ls
