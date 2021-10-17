@@ -27,7 +27,7 @@ defmodule Soulless.MixProject do
       {:protox, "~> 1.6"},
       {:websockex, "~> 0.4.3"},
       {:httpoison, "~> 1.8"},
-      {:poison, "~> 5.0"},
+      {:jason, "~> 1.2"},
       {:uuid, "~> 1.1"}
     ]
   end

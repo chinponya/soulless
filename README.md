@@ -11,7 +11,7 @@ The package can be installed by adding the following to your list of dependencie
 ```elixir
 def deps do
   [
-    {:soulless, :github, "chinponya/soulless"}
+    {:soulless, github: "chinponya/soulless"}
   ]
 end
 ```
@@ -54,7 +54,7 @@ defmodule Majsoul.Client do
   # The types for such messages are always prefixed with `Res` for "response".
 
   # Pattern match on the response struct we are interested in.
-  def handle_response(%ResGameRecordList{} = message, state) do
+  def handle_response(%Soulless.Lq.ResGameRecordList{} = message, state) do
     IO.puts("There are #{message.total_count} game logs on this account")
     {:ok, state}
   end

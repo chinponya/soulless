@@ -153,11 +153,11 @@ defmodule Soulless.Client do
 
       defp endpoint(:en = region) do
         with {:ok, version_response} <- HTTPoison.get(version_url(region)),
-             {:ok, version_json} <- Poison.decode(version_response.body),
+             {:ok, version_json} <- Jason.decode(version_response.body),
              {:ok, config_response} <- HTTPoison.get(config_url(region, version_json["version"])),
-             {:ok, config_json} <- Poison.decode(config_response.body),
+             {:ok, config_json} <- Jason.decode(config_response.body),
              {:ok, servers_response} <- HTTPoison.get(server_list_url_from_config(config_json)),
-             {:ok, servers_json} <- Poison.decode(servers_response.body) do
+             {:ok, servers_json} <- Jason.decode(servers_response.body) do
           {
             "wss://#{List.first(servers_json["servers"])}",
             "#{List.first(config_json["yo_service_url"])}/user/login",
@@ -186,10 +186,10 @@ defmodule Soulless.Client do
 
       defp login(pid, passport_url, uid, access_token, version) do
         headers = [{"Content-type", "application/json"}, {"Accept", "application/json"}]
-        body = Poison.encode!(%{uid: uid, token: access_token, deviceId: "web|#{uid}"})
+        body = Jason.encode!(%{uid: uid, token: access_token, deviceId: "web|#{uid}"})
 
         response = HTTPoison.post!(passport_url, body, headers)
-        passport = Poison.decode!(response.body)
+        passport = Jason.decode!(response.body)
 
         Logger.debug("Obtained passport: #{inspect(passport)}")
 
