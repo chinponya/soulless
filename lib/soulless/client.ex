@@ -4,6 +4,8 @@ defmodule Soulless.Client do
       use WebSockex
       require Logger
       alias Soulless.Lq
+      alias Soulless.Service
+      alias Soulless.RPC
 
       def start_link(args \\ %{}) do
         name = args[:name] || __MODULE__
@@ -217,12 +219,13 @@ defmodule Soulless.Client do
 
         Logger.debug("Obtained passport: #{inspect(passport)}")
 
-        Soulless.Lobby.oauth2Auth(pid, %Lq.ReqOauth2Auth{
+        Service.Lobby.oauth2Auth(%Lq.ReqOauth2Auth{
           type: 8,
           code: passport["accessToken"],
           uid: passport["uid"],
           client_version_string: "web-#{version}"
         })
+        |> RPC.send(pid)
       end
 
       defp handle_login_response(%Lq.ResOauth2Auth{} = message, %{version: version} = state) do
@@ -255,7 +258,9 @@ defmodule Soulless.Client do
           version: 0
         }
 
-        Soulless.Lobby.oauth2Login(self(), payload)
+        Service.Lobby.oauth2Login(payload)
+        |> RPC.send(self())
+
         {:ok, state}
       end
 
