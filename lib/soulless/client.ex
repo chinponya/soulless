@@ -131,7 +131,7 @@ defmodule Soulless.Client do
         Logger.debug("Received raw notice: #{inspect(message)}")
 
         with {:ok, wrapper} <- Soulless.Lq.Wrapper.decode(message),
-             {:ok, notice_mod} <- Soulless.Notice.get_by_notice_name(wrapper.name),
+             {:ok, notice_mod} <- Soulless.get_module_by_identifier(wrapper.name),
              {:ok, notice} <- notice_mod.decode(wrapper.data) do
           handle_notice(notice, state)
         else
