@@ -3,9 +3,6 @@ defmodule Soulless.Client do
     quote do
       use WebSockex
       require Logger
-      alias Soulless.Lq
-      alias Soulless.Service
-      alias Soulless.RPC
 
       def start_link(args \\ %{}) do
         name = args[:name] || __MODULE__
@@ -76,8 +73,8 @@ defmodule Soulless.Client do
              %{next_request_id: next_request_id} = state
            ) do
         wrapper =
-          %Lq.Wrapper{name: namespace, data: :binary.list_to_bin(message)}
-          |> Lq.Wrapper.encode!()
+          %Soulless.Lq.Wrapper{name: namespace, data: :binary.list_to_bin(message)}
+          |> Soulless.Lq.Wrapper.encode!()
           |> :binary.list_to_bin()
 
         message = <<@request, next_request_id::little-size(16)>> <> wrapper
@@ -100,13 +97,13 @@ defmodule Soulless.Client do
              {:ok, message} <- decoder_mod.decode(wrapper) do
           case {message, from} do
             # HACK maybe there's a nicer way to handle this
-            {%Lq.ResOauth2Auth{}, nil} ->
+            {%Soulless.Lq.ResOauth2Auth{}, nil} ->
               handle_login_response(message, updated_state)
 
-            {%Lq.ResOauth2Check{}, nil} ->
+            {%Soulless.Lq.ResOauth2Check{}, nil} ->
               handle_login_response(message, updated_state)
 
-            {%Lq.ResLogin{}, nil} ->
+            {%Soulless.Lq.ResLogin{}, nil} ->
               handle_login_response(message, updated_state)
 
             {message, nil} ->
@@ -132,7 +129,7 @@ defmodule Soulless.Client do
       def handle_frame({:binary, <<@notice::size(8), message::binary>>}, state) do
         Logger.debug("Received raw notice: #{inspect(message)}")
 
-        with {:ok, wrapper} <- Lq.Wrapper.decode(message),
+        with {:ok, wrapper} <- Soulless.Lq.Wrapper.decode(message),
              {:ok, notice_mod} <- Soulless.Notice.get_by_notice_name(wrapper.name),
              {:ok, notice} <- notice_mod.decode(wrapper.data) do
           handle_notice(notice, state)
@@ -162,13 +159,13 @@ defmodule Soulless.Client do
             state[:access_token]
           )
 
-        Service.Lobby.oauth2Auth(%Lq.ReqOauth2Auth{
+        Soulless.Service.Lobby.oauth2Auth(%Soulless.Lq.ReqOauth2Auth{
           type: 8,
           code: passport["accessToken"],
           uid: passport["uid"],
           client_version_string: "web-#{state[:version]}"
         })
-        |> RPC.send(self())
+        |> Soulless.RPC.send(self())
 
         {:ok, state}
       end
@@ -180,17 +177,20 @@ defmodule Soulless.Client do
 
       # Auth flow
 
-      defp handle_login_response(%Lq.ResOauth2Auth{} = message, %{version: version} = state) do
+      defp handle_login_response(
+             %Soulless.Lq.ResOauth2Auth{} = message,
+             %{version: version} = state
+           ) do
         Logger.debug("Obtained oauth2 token: #{inspect(message)}")
         # HACK For some reason the decoded access token contains
         # two bytes at the beginning that get rejected by the server
         # There's a possibility that the decoder does something wrong
         <<_::size(16), access_token::binary>> = message.access_token
 
-        payload = %Lq.ReqOauth2Login{
+        payload = %Soulless.Lq.ReqOauth2Login{
           type: 8,
           access_token: access_token,
-          device: %Lq.ClientDeviceInfo{
+          device: %Soulless.Lq.ClientDeviceInfo{
             platform: "pc",
             hardware: "pc",
             is_browser: true,
@@ -201,7 +201,7 @@ defmodule Soulless.Client do
           },
           random_key: UUID.uuid1(),
           currency_platforms: [2, 9],
-          client_version: %Lq.ClientVersionInfo{
+          client_version: %Soulless.Lq.ClientVersionInfo{
             resource: "#{version}.w"
           },
           client_version_string: "web-#{version}",
@@ -210,18 +210,18 @@ defmodule Soulless.Client do
           version: 0
         }
 
-        Service.Lobby.oauth2Login(payload)
-        |> RPC.send(self())
+        Soulless.Service.Lobby.oauth2Login(payload)
+        |> Soulless.RPC.send(self())
 
         {:ok, state}
       end
 
-      defp handle_login_response(%Lq.ResOauth2Check{} = _message, state) do
+      defp handle_login_response(%Soulless.Lq.ResOauth2Check{} = _message, state) do
         # TODO implement
         {:ok, state}
       end
 
-      defp handle_login_response(%Lq.ResLogin{} = message, state) do
+      defp handle_login_response(%Soulless.Lq.ResLogin{} = message, state) do
         Logger.debug("Login attempt response: #{inspect(message)}")
         Logger.info("Logged in as #{message.account.nickname}")
         send(self(), :ready)
@@ -255,11 +255,11 @@ defmodule Soulless.Client do
 
       # API
       def send(rpc) do
-        RPC.send(rpc, __MODULE__)
+        Soulless.RPC.send(rpc, __MODULE__)
       end
 
       def fetch(rpc) do
-        RPC.fetch(rpc, __MODULE__)
+        Soulless.RPC.fetch(rpc, __MODULE__)
       end
 
       # Our library callbacks with default implementations
