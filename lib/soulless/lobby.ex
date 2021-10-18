@@ -14,6 +14,16 @@ defmodule Soulless.Lobby do
     end
   end
 
+  def fetch(client, message, encoder_mod, decoder_mod, namespace) do
+    case encoder_mod.encode(message) do
+      {:ok, bytes} ->
+        GenServer.call(client, {:send, bytes, namespace, decoder_mod})
+
+      error ->
+        error
+    end
+  end
+
   def heatbeat(client) do
     send_message(
       client,

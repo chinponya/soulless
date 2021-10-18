@@ -54,12 +54,25 @@ defmodule Soulless.Client do
       @request 2
       @response 3
 
-      # Handle request
+      # Handle requests
+      def handle_info({:"$gen_call", from, message}, state) do
+        handle_call(message, from, state)
+      end
+
+      def handle_call({:send, _, _, _} = message, from, state) do
+        handle_request(message, from, state)
+      end
+
       @impl true
-      def handle_cast(
-            {:send, message, namespace, decoder_mod},
-            %{next_request_id: next_request_id} = state
-          ) do
+      def handle_cast({:send, _, _, _} = message, state) do
+        handle_request(message, nil, state)
+      end
+
+      defp handle_request(
+             {:send, message, namespace, decoder_mod},
+             from,
+             %{next_request_id: next_request_id} = state
+           ) do
         wrapper =
           %Lq.Wrapper{name: namespace, data: :binary.list_to_bin(message)}
           |> Lq.Wrapper.encode!()
@@ -72,7 +85,7 @@ defmodule Soulless.Client do
         {:reply, {:binary, message},
          state
          |> increment_request_id()
-         |> put_request(next_request_id, namespace, decoder_mod)}
+         |> put_request(next_request_id, namespace, decoder_mod, from)}
       end
 
       # Handle response
@@ -81,14 +94,25 @@ defmodule Soulless.Client do
         <<req_id::little-size(16), wrapper::binary>> = message
         Logger.debug("Received raw message: #{inspect(message)}")
 
-        with {updated_state, {_namespace, decoder_mod}} <- pop_request(state, req_id),
+        with {updated_state, {_namespace, decoder_mod, from}} <- pop_request(state, req_id),
              {:ok, message} <- decoder_mod.decode(wrapper) do
-          case message do
+          case {message, from} do
             # HACK maybe there's a nicer way to handle this
-            %Lq.ResOauth2Auth{} -> handle_login_response(message, updated_state)
-            %Lq.ResOauth2Check{} -> handle_login_response(message, updated_state)
-            %Lq.ResLogin{} -> handle_login_response(message, updated_state)
-            _ -> handle_response(message, updated_state)
+            {%Lq.ResOauth2Auth{}, nil} ->
+              handle_login_response(message, updated_state)
+
+            {%Lq.ResOauth2Check{}, nil} ->
+              handle_login_response(message, updated_state)
+
+            {%Lq.ResLogin{}, nil} ->
+              handle_login_response(message, updated_state)
+
+            {message, nil} ->
+              handle_response(message, updated_state)
+
+            {message, from} ->
+              GenServer.reply(from, message)
+              {:ok, updated_state}
           end
         else
           {:error, reason} ->
@@ -255,13 +279,13 @@ defmodule Soulless.Client do
         end)
       end
 
-      defp put_request(state, request_id, namespace, decoder_mod) do
+      defp put_request(state, request_id, namespace, decoder_mod, from) do
         Map.update(
           state,
           :pending_requests,
           %{},
           fn pending_requests ->
-            Map.put(pending_requests, request_id, {namespace, decoder_mod})
+            Map.put(pending_requests, request_id, {namespace, decoder_mod, from})
           end
         )
       end
