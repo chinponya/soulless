@@ -94,7 +94,8 @@ defmodule Soulless.Client do
         Logger.debug("Received raw message: #{inspect(message)}")
 
         with {updated_state, {_namespace, decoder_mod, from}} <- pop_request(state, req_id),
-             {:ok, message} <- decoder_mod.decode(wrapper) do
+             {:ok, unwrapped} <- Soulless.Lq.Wrapper.decode(wrapper),
+             {:ok, message} <- decoder_mod.decode(unwrapped.data) do
           case {message, from} do
             # HACK maybe there's a nicer way to handle this
             {%Soulless.Lq.ResOauth2Auth{}, nil} ->
@@ -182,14 +183,10 @@ defmodule Soulless.Client do
              %{version: version} = state
            ) do
         Logger.debug("Obtained oauth2 token: #{inspect(message)}")
-        # HACK For some reason the decoded access token contains
-        # two bytes at the beginning that get rejected by the server
-        # There's a possibility that the decoder does something wrong
-        <<_::size(16), access_token::binary>> = message.access_token
 
         payload = %Soulless.Lq.ReqOauth2Login{
           type: 8,
-          access_token: access_token,
+          access_token: message.access_token,
           device: %Soulless.Lq.ClientDeviceInfo{
             platform: "pc",
             hardware: "pc",
