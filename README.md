@@ -38,14 +38,14 @@ defmodule Majsoul.Client do
     Logger.info("Client ready")
 
     # Example of creating a new request to the `Lobby` service.
-    Soulless.Lobby.fetchGameRecordList(
-      # First argument expects a PID. The macro assigns a global name that matches __MODULE__,
-      # so in the case of creating requests from other processes we can use `Majsoul.Client` instead.
-      self(),
-      # Second argument should contain a corresponding request struct. You can find out which one you need
-      # by looking at the `Soulless.Lobby` module or the `priv/protos/majsou.proto` file.
-      %Soulless.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
-    )
+
+    # Pass a corresponding request struct to a service you want to send it to. 
+    # You can find out which one you need by looking at the `Soulless.Lobby` module
+    # or the `priv/protos/majsou.proto` file.
+    %Soulless.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
+    |> Soulless.Service.Lobby.fetchGameRecordList()
+    # Next, pass it to `Soulless.RPC.send/2` with client's PID in order to actually send it.
+    |> Soulless.RPC.send(self())
 
     {:ok, state}
   end
@@ -84,6 +84,27 @@ defmodule Majsoul.Client do
   end
 end
 ```
+
+Note that the above example showcased how to create requests from the `handle_ready/1` handle, where requests
+are required to not block the GenServer. In most cases, it's going to be easier to just create requests from
+the outside. For this task, we need to use `Soulless.RPC.fetch/2` function.
+
+```elixir
+# Pass a corresponding request struct to a service you want to send it to. 
+# You can find out which one you need by looking at the `Soulless.Lobby` module
+# or the `priv/protos/majsou.proto` file.
+response = 
+  %Soulless.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
+    |> Soulless.Service.Lobby.fetchGameRecordList()
+    # Next, pass it to `Soulless.RPC.fetch/2` in order to actually send it.
+    # It expects a PID, but the macro assigns a global name that matches __MODULE__,
+    # so in this case we can use `Majsoul.Client` instead.
+    |> Soulless.RPC.fetch(Majsoul.Client)
+
+# do something with `response` which in this case will be of type `%Soulless.Lq.ResGameRecordList{}`
+...
+```
+
 
 ## Configuration 
 
