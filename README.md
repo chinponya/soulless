@@ -99,7 +99,7 @@ response =
     # Next, pass it to `Soulless.RPC.fetch/2` in order to actually send it.
     # It expects a PID, but the macro assigns a global name that matches __MODULE__,
     # so in this case we can use `Majsoul.Client` instead.
-    |> Soulless.RPC.fetch(Majsoul.Client)
+    |> Majsoul.Client.fetch()
 
 # do something with `response` which in this case will be of type `%Soulless.Lq.ResGameRecordList{}`
 ...

@@ -253,6 +253,15 @@ defmodule Soulless.Client do
         {updated_state, contents}
       end
 
+      # API
+      def send(rpc) do
+        RPC.send(rpc, __MODULE__)
+      end
+
+      def fetch(rpc) do
+        RPC.fetch(rpc, __MODULE__)
+      end
+
       # Our library callbacks with default implementations
 
       @callback handle_response(message :: term, state :: term) ::
