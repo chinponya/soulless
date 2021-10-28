@@ -29,3 +29,4 @@ grpc_playground-*.tar
 .state
 .direnv
 .vscode
+.envrc.private
