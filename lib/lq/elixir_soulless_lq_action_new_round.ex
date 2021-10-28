@@ -20,6 +20,7 @@ defmodule(Soulless.Lq.ActionNewRound) do
       opens: [],
       muyu: nil,
       ju_count: 0,
+      new_tile: "",
       __uf__: []
     )
 
@@ -55,6 +56,7 @@ defmodule(Soulless.Lq.ActionNewRound) do
           |> encode_opens(msg)
           |> encode_muyu(msg)
           |> encode_ju_count(msg)
+          |> encode_new_tile(msg)
           |> encode_unknown_fields(msg)
         end
       )
@@ -317,6 +319,18 @@ defmodule(Soulless.Lq.ActionNewRound) do
             ArgumentError ->
               reraise(Protox.EncodingError.new(:ju_count, "invalid field value"), __STACKTRACE__)
           end
+        end,
+        defp(encode_new_tile(acc, msg)) do
+          try do
+            if(msg.new_tile == "") do
+              acc
+            else
+              [acc, <<146, 1>>, Protox.Encode.encode_string(msg.new_tile)]
+            end
+          rescue
+            ArgumentError ->
+              reraise(Protox.EncodingError.new(:new_tile, "invalid field value"), __STACKTRACE__)
+          end
         end
       ]
 
@@ -466,6 +480,11 @@ defmodule(Soulless.Lq.ActionNewRound) do
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
                 {[ju_count: value], rest}
 
+              {18, _, bytes} ->
+                {len, bytes} = Protox.Varint.decode(bytes)
+                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+                {[new_tile: delimited], rest}
+
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -544,7 +563,8 @@ defmodule(Soulless.Lq.ActionNewRound) do
         14 => {:doras, :unpacked, :string},
         15 => {:opens, :unpacked, {:message, Soulless.Lq.NewRoundOpenedTiles}},
         16 => {:muyu, {:scalar, nil}, {:message, Soulless.Lq.MuyuInfo}},
-        17 => {:ju_count, {:scalar, 0}, :uint32}
+        17 => {:ju_count, {:scalar, 0}, :uint32},
+        18 => {:new_tile, {:scalar, ""}, :string}
       }
     end
 
@@ -565,6 +585,7 @@ defmodule(Soulless.Lq.ActionNewRound) do
         liqibang: {8, {:scalar, 0}, :uint32},
         md5: {12, {:scalar, ""}, :string},
         muyu: {16, {:scalar, nil}, {:message, Soulless.Lq.MuyuInfo}},
+        new_tile: {18, {:scalar, ""}, :string},
         opens: {15, :unpacked, {:message, Soulless.Lq.NewRoundOpenedTiles}},
         operation: {7, {:scalar, nil}, {:message, Soulless.Lq.OptionalOperationList}},
         scores: {6, :packed, :int32},
@@ -729,6 +750,15 @@ defmodule(Soulless.Lq.ActionNewRound) do
           name: :ju_count,
           tag: 17,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "newTile",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :new_tile,
+          tag: 18,
+          type: :string
         }
       ]
     end
@@ -1250,6 +1280,46 @@ defmodule(Soulless.Lq.ActionNewRound) do
            }}
         end
       ),
+      (
+        def(field_def(:new_tile)) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "newTile",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :new_tile,
+             tag: 18,
+             type: :string
+           }}
+        end
+
+        def(field_def("newTile")) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "newTile",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :new_tile,
+             tag: 18,
+             type: :string
+           }}
+        end
+
+        def(field_def("new_tile")) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "newTile",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :new_tile,
+             tag: 18,
+             type: :string
+           }}
+        end
+      ),
       def(field_def(_)) do
         {:error, :no_such_field}
       end
@@ -1334,6 +1404,9 @@ defmodule(Soulless.Lq.ActionNewRound) do
       end,
       def(default(:ju_count)) do
         {:ok, 0}
+      end,
+      def(default(:new_tile)) do
+        {:ok, ""}
       end,
       def(default(_)) do
         {:error, :no_such_field}

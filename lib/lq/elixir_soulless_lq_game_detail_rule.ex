@@ -53,6 +53,7 @@ defmodule(Soulless.Lq.GameDetailRule) do
       xuezhandaodi: 0,
       huansanzhang: 0,
       chuanma: 0,
+      reveal_discard: 0,
       disable_leijiyiman: false,
       __uf__: []
     )
@@ -122,6 +123,7 @@ defmodule(Soulless.Lq.GameDetailRule) do
           |> encode_xuezhandaodi(msg)
           |> encode_huansanzhang(msg)
           |> encode_chuanma(msg)
+          |> encode_reveal_discard(msg)
           |> encode_disable_leijiyiman(msg)
           |> encode_unknown_fields(msg)
         end
@@ -847,6 +849,21 @@ defmodule(Soulless.Lq.GameDetailRule) do
               reraise(Protox.EncodingError.new(:chuanma, "invalid field value"), __STACKTRACE__)
           end
         end,
+        defp(encode_reveal_discard(acc, msg)) do
+          try do
+            if(msg.reveal_discard == 0) do
+              acc
+            else
+              [acc, <<152, 3>>, Protox.Encode.encode_uint32(msg.reveal_discard)]
+            end
+          rescue
+            ArgumentError ->
+              reraise(
+                Protox.EncodingError.new(:reveal_discard, "invalid field value"),
+                __STACKTRACE__
+              )
+          end
+        end,
         defp(encode_disable_leijiyiman(acc, msg)) do
           try do
             if(msg.disable_leijiyiman == false) do
@@ -1116,6 +1133,10 @@ defmodule(Soulless.Lq.GameDetailRule) do
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
                 {[chuanma: value], rest}
 
+              {51, _, bytes} ->
+                {value, rest} = Protox.Decode.parse_uint32(bytes)
+                {[reveal_discard: value], rest}
+
               {60, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_bool(bytes)
                 {[disable_leijiyiman: value], rest}
@@ -1204,6 +1225,7 @@ defmodule(Soulless.Lq.GameDetailRule) do
         25 => {:have_sanjiahele, {:scalar, false}, :bool},
         28 => {:have_helezhongju, {:scalar, false}, :bool},
         6 => {:fandian, {:scalar, 0}, :uint32},
+        51 => {:reveal_discard, {:scalar, 0}, :uint32},
         38 => {:ai_level, {:scalar, 0}, :uint32},
         13 => {:noting_fafu_3, {:scalar, 0}, :uint32},
         40 => {:disable_multi_yukaman, {:scalar, false}, :bool},
@@ -1242,57 +1264,58 @@ defmodule(Soulless.Lq.GameDetailRule) do
           }
     def(defs_by_name()) do
       %{
-        have_gang_biao_dora: {17, {:scalar, false}, :bool},
-        fanfu: {41, {:scalar, 0}, :uint32},
-        tianbian_value: {8, {:scalar, 0}, :uint32},
-        dora3_mode: {43, {:scalar, 0}, :uint32},
-        disable_leijiyiman: {60, {:scalar, false}, :bool},
-        init_point: {5, {:scalar, 0}, :uint32},
-        bianjietishi: {37, {:scalar, false}, :bool},
-        shunweima_4: {36, {:scalar, 0}, :int32},
-        have_sijializhi: {23, {:scalar, false}, :bool},
-        shunweima_3: {35, {:scalar, 0}, :int32},
-        have_nanruxiru: {32, {:scalar, false}, :bool},
-        have_helezhongju: {28, {:scalar, false}, :bool},
-        have_liujumanguan: {14, {:scalar, false}, :bool},
-        time_fixed: {1, {:scalar, 0}, :uint32},
-        can_jifei: {7, {:scalar, false}, :bool},
-        have_qieshangmanguan: {15, {:scalar, false}, :bool},
-        have_biao_dora: {16, {:scalar, false}, :bool},
-        open_hand: {47, {:scalar, 0}, :uint32},
-        changbang_value: {10, {:scalar, 0}, :uint32},
-        time_add: {2, {:scalar, 0}, :uint32},
-        ai_level: {38, {:scalar, 0}, :uint32},
         xuezhandaodi: {48, {:scalar, 0}, :uint32},
-        fandian: {6, {:scalar, 0}, :uint32},
-        huansanzhang: {49, {:scalar, 0}, :uint32},
-        begin_open_mode: {44, {:scalar, 0}, :uint32},
-        muyu_mode: {46, {:scalar, 0}, :uint32},
-        chuanma: {50, {:scalar, 0}, :uint32},
-        noting_fafu_3: {13, {:scalar, 0}, :uint32},
-        disable_multi_yukaman: {40, {:scalar, false}, :bool},
-        shiduan: {4, {:scalar, 0}, :uint32},
-        have_toutiao: {26, {:scalar, false}, :bool},
-        guyi_mode: {42, {:scalar, 0}, :uint32},
-        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
-        have_li_dora: {19, {:scalar, false}, :bool},
-        have_yifa: {31, {:scalar, false}, :bool},
-        have_gang_li_dora: {20, {:scalar, false}, :bool},
-        have_sigangsanle: {22, {:scalar, false}, :bool},
-        have_tingpaizhongju: {30, {:scalar, false}, :bool},
-        noting_fafu_2: {12, {:scalar, 0}, :uint32},
-        liqibang_value: {9, {:scalar, 0}, :uint32},
-        have_zimosun: {39, {:scalar, false}, :bool},
-        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
-        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
-        dora_count: {3, {:scalar, 0}, :uint32},
-        have_helelianzhuang: {27, {:scalar, false}, :bool},
-        have_sifenglianda: {21, {:scalar, false}, :bool},
+        dora3_mode: {43, {:scalar, 0}, :uint32},
+        have_biao_dora: {16, {:scalar, false}, :bool},
+        time_add: {2, {:scalar, 0}, :uint32},
+        have_liujumanguan: {14, {:scalar, false}, :bool},
+        changbang_value: {10, {:scalar, 0}, :uint32},
         shunweima_2: {34, {:scalar, 0}, :int32},
-        jiuchao_mode: {45, {:scalar, 0}, :uint32},
+        guyi_mode: {42, {:scalar, 0}, :uint32},
         have_sanjiahele: {25, {:scalar, false}, :bool},
+        tianbian_value: {8, {:scalar, 0}, :uint32},
         noting_fafu_1: {11, {:scalar, 0}, :uint32},
-        ming_dora_immediately_open: {18, {:scalar, false}, :bool}
+        init_point: {5, {:scalar, 0}, :uint32},
+        shunweima_3: {35, {:scalar, 0}, :int32},
+        have_gang_biao_dora: {17, {:scalar, false}, :bool},
+        have_tingpaizhongju: {30, {:scalar, false}, :bool},
+        reveal_discard: {51, {:scalar, 0}, :uint32},
+        begin_open_mode: {44, {:scalar, 0}, :uint32},
+        have_sigangsanle: {22, {:scalar, false}, :bool},
+        ai_level: {38, {:scalar, 0}, :uint32},
+        have_toutiao: {26, {:scalar, false}, :bool},
+        shiduan: {4, {:scalar, 0}, :uint32},
+        have_yifa: {31, {:scalar, false}, :bool},
+        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
+        jiuchao_mode: {45, {:scalar, 0}, :uint32},
+        have_gang_li_dora: {20, {:scalar, false}, :bool},
+        fandian: {6, {:scalar, 0}, :uint32},
+        ming_dora_immediately_open: {18, {:scalar, false}, :bool},
+        noting_fafu_2: {12, {:scalar, 0}, :uint32},
+        time_fixed: {1, {:scalar, 0}, :uint32},
+        have_helelianzhuang: {27, {:scalar, false}, :bool},
+        dora_count: {3, {:scalar, 0}, :uint32},
+        have_li_dora: {19, {:scalar, false}, :bool},
+        open_hand: {47, {:scalar, 0}, :uint32},
+        have_sijializhi: {23, {:scalar, false}, :bool},
+        have_nanruxiru: {32, {:scalar, false}, :bool},
+        can_jifei: {7, {:scalar, false}, :bool},
+        fanfu: {41, {:scalar, 0}, :uint32},
+        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
+        chuanma: {50, {:scalar, 0}, :uint32},
+        muyu_mode: {46, {:scalar, 0}, :uint32},
+        shunweima_4: {36, {:scalar, 0}, :int32},
+        noting_fafu_3: {13, {:scalar, 0}, :uint32},
+        disable_leijiyiman: {60, {:scalar, false}, :bool},
+        have_helezhongju: {28, {:scalar, false}, :bool},
+        have_sifenglianda: {21, {:scalar, false}, :bool},
+        liqibang_value: {9, {:scalar, 0}, :uint32},
+        bianjietishi: {37, {:scalar, false}, :bool},
+        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
+        have_qieshangmanguan: {15, {:scalar, false}, :bool},
+        have_zimosun: {39, {:scalar, false}, :bool},
+        disable_multi_yukaman: {40, {:scalar, false}, :bool},
+        huansanzhang: {49, {:scalar, 0}, :uint32}
       }
     end
 
@@ -1747,6 +1770,15 @@ defmodule(Soulless.Lq.GameDetailRule) do
           label: :optional,
           name: :chuanma,
           tag: 50,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "revealDiscard",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :reveal_discard,
+          tag: 51,
           type: :uint32
         },
         %{
@@ -3676,6 +3708,46 @@ defmodule(Soulless.Lq.GameDetailRule) do
         []
       ),
       (
+        def(field_def(:reveal_discard)) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "revealDiscard",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :reveal_discard,
+             tag: 51,
+             type: :uint32
+           }}
+        end
+
+        def(field_def("revealDiscard")) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "revealDiscard",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :reveal_discard,
+             tag: 51,
+             type: :uint32
+           }}
+        end
+
+        def(field_def("reveal_discard")) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "revealDiscard",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :reveal_discard,
+             tag: 51,
+             type: :uint32
+           }}
+        end
+      ),
+      (
         def(field_def(:disable_leijiyiman)) do
           {:ok,
            %{
@@ -3897,6 +3969,9 @@ defmodule(Soulless.Lq.GameDetailRule) do
         {:ok, 0}
       end,
       def(default(:chuanma)) do
+        {:ok, 0}
+      end,
+      def(default(:reveal_discard)) do
         {:ok, 0}
       end,
       def(default(:disable_leijiyiman)) do
