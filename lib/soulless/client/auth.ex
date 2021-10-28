@@ -6,11 +6,7 @@ defmodule Soulless.Client.Auth do
     body = Jason.encode!(%{uid: uid, token: access_token, deviceId: "web|#{uid}"})
 
     response = HTTPoison.post!(passport_url, body, headers)
-    passport = Jason.decode!(response.body)
-
-    Logger.debug("Obtained passport: #{inspect(passport)}")
-
-    passport
+    Jason.decode!(response.body)
   end
 
   def endpoint(:en = region) do
@@ -45,7 +41,7 @@ defmodule Soulless.Client.Auth do
   end
 
   defp version_url(region) do
-    "#{base_url(region)}/version.json?randv=#{:rand.uniform(9999999999999999)}"
+    "#{base_url(region)}/version.json?randv=#{:rand.uniform(9_999_999_999_999_999)}"
   end
 
   defp config_url(region, version) do
