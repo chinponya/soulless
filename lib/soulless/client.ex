@@ -12,22 +12,22 @@ defmodule Soulless.Client do
 
         case Soulless.Client.Auth.endpoint(region) do
           {:ok, %{endpoint_url: endpoint_url, passport_url: passport_url, version: version}} ->
-        state = %{
-          next_request_id: 1,
-          pending_requests: %{},
-          version: version,
-          passport_url: passport_url,
-          uid: uid,
-          access_token: access_token
-        }
+            state = %{
+              next_request_id: 1,
+              pending_requests: %{},
+              version: version,
+              passport_url: passport_url,
+              uid: uid,
+              access_token: access_token
+            }
 
-        WebSockex.start_link(
+            WebSockex.start_link(
               endpoint_url,
-          __MODULE__,
-          state,
+              __MODULE__,
+              state,
               handle_initial_conn_failure: true,
-          name: name
-        )
+              name: name
+            )
 
           {:error, :maintenance} ->
             Logger.error("#{__MODULE__} Server is currently under maintenance")
@@ -171,21 +171,27 @@ defmodule Soulless.Client do
         Logger.debug("#{__MODULE__} Logging in with UID #{state[:uid]}")
 
         passport =
-          Soulless.Client.Auth.get_passport(
-            state[:passport_url],
-            state[:uid],
-            state[:access_token]
-          )
+          case Map.get(state, :passport) do
+            nil ->
+              Soulless.Client.Auth.get_passport(
+                state[:passport_url],
+                state[:uid],
+                state[:access_token]
+              )
+
+            value ->
+              value
+          end
 
         Soulless.Service.Lobby.oauth2Auth(%Soulless.Lq.ReqOauth2Auth{
-          type: 8,
+          type: 7,
           code: passport["accessToken"],
           uid: passport["uid"],
           client_version_string: "web-#{state[:version]}"
         })
         |> Soulless.RPC.send(self())
 
-        {:ok, state}
+        {:ok, Map.put(state, :passport, passport)}
       end
 
       @impl true
@@ -201,33 +207,33 @@ defmodule Soulless.Client do
            ) do
         case is_nil(message.error) || message.error.code do
           true ->
-        payload = %Soulless.Lq.ReqOauth2Login{
-          type: 8,
-          access_token: message.access_token,
-          device: %Soulless.Lq.ClientDeviceInfo{
-            platform: "pc",
-            hardware: "pc",
-            is_browser: true,
-            os: "windows",
-            os_version: "win10",
-            sale_platform: "web",
-            software: "Chrome"
-          },
-          random_key: UUID.uuid1(),
-          currency_platforms: [2, 9],
-          client_version: %Soulless.Lq.ClientVersionInfo{
-            resource: "#{version}.w"
-          },
-          client_version_string: "web-#{version}",
-          gen_access_token: false,
-          reconnect: false,
-          version: 0
-        }
+            payload = %Soulless.Lq.ReqOauth2Login{
+              type: 7,
+              access_token: message.access_token,
+              device: %Soulless.Lq.ClientDeviceInfo{
+                platform: "pc",
+                hardware: "pc",
+                is_browser: true,
+                os: "windows",
+                os_version: "win10",
+                sale_platform: "web",
+                software: "Chrome"
+              },
+              random_key: UUID.uuid1(),
+              currency_platforms: [2, 9],
+              client_version: %Soulless.Lq.ClientVersionInfo{
+                resource: "#{version}.w"
+              },
+              client_version_string: "web-#{version}",
+              gen_access_token: false,
+              reconnect: false,
+              version: 0
+            }
 
-        Soulless.Service.Lobby.oauth2Login(payload)
-        |> Soulless.RPC.send(self())
+            Soulless.Service.Lobby.oauth2Login(payload)
+            |> Soulless.RPC.send(self())
 
-        {:ok, state}
+            {:ok, state}
 
           151 ->
             {:error, :client_outdated}
@@ -248,7 +254,7 @@ defmodule Soulless.Client do
 
         if message.account do
           Logger.info("#{__MODULE__} Logged in as #{message.account.nickname}")
-        send(self(), :ready)
+          send(self(), :ready)
         else
           retry_login()
         end

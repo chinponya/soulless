@@ -21,8 +21,6 @@ defmodule Soulless.Client.Auth do
          {:ok, servers_response} <- HTTPoison.get(server_list_url_from_config(config_json)),
          {:ok, servers_json} <- Jason.decode(servers_response.body),
          {:maintenance, false} <- {:maintenance, Map.has_key?(servers_json, "maintenance")} do
-          IO.inspect(version_json, label: :version)
-          IO.inspect(config_json, label: :config)
       {:ok,
        %{
          endpoint_url: "wss://#{List.first(servers_json["servers"])}",
