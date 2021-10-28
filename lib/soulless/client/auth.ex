@@ -45,7 +45,7 @@ defmodule Soulless.Client.Auth do
   end
 
   defp version_url(region) do
-    "#{base_url(region)}/version.json"
+    "#{base_url(region)}/version.json?randv=#{:rand.uniform(9999999999999999)}"
   end
 
   defp config_url(region, version) do
