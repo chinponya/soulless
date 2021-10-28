@@ -19,15 +19,21 @@ defmodule Soulless.Client.Auth do
          {:ok, config_response} <- HTTPoison.get(config_url(region, version_json["version"])),
          {:ok, config_json} <- Jason.decode(config_response.body),
          {:ok, servers_response} <- HTTPoison.get(server_list_url_from_config(config_json)),
-         {:ok, servers_json} <- Jason.decode(servers_response.body) do
-      {
-        "wss://#{List.first(servers_json["servers"])}",
-        "#{List.first(config_json["yo_service_url"])}/user/login",
-        String.trim_trailing(version_json["version"], ".w")
-      }
+         {:ok, servers_json} <- Jason.decode(servers_response.body),
+         {:maintenance, false} <- {:maintenance, Map.has_key?(servers_json, "maintenance")} do
+          IO.inspect(version_json, label: :version)
+          IO.inspect(config_json, label: :config)
+      {:ok,
+       %{
+         endpoint_url: "wss://#{List.first(servers_json["servers"])}",
+         passport_url: "#{List.first(config_json["yo_service_url"])}/user/login",
+         version: String.trim_trailing(version_json["version"], ".w")
+       }}
     else
+      {:maintenance, true} ->
+        {:error, :maintenance}
+
       {:error, reason} ->
-        Logger.error("Could not retrieve endpoint: #{inspect(reason)}")
         {:error, reason}
     end
   end

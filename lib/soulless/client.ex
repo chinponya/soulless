@@ -10,8 +10,8 @@ defmodule Soulless.Client do
         access_token = args[:access_token] || Application.fetch_env!(:soulless, :access_token)
         region = args[:region] || Application.fetch_env!(:soulless, :region)
 
-        {endpoint, passport_url, version} = Soulless.Client.Auth.endpoint(region)
-
+        case Soulless.Client.Auth.endpoint(region) do
+          {:ok, %{endpoint_url: endpoint_url, passport_url: passport_url, version: version}} ->
         state = %{
           next_request_id: 1,
           pending_requests: %{},
@@ -22,24 +22,35 @@ defmodule Soulless.Client do
         }
 
         WebSockex.start_link(
-          endpoint,
+              endpoint_url,
           __MODULE__,
           state,
+              handle_initial_conn_failure: true,
           name: name
         )
+
+          {:error, :maintenance} ->
+            Logger.error("#{__MODULE__} Server is currently under maintenance")
+
+          {:error, reason} ->
+            Logger.error("#{__MODULE__} Could not retrieve endpoint: #{inspect(reason)}")
+            {:error, reason}
+        end
       end
 
       # Websocket callbacks
       @impl true
       def handle_connect(_conn, state) do
-        Logger.info("Connected!")
+        Logger.info("#{__MODULE__} Connected!")
         send(self(), :login)
         {:ok, update_heartbeat(state)}
       end
 
       @impl true
       def handle_disconnect(disconnect_map, state) do
-        super(disconnect_map, state)
+        :ok = Logger.warn("#{__MODULE__} disconnected: #{inspect(disconnect_map)}")
+        :timer.sleep(60_000)
+        {:reconnect, state}
       end
 
       # Message types
@@ -119,11 +130,14 @@ defmodule Soulless.Client do
           end
         else
           {:error, reason} ->
-            Logger.warn("Could not decode a message for with ID #{req_id}: #{inspect(reason)}")
+            Logger.warn(
+              "#{__MODULE__} Could not decode a message for with ID #{req_id}: #{inspect(reason)}"
+            )
+
             {:ok, state}
 
           _ ->
-            Logger.warn("Received an unknown message with ID #{req_id}")
+            Logger.warn("#{__MODULE__} Received an unknown message with ID #{req_id}")
             {:ok, state}
         end
       end
@@ -139,14 +153,14 @@ defmodule Soulless.Client do
           handle_notice(notice, state)
         else
           {:error, reason} ->
-            Logger.error("Could not decode notice: #{inspect(reason)}")
+            Logger.error("#{__MODULE__} Could not decode notice: #{inspect(reason)}")
             {:ok, state}
         end
       end
 
       @impl true
       def handle_frame(response, state) do
-        Logger.warn("Unhandled message: #{inspect(response)}")
+        Logger.warn("#{__MODULE__} Unhandled message: #{inspect(response)}")
         {:ok, state}
       end
 
@@ -154,7 +168,7 @@ defmodule Soulless.Client do
 
       @impl true
       def handle_info(:login, state) do
-        Logger.debug("Logging in with UID #{state[:uid]}")
+        Logger.debug("#{__MODULE__} Logging in with UID #{state[:uid]}")
 
         passport =
           Soulless.Client.Auth.get_passport(
@@ -185,8 +199,8 @@ defmodule Soulless.Client do
              %Soulless.Lq.ResOauth2Auth{} = message,
              %{version: version} = state
            ) do
-        Logger.debug("Obtained oauth2 token: #{inspect(message)}")
-
+        case is_nil(message.error) || message.error.code do
+          true ->
         payload = %Soulless.Lq.ReqOauth2Login{
           type: 8,
           access_token: message.access_token,
@@ -214,6 +228,14 @@ defmodule Soulless.Client do
         |> Soulless.RPC.send(self())
 
         {:ok, state}
+
+          151 ->
+            {:error, :client_outdated}
+
+          _ ->
+            retry_login("Couldn't obtain oauth2 token.")
+            {:ok, state}
+        end
       end
 
       defp handle_login_response(%Soulless.Lq.ResOauth2Check{} = _message, state) do
@@ -222,13 +244,27 @@ defmodule Soulless.Client do
       end
 
       defp handle_login_response(%Soulless.Lq.ResLogin{} = message, state) do
-        Logger.debug("Login attempt response: #{inspect(message)}")
-        Logger.info("Logged in as #{message.account.nickname}")
+        state = Map.put(state, :login, message)
+
+        if message.account do
+          Logger.info("#{__MODULE__} Logged in as #{message.account.nickname}")
         send(self(), :ready)
-        {:ok, Map.put(state, :login, message)}
+        else
+          retry_login()
+        end
+
+        {:ok, state}
       end
 
       # Helpers
+
+      defp retry_login(reason \\ "", retry_in \\ 300_000) do
+        Logger.error(
+          "#{__MODULE__} Login failed. #{reason} Retrying in #{round(retry_in / 1000)}s."
+        )
+
+        Process.send_after(self(), :login, retry_in)
+      end
 
       defp update_heartbeat(state, time \\ 30_000) do
         :ok =
@@ -297,7 +333,7 @@ defmodule Soulless.Client do
                   | {:close, WebSockex.close_frame(), new_state}
                 when new_state: term
       def handle_response(message, state) do
-        Logger.info("Received response #{inspect(message)}")
+        Logger.info("#{__MODULE__} Received response #{inspect(message)}")
         {:ok, state}
       end
 
@@ -309,14 +345,14 @@ defmodule Soulless.Client do
                 when new_state: term
 
       def handle_notice(message, state) do
-        Logger.info("Received notice #{inspect(message)}")
+        Logger.info("#{__MODULE__} Received notice #{inspect(message)}")
         {:ok, state}
       end
 
       @callback handle_ready(conn :: WebSockex.Conn.t(), state :: term) ::
                   {:ok, new_state :: term}
       def handle_ready(state) do
-        Logger.info("Client ready")
+        Logger.info("#{__MODULE__} Client ready")
         {:ok, state}
       end
 
