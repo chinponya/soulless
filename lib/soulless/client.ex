@@ -34,13 +34,7 @@ defmodule Soulless.Client do
       def handle_connect(_conn, state) do
         Logger.info("Connected!")
         send(self(), :login)
-        {:ok, state}
-      end
-
-      @impl true
-      def handle_disconnect(%{reason: {:local, reason}}, state) do
-        Logger.info("Local close with reason: #{inspect(reason)}")
-        {:ok, state}
+        {:ok, update_heartbeat(state)}
       end
 
       @impl true
@@ -56,6 +50,13 @@ defmodule Soulless.Client do
       # Handle requests
       def handle_info({:"$gen_call", from, message}, state) do
         handle_call(message, from, state)
+      end
+
+      def handle_info(:heartbeat, state) do
+        Soulless.Service.Lobby.heatbeat()
+        |> Soulless.RPC.send(self())
+
+        {:ok, state}
       end
 
       def handle_call({:send, _, _, _} = message, from, state) do
@@ -79,10 +80,9 @@ defmodule Soulless.Client do
 
         message = <<@request, next_request_id::little-size(16)>> <> wrapper
 
-        Logger.debug("Sending message: #{inspect(message)}")
-
         {:reply, {:binary, message},
          state
+         |> update_heartbeat()
          |> increment_request_id()
          |> put_request(next_request_id, namespace, decoder_mod, from)}
       end
@@ -91,26 +91,29 @@ defmodule Soulless.Client do
       @impl true
       def handle_frame({:binary, <<@response::size(8), message::binary>>}, state) do
         <<req_id::little-size(16), wrapper::binary>> = message
-        Logger.debug("Received raw message: #{inspect(message)}")
+        state = update_heartbeat(state)
 
-        with {updated_state, {_namespace, decoder_mod, from}} <- pop_request(state, req_id),
+        with {updated_state, {namespace, decoder_mod, from}} <- pop_request(state, req_id),
              {:ok, unwrapped} <- Soulless.Lq.Wrapper.decode(wrapper),
              {:ok, message} <- decoder_mod.decode(unwrapped.data) do
-          case {message, from} do
+          case {namespace, message, from} do
             # HACK maybe there's a nicer way to handle this
-            {%Soulless.Lq.ResOauth2Auth{}, nil} ->
+            {_, %Soulless.Lq.ResOauth2Auth{}, nil} ->
               handle_login_response(message, updated_state)
 
-            {%Soulless.Lq.ResOauth2Check{}, nil} ->
+            {_, %Soulless.Lq.ResOauth2Check{}, nil} ->
               handle_login_response(message, updated_state)
 
-            {%Soulless.Lq.ResLogin{}, nil} ->
+            {_, %Soulless.Lq.ResLogin{}, nil} ->
               handle_login_response(message, updated_state)
 
-            {message, nil} ->
+            {".lq.Lobby.heatbeat", message, nil} ->
+              {:ok, updated_state}
+
+            {_, message, nil} ->
               handle_response(message, updated_state)
 
-            {message, from} ->
+            {_, message, from} ->
               GenServer.reply(from, message)
               {:ok, updated_state}
           end
@@ -128,7 +131,7 @@ defmodule Soulless.Client do
       # Handle notice
       @impl true
       def handle_frame({:binary, <<@notice::size(8), message::binary>>}, state) do
-        Logger.debug("Received raw notice: #{inspect(message)}")
+        state = update_heartbeat(state)
 
         with {:ok, wrapper} <- Soulless.Lq.Wrapper.decode(message),
              {:ok, notice_mod} <- Soulless.get_module_by_identifier(wrapper.name),
@@ -226,6 +229,32 @@ defmodule Soulless.Client do
       end
 
       # Helpers
+
+      defp update_heartbeat(state, time \\ 30_000) do
+        :ok =
+          case Map.get(state, :timer_ref) do
+            nil -> :ok
+            timer_ref -> cancel_timer(timer_ref)
+          end
+
+        timer_ref = Process.send_after(self(), :heartbeat, time)
+        Map.put(state, :timer_ref, timer_ref)
+      end
+
+      defp cancel_timer(ref) do
+        # Flush the mailbox if we failed to cancel the timer
+        case Process.cancel_timer(ref) do
+          i when is_integer(i) ->
+            :ok
+
+          false ->
+            receive do
+              :timeout -> :ok
+            after
+              0 -> :ok
+            end
+        end
+      end
 
       defp increment_request_id(state) do
         Map.update(state, :next_request_id, 0, fn next_request_id ->
