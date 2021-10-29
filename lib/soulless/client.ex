@@ -183,7 +183,7 @@ defmodule Soulless.Client do
               value
           end
 
-        Soulless.Service.Lobby.oauth2Auth(%Soulless.Lq.ReqOauth2Auth{
+        Soulless.Service.Lobby.oauth2_auth(%Soulless.Lq.ReqOauth2Auth{
           type: 7,
           code: passport["accessToken"],
           uid: passport["uid"],
@@ -230,7 +230,7 @@ defmodule Soulless.Client do
               version: 0
             }
 
-            Soulless.Service.Lobby.oauth2Login(payload)
+            Soulless.Service.Lobby.oauth2_login(payload)
             |> Soulless.RPC.send(self())
 
             {:ok, state}
