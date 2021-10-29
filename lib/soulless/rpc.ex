@@ -47,12 +47,13 @@ defmodule Soulless.RPC do
     {:custom, request_type} = Keyword.get(rpc, :request_type)
     {:custom, return_type} = Keyword.get(rpc, :return_type)
     function = Keyword.get(rpc, :function)
-    request_module = Module.safe_concat([namespace, String.capitalize(package), request_type])
-    response_module = Module.safe_concat([namespace, String.capitalize(package), return_type])
+    request_module = Module.concat([namespace, String.capitalize(package), request_type])
+    response_module = Module.concat([namespace, String.capitalize(package), return_type])
     function_name = function |> Macro.underscore() |> String.to_atom()
+    is_empty = Enum.empty?(request_module.fields_defs)
 
     message =
-      if Enum.empty?(request_module.fields_defs) do
+      if is_empty do
         quote do
           unquote(Macro.escape(struct(request_module)))
         end
@@ -62,24 +63,27 @@ defmodule Soulless.RPC do
         end
       end
 
-    args =
-      if Enum.empty?(request_module.fields_defs) do
-        quote do
-        end
-      else
-        quote do
-          payload
-        end
-      end
-
-    quote do
-      def unquote(function_name)(unquote(args)) do
+    body =
+      quote do
         %Soulless.RPC{
           message: unquote(message),
           request_module: unquote(request_module),
           response_module: unquote(response_module),
           namespace: unquote(".#{package}.#{service_name}.#{function}")
         }
+      end
+
+    if is_empty do
+      quote do
+        def unquote(function_name)() do
+          unquote(body)
+        end
+      end
+    else
+      quote do
+        def unquote(function_name)(payload) do
+          unquote(body)
+        end
       end
     end
   end
