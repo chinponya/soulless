@@ -12,7 +12,7 @@ defmodule Soulless.Protobuf.Modules do
   def generate_module_lookup_map(file_path, namespace) do
     generate_module_names(file_path)
     |> Enum.map(fn module_name ->
-      {".#{module_name}", Module.safe_concat([namespace, upcase_first(module_name)])}
+      {".#{module_name}", Module.concat([namespace, upcase_first(module_name)])}
     end)
     |> Enum.into(Map.new())
   end
