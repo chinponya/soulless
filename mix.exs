@@ -5,7 +5,7 @@ defmodule Soulless.MixProject do
     [
       app: :soulless,
       name: "Soulless",
-      version: "0.0.2",
+      version: "0.1.0",
       elixir: "~> 1.12",
       description: "Mahjong Soul API client",
       source_url: "https://github.com/chinponya/soulless",
