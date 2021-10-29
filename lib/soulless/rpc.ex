@@ -35,10 +35,7 @@ defmodule Soulless.RPC do
       procedures =
         Keyword.get(service, :procedures)
         |> Enum.map(fn {:rpc, rpc} ->
-          {
-            Keyword.get(rpc, :function) |> Macro.underscore() |> String.to_atom(),
-            build_rpc_fun(namespace, package, service_name, rpc)
-          }
+          build_rpc_fun(namespace, package, service_name, rpc)
         end)
 
       {service_name, procedures}
