@@ -148,7 +148,7 @@ defmodule Soulless.Client do
         state = update_heartbeat(state)
 
         with {:ok, wrapper} <- Soulless.Lq.Wrapper.decode(message),
-             {:ok, notice_mod} <- Soulless.get_module_by_identifier(wrapper.name),
+             {:ok, notice_mod} <- Soulless.Lq.get_module_by_identifier(wrapper.name),
              {:ok, notice} <- notice_mod.decode(wrapper.data) do
           handle_notice(notice, state)
         else

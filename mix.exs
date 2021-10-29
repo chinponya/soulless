@@ -28,7 +28,8 @@ defmodule Soulless.MixProject do
       {:websockex, "~> 0.4.3"},
       {:httpoison, "~> 1.8"},
       {:jason, "~> 1.2"},
-      {:uuid, "~> 1.1"}
+      {:uuid, "~> 1.1"},
+      {:nimble_parsec, "~> 1.1"}
     ]
   end
 end
