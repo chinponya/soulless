@@ -2,7 +2,7 @@
 defmodule(Soulless.Lq.ActionPrototype) do
   @moduledoc false
   (
-    defstruct(step: 0, name: "", data: "", __uf__: [])
+    defstruct(step: 0, name: "", data: nil, __uf__: [])
 
     (
       (
@@ -55,10 +55,10 @@ defmodule(Soulless.Lq.ActionPrototype) do
         end,
         defp(encode_data(acc, msg)) do
           try do
-            if(msg.data == "") do
+            if(msg.data == nil) do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_bytes(msg.data)]
+              [acc, <<26>>, Protox.Encode.encode_message(msg.data)]
             end
           rescue
             ArgumentError ->
@@ -131,7 +131,9 @@ defmodule(Soulless.Lq.ActionPrototype) do
               {3, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[data: delimited], rest}
+
+                {[data: Protox.Message.merge(msg.data, Soulless.Lq.Wrapper.decode!(delimited))],
+                 rest}
 
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -197,7 +199,7 @@ defmodule(Soulless.Lq.ActionPrototype) do
       %{
         1 => {:step, {:scalar, 0}, :uint32},
         2 => {:name, {:scalar, ""}, :string},
-        3 => {:data, {:scalar, ""}, :bytes}
+        3 => {:data, {:scalar, nil}, {:message, Soulless.Lq.Wrapper}}
       }
     end
 
@@ -207,7 +209,7 @@ defmodule(Soulless.Lq.ActionPrototype) do
           }
     def(defs_by_name()) do
       %{
-        data: {3, {:scalar, ""}, :bytes},
+        data: {3, {:scalar, nil}, {:message, Soulless.Lq.Wrapper}},
         name: {2, {:scalar, ""}, :string},
         step: {1, {:scalar, 0}, :uint32}
       }
@@ -237,11 +239,11 @@ defmodule(Soulless.Lq.ActionPrototype) do
         %{
           __struct__: Protox.Field,
           json_name: "data",
-          kind: {:scalar, ""},
+          kind: {:scalar, nil},
           label: :optional,
           name: :data,
           tag: 3,
-          type: :bytes
+          type: {:message, Soulless.Lq.Wrapper}
         }
       ]
     end
@@ -312,11 +314,11 @@ defmodule(Soulless.Lq.ActionPrototype) do
            %{
              __struct__: Protox.Field,
              json_name: "data",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :data,
              tag: 3,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -325,11 +327,11 @@ defmodule(Soulless.Lq.ActionPrototype) do
            %{
              __struct__: Protox.Field,
              json_name: "data",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :data,
              tag: 3,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -376,7 +378,7 @@ defmodule(Soulless.Lq.ActionPrototype) do
         {:ok, ""}
       end,
       def(default(:data)) do
-        {:ok, ""}
+        {:ok, nil}
       end,
       def(default(_)) do
         {:error, :no_such_field}

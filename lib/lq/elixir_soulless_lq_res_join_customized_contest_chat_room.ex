@@ -47,7 +47,7 @@ defmodule(Soulless.Lq.ResJoinCustomizedContestChatRoom) do
                 [
                   acc,
                   Enum.reduce(values, [], fn value, acc ->
-                    [acc, <<18>>, Protox.Encode.encode_bytes(value)]
+                    [acc, <<18>>, Protox.Encode.encode_message(value)]
                   end)
                 ]
             end
@@ -123,7 +123,9 @@ defmodule(Soulless.Lq.ResJoinCustomizedContestChatRoom) do
               {2, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[chat_history: msg.chat_history ++ [delimited]], rest}
+
+                {[chat_history: msg.chat_history ++ [Soulless.Lq.Wrapper.decode!(delimited)]],
+                 rest}
 
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -188,7 +190,7 @@ defmodule(Soulless.Lq.ResJoinCustomizedContestChatRoom) do
     def(defs()) do
       %{
         1 => {:error, {:scalar, nil}, {:message, Soulless.Lq.Error}},
-        2 => {:chat_history, :unpacked, :bytes}
+        2 => {:chat_history, :unpacked, {:message, Soulless.Lq.Wrapper}}
       }
     end
 
@@ -198,7 +200,7 @@ defmodule(Soulless.Lq.ResJoinCustomizedContestChatRoom) do
           }
     def(defs_by_name()) do
       %{
-        chat_history: {2, :unpacked, :bytes},
+        chat_history: {2, :unpacked, {:message, Soulless.Lq.Wrapper}},
         error: {1, {:scalar, nil}, {:message, Soulless.Lq.Error}}
       }
     end
@@ -222,7 +224,7 @@ defmodule(Soulless.Lq.ResJoinCustomizedContestChatRoom) do
           label: :repeated,
           name: :chat_history,
           tag: 2,
-          type: :bytes
+          type: {:message, Soulless.Lq.Wrapper}
         }
       ]
     end
@@ -268,7 +270,7 @@ defmodule(Soulless.Lq.ResJoinCustomizedContestChatRoom) do
              label: :repeated,
              name: :chat_history,
              tag: 2,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -281,7 +283,7 @@ defmodule(Soulless.Lq.ResJoinCustomizedContestChatRoom) do
              label: :repeated,
              name: :chat_history,
              tag: 2,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -294,7 +296,7 @@ defmodule(Soulless.Lq.ResJoinCustomizedContestChatRoom) do
              label: :repeated,
              name: :chat_history,
              tag: 2,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
       ),

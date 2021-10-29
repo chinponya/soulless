@@ -2,7 +2,7 @@
 defmodule(Soulless.Lq.GameLiveUnit) do
   @moduledoc false
   (
-    defstruct(timestamp: 0, action_category: 0, action_data: "", __uf__: [])
+    defstruct(timestamp: 0, action_category: 0, action_data: nil, __uf__: [])
 
     (
       (
@@ -58,10 +58,10 @@ defmodule(Soulless.Lq.GameLiveUnit) do
         end,
         defp(encode_action_data(acc, msg)) do
           try do
-            if(msg.action_data == "") do
+            if(msg.action_data == nil) do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_bytes(msg.action_data)]
+              [acc, <<26>>, Protox.Encode.encode_message(msg.action_data)]
             end
           rescue
             ArgumentError ->
@@ -136,7 +136,11 @@ defmodule(Soulless.Lq.GameLiveUnit) do
               {3, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[action_data: delimited], rest}
+
+                {[
+                   action_data:
+                     Protox.Message.merge(msg.action_data, Soulless.Lq.Wrapper.decode!(delimited))
+                 ], rest}
 
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -202,7 +206,7 @@ defmodule(Soulless.Lq.GameLiveUnit) do
       %{
         1 => {:timestamp, {:scalar, 0}, :uint32},
         2 => {:action_category, {:scalar, 0}, :uint32},
-        3 => {:action_data, {:scalar, ""}, :bytes}
+        3 => {:action_data, {:scalar, nil}, {:message, Soulless.Lq.Wrapper}}
       }
     end
 
@@ -213,7 +217,7 @@ defmodule(Soulless.Lq.GameLiveUnit) do
     def(defs_by_name()) do
       %{
         action_category: {2, {:scalar, 0}, :uint32},
-        action_data: {3, {:scalar, ""}, :bytes},
+        action_data: {3, {:scalar, nil}, {:message, Soulless.Lq.Wrapper}},
         timestamp: {1, {:scalar, 0}, :uint32}
       }
     end
@@ -242,11 +246,11 @@ defmodule(Soulless.Lq.GameLiveUnit) do
         %{
           __struct__: Protox.Field,
           json_name: "actionData",
-          kind: {:scalar, ""},
+          kind: {:scalar, nil},
           label: :optional,
           name: :action_data,
           tag: 3,
-          type: :bytes
+          type: {:message, Soulless.Lq.Wrapper}
         }
       ]
     end
@@ -328,11 +332,11 @@ defmodule(Soulless.Lq.GameLiveUnit) do
            %{
              __struct__: Protox.Field,
              json_name: "actionData",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :action_data,
              tag: 3,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -341,11 +345,11 @@ defmodule(Soulless.Lq.GameLiveUnit) do
            %{
              __struct__: Protox.Field,
              json_name: "actionData",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :action_data,
              tag: 3,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -354,11 +358,11 @@ defmodule(Soulless.Lq.GameLiveUnit) do
            %{
              __struct__: Protox.Field,
              json_name: "actionData",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :action_data,
              tag: 3,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
       ),
@@ -403,7 +407,7 @@ defmodule(Soulless.Lq.GameLiveUnit) do
         {:ok, 0}
       end,
       def(default(:action_data)) do
-        {:ok, ""}
+        {:ok, nil}
       end,
       def(default(_)) do
         {:error, :no_such_field}

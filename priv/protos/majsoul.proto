@@ -963,7 +963,7 @@ message MineReward {
 message GameLiveUnit {
   uint32 timestamp = 1;
   uint32 action_category = 2;
-  bytes action_data = 3;
+  Wrapper action_data = 3;
 }
 
 message GameLiveSegment {
@@ -2118,7 +2118,7 @@ message ReqGameRecord {
 message ResGameRecord {
   Error error = 1;
   RecordGame head = 3;
-  bytes data = 4;
+  Wrapper data = 4;
   string data_url = 5;
 }
 
@@ -3307,7 +3307,7 @@ message ReqJoinCustomizedContestChatRoom {
 
 message ResJoinCustomizedContestChatRoom {
   Error error = 1;
-  repeated bytes chat_history = 2;
+  repeated Wrapper chat_history = 2;
 }
 
 message ReqSayChatMessage {
@@ -3911,14 +3911,14 @@ message GameSnapshot {
 message ActionPrototype {
   uint32 step = 1;
   string name = 2;
-  bytes data = 3;
+  Wrapper data = 3;
 }
 
 message GameDetailRecords {
-  repeated bytes records = 1;
+  repeated Wrapper records = 1;
   uint32 version = 2;
   repeated GameAction actions = 3;
-  bytes bar = 4;
+  Wrapper bar = 4;
 }
 
 message GameSelfOperation {
@@ -3962,7 +3962,7 @@ message GameUserEvent {
 message GameAction {
   uint32 passed = 1;
   uint32 type = 2;
-  bytes result = 3;
+  Wrapper result = 3;
   GameUserInput user_input = 4;
   GameUserEvent user_event = 5;
   uint32 game_event = 6;

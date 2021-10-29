@@ -5,7 +5,7 @@ defmodule(Soulless.Lq.GameAction) do
     defstruct(
       passed: 0,
       type: 0,
-      result: "",
+      result: nil,
       user_input: nil,
       user_event: nil,
       game_event: 0,
@@ -66,10 +66,10 @@ defmodule(Soulless.Lq.GameAction) do
         end,
         defp(encode_result(acc, msg)) do
           try do
-            if(msg.result == "") do
+            if(msg.result == nil) do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_bytes(msg.result)]
+              [acc, <<26>>, Protox.Encode.encode_message(msg.result)]
             end
           rescue
             ArgumentError ->
@@ -186,7 +186,11 @@ defmodule(Soulless.Lq.GameAction) do
               {3, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[result: delimited], rest}
+
+                {[
+                   result:
+                     Protox.Message.merge(msg.result, Soulless.Lq.Wrapper.decode!(delimited))
+                 ], rest}
 
               {4, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -280,7 +284,7 @@ defmodule(Soulless.Lq.GameAction) do
       %{
         1 => {:passed, {:scalar, 0}, :uint32},
         2 => {:type, {:scalar, 0}, :uint32},
-        3 => {:result, {:scalar, ""}, :bytes},
+        3 => {:result, {:scalar, nil}, {:message, Soulless.Lq.Wrapper}},
         4 => {:user_input, {:scalar, nil}, {:message, Soulless.Lq.GameUserInput}},
         5 => {:user_event, {:scalar, nil}, {:message, Soulless.Lq.GameUserEvent}},
         6 => {:game_event, {:scalar, 0}, :uint32}
@@ -295,7 +299,7 @@ defmodule(Soulless.Lq.GameAction) do
       %{
         game_event: {6, {:scalar, 0}, :uint32},
         passed: {1, {:scalar, 0}, :uint32},
-        result: {3, {:scalar, ""}, :bytes},
+        result: {3, {:scalar, nil}, {:message, Soulless.Lq.Wrapper}},
         type: {2, {:scalar, 0}, :uint32},
         user_event: {5, {:scalar, nil}, {:message, Soulless.Lq.GameUserEvent}},
         user_input: {4, {:scalar, nil}, {:message, Soulless.Lq.GameUserInput}}
@@ -326,11 +330,11 @@ defmodule(Soulless.Lq.GameAction) do
         %{
           __struct__: Protox.Field,
           json_name: "result",
-          kind: {:scalar, ""},
+          kind: {:scalar, nil},
           label: :optional,
           name: :result,
           tag: 3,
-          type: :bytes
+          type: {:message, Soulless.Lq.Wrapper}
         },
         %{
           __struct__: Protox.Field,
@@ -428,11 +432,11 @@ defmodule(Soulless.Lq.GameAction) do
            %{
              __struct__: Protox.Field,
              json_name: "result",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :result,
              tag: 3,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -441,11 +445,11 @@ defmodule(Soulless.Lq.GameAction) do
            %{
              __struct__: Protox.Field,
              json_name: "result",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :result,
              tag: 3,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -612,7 +616,7 @@ defmodule(Soulless.Lq.GameAction) do
         {:ok, 0}
       end,
       def(default(:result)) do
-        {:ok, ""}
+        {:ok, nil}
       end,
       def(default(:user_input)) do
         {:ok, nil}

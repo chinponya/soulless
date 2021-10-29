@@ -2,7 +2,7 @@
 defmodule(Soulless.Lq.GameDetailRecords) do
   @moduledoc false
   (
-    defstruct(records: [], version: 0, actions: [], bar: "", __uf__: [])
+    defstruct(records: [], version: 0, actions: [], bar: nil, __uf__: [])
 
     (
       (
@@ -40,7 +40,7 @@ defmodule(Soulless.Lq.GameDetailRecords) do
                 [
                   acc,
                   Enum.reduce(values, [], fn value, acc ->
-                    [acc, "\n", Protox.Encode.encode_bytes(value)]
+                    [acc, "\n", Protox.Encode.encode_message(value)]
                   end)
                 ]
             end
@@ -82,10 +82,10 @@ defmodule(Soulless.Lq.GameDetailRecords) do
         end,
         defp(encode_bar(acc, msg)) do
           try do
-            if(msg.bar == "") do
+            if(msg.bar == nil) do
               acc
             else
-              [acc, "\"", Protox.Encode.encode_bytes(msg.bar)]
+              [acc, "\"", Protox.Encode.encode_message(msg.bar)]
             end
           rescue
             ArgumentError ->
@@ -149,7 +149,7 @@ defmodule(Soulless.Lq.GameDetailRecords) do
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[records: msg.records ++ [delimited]], rest}
+                {[records: msg.records ++ [Soulless.Lq.Wrapper.decode!(delimited)]], rest}
 
               {2, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -163,7 +163,9 @@ defmodule(Soulless.Lq.GameDetailRecords) do
               {4, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[bar: delimited], rest}
+
+                {[bar: Protox.Message.merge(msg.bar, Soulless.Lq.Wrapper.decode!(delimited))],
+                 rest}
 
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -227,10 +229,10 @@ defmodule(Soulless.Lq.GameDetailRecords) do
           }
     def(defs()) do
       %{
-        1 => {:records, :unpacked, :bytes},
+        1 => {:records, :unpacked, {:message, Soulless.Lq.Wrapper}},
         2 => {:version, {:scalar, 0}, :uint32},
         3 => {:actions, :unpacked, {:message, Soulless.Lq.GameAction}},
-        4 => {:bar, {:scalar, ""}, :bytes}
+        4 => {:bar, {:scalar, nil}, {:message, Soulless.Lq.Wrapper}}
       }
     end
 
@@ -241,8 +243,8 @@ defmodule(Soulless.Lq.GameDetailRecords) do
     def(defs_by_name()) do
       %{
         actions: {3, :unpacked, {:message, Soulless.Lq.GameAction}},
-        bar: {4, {:scalar, ""}, :bytes},
-        records: {1, :unpacked, :bytes},
+        bar: {4, {:scalar, nil}, {:message, Soulless.Lq.Wrapper}},
+        records: {1, :unpacked, {:message, Soulless.Lq.Wrapper}},
         version: {2, {:scalar, 0}, :uint32}
       }
     end
@@ -257,7 +259,7 @@ defmodule(Soulless.Lq.GameDetailRecords) do
           label: :repeated,
           name: :records,
           tag: 1,
-          type: :bytes
+          type: {:message, Soulless.Lq.Wrapper}
         },
         %{
           __struct__: Protox.Field,
@@ -280,11 +282,11 @@ defmodule(Soulless.Lq.GameDetailRecords) do
         %{
           __struct__: Protox.Field,
           json_name: "bar",
-          kind: {:scalar, ""},
+          kind: {:scalar, nil},
           label: :optional,
           name: :bar,
           tag: 4,
-          type: :bytes
+          type: {:message, Soulless.Lq.Wrapper}
         }
       ]
     end
@@ -301,7 +303,7 @@ defmodule(Soulless.Lq.GameDetailRecords) do
              label: :repeated,
              name: :records,
              tag: 1,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -314,7 +316,7 @@ defmodule(Soulless.Lq.GameDetailRecords) do
              label: :repeated,
              name: :records,
              tag: 1,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -384,11 +386,11 @@ defmodule(Soulless.Lq.GameDetailRecords) do
            %{
              __struct__: Protox.Field,
              json_name: "bar",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :bar,
              tag: 4,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -397,11 +399,11 @@ defmodule(Soulless.Lq.GameDetailRecords) do
            %{
              __struct__: Protox.Field,
              json_name: "bar",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :bar,
              tag: 4,
-             type: :bytes
+             type: {:message, Soulless.Lq.Wrapper}
            }}
         end
 
@@ -451,7 +453,7 @@ defmodule(Soulless.Lq.GameDetailRecords) do
         {:error, :no_default_value}
       end,
       def(default(:bar)) do
-        {:ok, ""}
+        {:ok, nil}
       end,
       def(default(_)) do
         {:error, :no_such_field}
