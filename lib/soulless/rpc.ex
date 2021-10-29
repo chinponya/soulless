@@ -1,6 +1,6 @@
 defmodule Soulless.RPC do
   @enforce_keys [:message, :request_module, :response_module, :namespace]
-  defstruct [:client, :message, :request_module, :response_module, :namespace]
+  defstruct [:message, :request_module, :response_module, :namespace]
 
   def send(%Soulless.RPC{} = rpc, client) do
     case rpc.request_module.encode(rpc.message) do
