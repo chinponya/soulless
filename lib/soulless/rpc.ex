@@ -22,7 +22,7 @@ defmodule Soulless.RPC do
     end
   end
 
-  def generate_rpc_funs(file_path, namespace) do
+  defp generate_rpc_funs(file_path, namespace) do
     file_contents = File.read!(file_path)
     {:ok, parsed_proto, _, _, _, _} = Soulless.Protobuf.Parser.parse(file_contents)
     package = Keyword.get(parsed_proto, :package)
@@ -43,7 +43,7 @@ defmodule Soulless.RPC do
     |> Map.new()
   end
 
-  def build_rpc_fun(namespace, package, service_name, rpc) do
+  defp build_rpc_fun(namespace, package, service_name, rpc) do
     {:custom, request_type} = Keyword.get(rpc, :request_type)
     {:custom, return_type} = Keyword.get(rpc, :return_type)
     function = Keyword.get(rpc, :function)
