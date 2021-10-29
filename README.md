@@ -43,7 +43,7 @@ defmodule Majsoul.Client do
     # You can find out which one you need by looking at the `Soulless.Lobby` module
     # or the `priv/protos/majsou.proto` file.
     %Soulless.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
-    |> Soulless.Service.Lobby.fetchGameRecordList()
+    |> Soulless.Service.Lobby.fetch_game_record_list()
     # Next, pass it to `Soulless.RPC.send/2` with client's PID in order to actually send it.
     |> Soulless.RPC.send(self())
 
@@ -95,7 +95,7 @@ the outside. For this task, we need to use `Soulless.RPC.fetch/2` function.
 # or the `priv/protos/majsou.proto` file.
 response = 
   %Soulless.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
-    |> Soulless.Service.Lobby.fetchGameRecordList()
+    |> Soulless.Service.Lobby.fetch_game_record_list()
     # Next, pass it to `Soulless.RPC.fetch/2` in order to actually send it.
     # It expects a PID, but the macro assigns a global name that matches __MODULE__,
     # so in this case we can use `Majsoul.Client` instead.
