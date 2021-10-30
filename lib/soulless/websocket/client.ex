@@ -121,7 +121,7 @@ defmodule Soulless.Websocket.Client do
     with {:ok, wrapper} <- Soulless.Lq.Wrapper.decode(message),
          {:ok, notice_mod} <- Soulless.Lq.get_module_by_identifier(wrapper.name),
          {:ok, notice} <- notice_mod.decode(wrapper.data) do
-      :ok = GenServer.cast(parent_pid, {:response, notice})
+      :ok = GenServer.cast(parent_pid, {:notice, notice})
       {:ok, state}
     else
       {:error, reason} ->
