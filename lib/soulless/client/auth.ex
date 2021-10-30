@@ -5,8 +5,11 @@ defmodule Soulless.Client.Auth do
     headers = [{"Content-type", "application/json"}, {"Accept", "application/json"}]
     body = Jason.encode!(%{uid: uid, token: access_token, deviceId: "web|#{uid}"})
 
-    response = HTTPoison.post!(passport_url, body, headers)
-    Jason.decode!(response.body)
+    with {:ok, response} <- HTTPoison.post(passport_url, body, headers) do
+      Jason.decode(response.body)
+    else
+      error -> error
+    end
   end
 
   def endpoint(:en = region) do
