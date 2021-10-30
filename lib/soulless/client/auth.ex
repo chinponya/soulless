@@ -13,13 +13,9 @@ defmodule Soulless.Client.Auth do
   end
 
   def endpoint(:en = region) do
-    with {:ok, version_response} <- HTTPoison.get(version_url(region)),
-         {:ok, version_json} <- Jason.decode(version_response.body),
-         {:ok, config_response} <- HTTPoison.get(config_url(region, version_json["version"])),
-         {:ok, config_json} <- Jason.decode(config_response.body),
-         {:ok, servers_response} <- HTTPoison.get(server_list_url_from_config(config_json)),
-         {:ok, servers_json} <- Jason.decode(servers_response.body),
-         {:maintenance, false} <- {:maintenance, Map.has_key?(servers_json, "maintenance")} do
+    with {:ok, version_json} <- version(region),
+         {:ok, config_json} <- config(region, version_json["version"]),
+         {:ok, servers_json} <- server_list(config_json) do
       {:ok,
        %{
          endpoint_url: "wss://#{List.first(servers_json["servers"])}",
@@ -27,16 +23,43 @@ defmodule Soulless.Client.Auth do
          version: String.trim_trailing(version_json["version"], ".w")
        }}
     else
-      {:maintenance, true} ->
-        {:error, :maintenance}
-
-      {:error, reason} ->
-        {:error, reason}
+      error -> error
     end
   end
 
   def endpoint(region) do
     raise "Authentication flow for region '#{String.to_atom(region)}' is not supported"
+  end
+
+  def version(region) do
+    with {:ok, version_response} <- HTTPoison.get(version_url(region)) do
+      Jason.decode(version_response.body)
+    else
+      error -> error
+    end
+  end
+
+  def config(region, version) do
+    with {:ok, config_response} <- HTTPoison.get(config_url(region, version)) do
+      Jason.decode(config_response.body)
+    else
+      error -> error
+    end
+  end
+
+  def server_list(config_json) when is_map(config_json) do
+    server_list(server_list_url_from_config(config_json))
+  end
+
+  def server_list(server_list_url) when is_binary(server_list_url) do
+    with {:ok, servers_response} <- HTTPoison.get(server_list_url),
+         {:ok, servers_json} <- Jason.decode(servers_response.body),
+         {:maintenance, false} <- {:maintenance, Map.has_key?(servers_json, "maintenance")} do
+      {:ok, servers_json}
+    else
+      {:maintenance, true} -> {:error, :maintenance}
+      error -> error
+    end
   end
 
   defp base_url(:en) do
