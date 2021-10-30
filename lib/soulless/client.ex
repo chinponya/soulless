@@ -74,6 +74,7 @@ defmodule Soulless.Client do
         case Soulless.Client.login(uid, access_token, passport_url, version, child_pid) do
           {:ok, account} ->
             Logger.info("#{__MODULE__} Logged in as #{account.nickname}")
+            GenServer.cast(self(), :logged_in)
 
             {:noreply,
              state
@@ -91,6 +92,11 @@ defmodule Soulless.Client do
         Logger.info("#{__MODULE__} disconnected")
 
         {:noreply, Map.put(state, :status, :disconnected)}
+      end
+
+      @impl true
+      def handle_cast(:logged_in, state) do
+        handle_ready(state)
       end
 
       @impl true
