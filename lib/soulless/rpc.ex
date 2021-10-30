@@ -5,7 +5,7 @@ defmodule Soulless.RPC do
   def send(%Soulless.RPC{} = rpc, client) do
     case rpc.request_module.encode(rpc.message) do
       {:ok, bytes} ->
-        WebSockex.cast(client, {:send, bytes, rpc.namespace, rpc.response_module})
+        GenServer.cast(client, {:send, bytes, rpc.namespace, rpc.response_module})
 
       error ->
         error
