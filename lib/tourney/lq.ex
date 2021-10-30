@@ -1,7 +1,7 @@
-defmodule Soulless.Lq do
+defmodule Soulless.Tourney.Lq do
   @modules Soulless.Protobuf.Modules.generate_module_lookup_map(
-             "priv/protos/majsoul.proto",
-             Soulless
+             "priv/protos/tourney.proto",
+             Soulless.Tourney
            )
 
   def get_module_by_identifier(name) do

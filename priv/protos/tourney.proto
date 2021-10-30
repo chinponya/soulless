@@ -423,7 +423,7 @@ message ReqRemoveContestObserver {
 
 message ResFetchContestChatHistory {
   Error error = 1;
-  repeated bytes chat_history = 2;
+  repeated Wrapper chat_history = 2;
 }
 
 message NotifyContestMatchingPlayer {
@@ -1085,7 +1085,7 @@ message Friend {
 message GameLiveUnit {
   uint32 timestamp = 1;
   uint32 action_category = 2;
-  bytes action_data = 3;
+  Wrapper action_data = 3;
 }
 
 message GameLiveSegment {
