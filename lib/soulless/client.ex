@@ -13,6 +13,7 @@ defmodule Soulless.Client do
         region = opts[:region] || Application.fetch_env!(:soulless, :region)
 
         state = %{
+          name: name,
           uid: uid,
           access_token: access_token,
           region: region,
@@ -36,7 +37,8 @@ defmodule Soulless.Client do
              {:ok, child_pid} <-
                Soulless.Websocket.Client.start_link(
                  endpoint_url: endpoint_url,
-                 parent_pid: self()
+                 parent_pid: self(),
+                 name: Module.concat([__MODULE__, Child])
                ) do
           Logger.info("#{__MODULE__} Spawned child #{inspect(child_pid)}")
 
@@ -129,11 +131,13 @@ defmodule Soulless.Client do
 
       # API
       def send(rpc) do
-        Soulless.RPC.send(rpc, __MODULE__)
+        # HACK this prevents users from spawning multiple processes using one module
+        Soulless.RPC.send(rpc, Module.concat([__MODULE__, Child]))
       end
 
       def fetch(rpc) do
-        Soulless.RPC.fetch(rpc, __MODULE__)
+        # HACK this prevents users from spawning multiple processes using one module
+        Soulless.RPC.fetch(rpc, Module.concat([__MODULE__, Child]))
       end
 
       # Our library callbacks with default implementations

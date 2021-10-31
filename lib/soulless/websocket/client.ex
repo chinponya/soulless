@@ -7,14 +7,14 @@ defmodule Soulless.Websocket.Client do
   @request 2
   @response 3
 
-  def start_link([endpoint_url: endpoint_url, parent_pid: parent_pid] = _opts) do
+  def start_link([endpoint_url: endpoint_url, parent_pid: parent_pid, name: name]) do
     state = %{
       next_request_id: 1,
       pending_requests: %{},
       parent_pid: parent_pid
     }
 
-    WebSockex.start_link(endpoint_url, __MODULE__, state)
+    WebSockex.start_link(endpoint_url, __MODULE__, state, name: name)
   end
 
   # Websocket callbacks
