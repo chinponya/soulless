@@ -21,16 +21,16 @@ end
 Interfacing with the library happens in two ways: by calling wrappers for RPC functions, with the appropriate data, and through callbacks invoked by the library when the server sends us a message.
 
 First, it's advised to create a new module where the callbacks will be implemented.
-The `message` parameter will be one of the structs under `Soulless.Lq`.
+The `message` parameter will be one of the structs under `Soulless.Game.Lq` - for the game client or `Soulless.Tourney.Lq` - for the tournament management site client.
 User's implementation should pattern match on these structs in order to handle the appropriate events.
 Don't forget to also implement a catch-all handler, so the process doesn't crash.
-File implementing them is auto generated and quite long, so it is easier to explore the available options in `iex` shell or through the `priv/protos/majsoul.proto`.
+File implementing the structs is auto generated and quite long, so it is easier to explore the available options in `iex` shell or through the `priv/protos/majsoul.proto` and `priv/protos/tourney.proto`.
 
 An example implementation could look like this.
 
 ```elixir
 defmodule Majsoul.Client do
-  use Soulless.Client
+  use Soulless.Game.Client # or Soulless.Tourney.Client
   require Logger
 
   # This callback is invoked after the client connects and logs in successfully.
@@ -42,8 +42,8 @@ defmodule Majsoul.Client do
     # Pass a corresponding request struct to a service you want to send it to. 
     # You can find out which one you need by looking at the `Soulless.Lobby` module
     # or the `priv/protos/majsou.proto` file.
-    %Soulless.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
-    |> Soulless.Service.Lobby.fetch_game_record_list()
+    %Soulless.Game.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
+    |> Soulless.Game.Service.Lobby.fetch_game_record_list()
     # Next, pass it to `Soulless.RPC.send/2` with client's PID in order to actually send it.
     |> Soulless.RPC.send(self())
 
@@ -54,7 +54,7 @@ defmodule Majsoul.Client do
   # The types for such messages are always prefixed with `Res` for "response".
 
   # Pattern match on the response struct we are interested in.
-  def handle_response(%Soulless.Lq.ResGameRecordList{} = message, state) do
+  def handle_response(%Soulless.Game.Lq.ResGameRecordList{} = message, state) do
     IO.puts("There are #{message.total_count} game logs on this account")
     {:ok, state}
   end
@@ -66,7 +66,7 @@ defmodule Majsoul.Client do
 
   # This callback is invoked when the server sends us a notice.
   # The types for such messages are always prefixed with `Notice`.
-  def handle_notice(%Soulless.Lq.NotifyFriendStateChange{} = message, state) do
+  def handle_notice(%Soulless.Game.Lq.NotifyFriendStateChange{} = message, state) do
     message_prefix = "Our friend UID #{message.active_state.account_id}"
 
     case {message.active_state.is_online, message.active_state.playing} do
@@ -94,8 +94,8 @@ the outside. For this task, we need to use `Soulless.RPC.fetch/2` function.
 # You can find out which one you need by looking at the `Soulless.Lobby` module
 # or the `priv/protos/majsou.proto` file.
 response = 
-  %Soulless.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
-    |> Soulless.Service.Lobby.fetch_game_record_list()
+  %Soulless.Game.Lq.ReqGameRecordList{start: 1, count: 10, type: 0}
+    |> Soulless.Game.Service.Lobby.fetch_game_record_list()
     # Next, pass it to `Soulless.RPC.fetch/2` in order to actually send it.
     # It expects a PID, but the macro assigns a global name that matches __MODULE__,
     # so in this case we can use `Majsoul.Client` instead.
@@ -113,7 +113,7 @@ These can be obtained by extracting values from the response made to `https://pa
 The relevant fields are `uid` and `token` (not to be confused with `access_token`).
 In addition, we also need to specify a `region`. Currently only `:en` is supported.
 
-These values should be provided either in the global configuration or via `Soulless.Client.start_link()`.
+These values should be provided either in the global configuration or via `{YourModule}.start_link()`.
 
 For global configuration this should look like so (note that all instances will share the global configuration):
 
@@ -130,7 +130,7 @@ config :soulless,
 And for `Soulless.Client.start_link()`:
 
 ```elixir
-{:ok, pid} = Soulless.Client.start_link(%{
+{:ok, pid} = Majsoul.Client.start_link(%{
   uid: "123456",
   access_token: "effeffeffeffeffeffeffeffeffeff",
   region: :en
@@ -145,7 +145,7 @@ defmodule Soulless.Application do
 
   def start(_type, _args) do
     children = [
-      {Soulless.Client, %{
+      {Majsoul.Client, %{
         uid: "123456",
         access_token: "effeffeffeffeffeffeffeffeffeff",
         region: :en

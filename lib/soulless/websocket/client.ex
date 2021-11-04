@@ -7,14 +7,22 @@ defmodule Soulless.Websocket.Client do
   @request 2
   @response 3
 
-  def start_link([endpoint_url: endpoint_url, parent_pid: parent_pid, name: name]) do
-    state = %{
-      next_request_id: 1,
-      pending_requests: %{},
-      parent_pid: parent_pid
-    }
+  def start_link(opts) do
+    case opts[:protocol_module].get_module_by_identifier(".lq.Wrapper") do
+      {:ok, wrapper_module} ->
+        state = %{
+          next_request_id: 1,
+          pending_requests: %{},
+          parent_pid: opts[:parent_pid],
+          protocol_module: opts[:protocol_module],
+          wrapper_module: wrapper_module
+        }
 
-    WebSockex.start_link(endpoint_url, __MODULE__, state, name: name)
+        WebSockex.start_link(opts[:endpoint_url], __MODULE__, state, name: opts[:name])
+
+      error ->
+        error
+    end
   end
 
   # Websocket callbacks
@@ -28,7 +36,7 @@ defmodule Soulless.Websocket.Client do
   def handle_disconnect(disconnect_map, %{parent_pid: parent_pid} = state) do
     Logger.warn("#{__MODULE__} disconnected: #{inspect(disconnect_map)}")
     GenServer.cast(parent_pid, :disconnected)
-    :timer.sleep(60_000)
+    Process.sleep(60_000)
     {:reconnect, state}
   end
 
@@ -63,11 +71,11 @@ defmodule Soulless.Websocket.Client do
   defp handle_request(
          {:send, message, namespace, decoder_mod},
          from,
-         %{next_request_id: next_request_id} = state
+         %{next_request_id: next_request_id, wrapper_module: wrapper_module} = state
        ) do
     wrapper =
-      %Soulless.Lq.Wrapper{name: namespace, data: :binary.list_to_bin(message)}
-      |> Soulless.Lq.Wrapper.encode!()
+      wrapper_module.__struct__(name: namespace, data: :binary.list_to_bin(message))
+      |> wrapper_module.encode!()
       |> :binary.list_to_bin()
 
     message = <<@request, next_request_id::little-size(16)>> <> wrapper
@@ -82,19 +90,17 @@ defmodule Soulless.Websocket.Client do
   @impl true
   def handle_frame(
         {:binary, <<@response::size(8), message::binary>>},
-        %{parent_pid: parent_pid} = state
+        %{parent_pid: parent_pid, wrapper_module: wrapper_module} = state
       ) do
     <<req_id::little-size(16), wrapper::binary>> = message
 
-    with {updated_state, {namespace, decoder_mod, from}} <- pop_request(state, req_id),
-         {:ok, unwrapped} <- Soulless.Lq.Wrapper.decode(wrapper),
+    with {updated_state, {_namespace, decoder_mod, from}} <- pop_request(state, req_id),
+         {:ok, unwrapped} <- wrapper_module.decode(wrapper),
          {:ok, message} <- decoder_mod.decode(unwrapped.data) do
-      case {namespace, message, from} do
-        {_, message, nil} ->
-          :ok = GenServer.cast(parent_pid, {:response, message})
-
-        {_, message, from} ->
-          GenServer.reply(from, message)
+      if is_nil(from) do
+        GenServer.cast(parent_pid, {:response, message})
+      else
+        GenServer.reply(from, message)
       end
 
       {:ok, updated_state}
@@ -116,10 +122,14 @@ defmodule Soulless.Websocket.Client do
   @impl true
   def handle_frame(
         {:binary, <<@notice::size(8), message::binary>>},
-        %{parent_pid: parent_pid} = state
+        %{
+          parent_pid: parent_pid,
+          wrapper_module: wrapper_module,
+          protocol_module: protocol_module
+        } = state
       ) do
-    with {:ok, wrapper} <- Soulless.Lq.Wrapper.decode(message),
-         {:ok, notice_mod} <- Soulless.Lq.get_module_by_identifier(wrapper.name),
+    with {:ok, wrapper} <- wrapper_module.decode(message),
+         {:ok, notice_mod} <- protocol_module.get_module_by_identifier(wrapper.name),
          {:ok, notice} <- notice_mod.decode(wrapper.data) do
       :ok = GenServer.cast(parent_pid, {:notice, notice})
       {:ok, state}
