@@ -18,7 +18,13 @@ defmodule Soulless.Websocket.Client do
           wrapper_module: wrapper_module
         }
 
-        WebSockex.start_link(opts[:endpoint_url], __MODULE__, state, name: opts[:name])
+        WebSockex.start_link(opts[:endpoint_url], __MODULE__, state,
+          name: opts[:name],
+          extra_headers: [
+            {"User-Agent",
+             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"}
+          ]
+        )
 
       error ->
         error
