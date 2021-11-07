@@ -108,6 +108,14 @@ defmodule Soulless.Protobuf.Parser do
   )
 
   defcombinatorp(
+    :import,
+    ignore(string("import"))
+    |> white_space()
+    |> quoted_legal_string()
+    |> semicolon()
+  )
+
+  defcombinatorp(
     :enum_field,
     empty()
     |> concat(
@@ -224,11 +232,12 @@ defmodule Soulless.Protobuf.Parser do
   )
 
   defcombinatorp(
-    :message_or_service,
+    :definition,
     choice([
       lookahead(string("message")) |> parsec(:message) |> tag(:message),
       lookahead(string("service")) |> parsec(:service) |> tag(:service),
-      lookahead(string("enum")) |> parsec(:enum) |> tag(:enum)
+      lookahead(string("enum")) |> parsec(:enum) |> tag(:enum),
+      lookahead(string("import")) |> parsec(:import) |> tag(:import),
     ])
   )
 
@@ -238,7 +247,7 @@ defmodule Soulless.Protobuf.Parser do
     |> concat(parsec(:syntax) |> unwrap_and_tag(:syntax))
     |> optional_white_space()
     |> concat(parsec(:package) |> unwrap_and_tag(:package))
-    |> repeat(optional_white_space() |> parsec(:message_or_service))
+    |> repeat(optional_white_space() |> parsec(:definition))
     |> optional_white_space()
     |> eos()
   )

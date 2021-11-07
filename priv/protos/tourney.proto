@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package lq;
 
+import "error.proto";
+
 service CustomizedContestManagerApi {
   rpc loginContestManager (ReqContestManageLogin) returns (ResContestManageLogin);
   rpc oauth2AuthContestManager (ReqContestManageOauth2Auth) returns (ResContestManageOauth2Auth);
@@ -461,7 +463,7 @@ message NotifyContestManagerKick {
 }
 
 message Error {
-  uint32 code = 1;
+  ErrorCode code = 1;
   repeated uint32 u32_params = 2;
   repeated string str_params = 3;
   string json_param = 4;

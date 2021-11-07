@@ -2,7 +2,7 @@
 defmodule(Soulless.Tourney.Lq.Error) do
   @moduledoc false
   (
-    defstruct(code: 0, u32_params: [], str_params: [], json_param: "", __uf__: [])
+    defstruct(code: :OK, u32_params: [], str_params: [], json_param: "", __uf__: [])
 
     (
       (
@@ -32,10 +32,14 @@ defmodule(Soulless.Tourney.Lq.Error) do
       [
         defp(encode_code(acc, msg)) do
           try do
-            if(msg.code == 0) do
+            if(msg.code == :OK) do
               acc
             else
-              [acc, "\b", Protox.Encode.encode_uint32(msg.code)]
+              [
+                acc,
+                "\b",
+                msg.code |> Soulless.Tourney.Lq.ErrorCode.encode() |> Protox.Encode.encode_enum()
+              ]
             end
           rescue
             ArgumentError ->
@@ -163,7 +167,7 @@ defmodule(Soulless.Tourney.Lq.Error) do
                 raise(%Protox.IllegalTagError{})
 
               {1, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
+                {value, rest} = Protox.Decode.parse_enum(bytes, Soulless.Tourney.Lq.ErrorCode)
                 {[code: value], rest}
 
               {2, 2, bytes} ->
@@ -251,7 +255,7 @@ defmodule(Soulless.Tourney.Lq.Error) do
           }
     def(defs()) do
       %{
-        1 => {:code, {:scalar, 0}, :uint32},
+        1 => {:code, {:scalar, :OK}, {:enum, Soulless.Tourney.Lq.ErrorCode}},
         2 => {:u32_params, :packed, :uint32},
         3 => {:str_params, :unpacked, :string},
         4 => {:json_param, {:scalar, ""}, :string}
@@ -264,7 +268,7 @@ defmodule(Soulless.Tourney.Lq.Error) do
           }
     def(defs_by_name()) do
       %{
-        code: {1, {:scalar, 0}, :uint32},
+        code: {1, {:scalar, :OK}, {:enum, Soulless.Tourney.Lq.ErrorCode}},
         json_param: {4, {:scalar, ""}, :string},
         str_params: {3, :unpacked, :string},
         u32_params: {2, :packed, :uint32}
@@ -277,11 +281,11 @@ defmodule(Soulless.Tourney.Lq.Error) do
         %{
           __struct__: Protox.Field,
           json_name: "code",
-          kind: {:scalar, 0},
+          kind: {:scalar, :OK},
           label: :optional,
           name: :code,
           tag: 1,
-          type: :uint32
+          type: {:enum, Soulless.Tourney.Lq.ErrorCode}
         },
         %{
           __struct__: Protox.Field,
@@ -321,11 +325,11 @@ defmodule(Soulless.Tourney.Lq.Error) do
            %{
              __struct__: Protox.Field,
              json_name: "code",
-             kind: {:scalar, 0},
+             kind: {:scalar, :OK},
              label: :optional,
              name: :code,
              tag: 1,
-             type: :uint32
+             type: {:enum, Soulless.Tourney.Lq.ErrorCode}
            }}
         end
 
@@ -334,11 +338,11 @@ defmodule(Soulless.Tourney.Lq.Error) do
            %{
              __struct__: Protox.Field,
              json_name: "code",
-             kind: {:scalar, 0},
+             kind: {:scalar, :OK},
              label: :optional,
              name: :code,
              tag: 1,
-             type: :uint32
+             type: {:enum, Soulless.Tourney.Lq.ErrorCode}
            }}
         end
 
@@ -499,7 +503,7 @@ defmodule(Soulless.Tourney.Lq.Error) do
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
       def(default(:code)) do
-        {:ok, 0}
+        {:ok, :OK}
       end,
       def(default(:u32_params)) do
         {:error, :no_default_value}

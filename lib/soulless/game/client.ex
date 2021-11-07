@@ -197,12 +197,9 @@ defmodule Soulless.Game.Client do
       true ->
         {:ok, response.access_token}
 
-      151 ->
-        {:error, :client_outdated}
-
-      _ ->
+      error_code ->
         Logger.error("#{__MODULE__} Fetching Oauth2 token failed. Received: #{inspect(response)}")
-        {:error, :unknown}
+        {:error, error_code}
     end
   end
 
