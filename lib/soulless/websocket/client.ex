@@ -8,6 +8,11 @@ defmodule Soulless.Websocket.Client do
   @response 3
 
   def start_link(opts) do
+    default_user_agent =
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"
+
+    user_agent = opts[:user_agent] || default_user_agent
+
     case opts[:protocol_module].get_module_by_identifier(".lq.Wrapper") do
       {:ok, wrapper_module} ->
         state = %{
@@ -20,10 +25,7 @@ defmodule Soulless.Websocket.Client do
 
         WebSockex.start_link(opts[:endpoint_url], __MODULE__, state,
           name: opts[:name],
-          extra_headers: [
-            {"User-Agent",
-             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"}
-          ]
+          extra_headers: [{"User-Agent", user_agent}]
         )
 
       error ->
