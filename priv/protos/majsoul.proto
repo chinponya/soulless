@@ -1802,6 +1802,7 @@ service Lobby {
   rpc buyArenaTicket (ReqBuyArenaTicket) returns (ResCommon);
   rpc enterArena (ReqEnterArena) returns (ResCommon);
   rpc receiveArenaReward (ReqArenaReward) returns (ResArenaReward);
+  rpc fetchOBToken (ReqFetchOBToken) returns (ResFetchOBToken);
 }
 
 message ResConnectionInfo {
@@ -3807,6 +3808,18 @@ message ResReceiveRPGRewards {
     uint32 count = 2;
   }
 
+}
+
+message ReqFetchOBToken {
+  string uuid = 1;
+}
+
+message ResFetchOBToken {
+  Error error = 1;
+  string token = 2;
+  uint32 create_time = 3;
+  uint32 delay = 4;
+  uint32 start_time = 5;
 }
 
 message ActionMJStart {
