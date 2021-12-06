@@ -11,7 +11,7 @@ The package can be installed by adding the following to your list of dependencie
 ```elixir
 def deps do
   [
-    {:soulless, github: "chinponya/soulless"}
+    {:soulless, "~> 0.1"}
   ]
 end
 ```
