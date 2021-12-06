@@ -1,6 +1,8 @@
 defmodule Soulless.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/chinponya/soulless"
+
   def project do
     [
       app: :soulless,
@@ -8,8 +10,8 @@ defmodule Soulless.MixProject do
       version: "0.1.0",
       elixir: "~> 1.12",
       description: "Mahjong Soul API client",
-      source_url: "https://github.com/chinponya/soulless",
       start_permanent: Mix.env() == :prod,
+      package: package(),
       deps: deps()
     ]
   end
@@ -18,6 +20,13 @@ defmodule Soulless.MixProject do
   def application do
     [
       extra_applications: [:logger]
+    ]
+  end
+
+  defp package() do
+    [
+      licenses: ["AGPL-3.0-only"],
+      links: %{"GitHub" => @source_url}
     ]
   end
 
