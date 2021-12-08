@@ -1,23 +1,22 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
+defmodule Soulless.Tourney.Lq.RewardPlusResult do
   @moduledoc false
   (
-    defstruct(id: 0, count: 0, exchange: nil, __uf__: [])
+    defstruct id: 0, count: 0, exchange: nil, __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_id(msg)
           |> encode_count(msg)
@@ -29,47 +28,47 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
       []
 
       [
-        defp(encode_id(acc, msg)) do
+        defp encode_id(acc, msg) do
           try do
-            if(msg.id == 0) do
+            if msg.id == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.id)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:id, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:id, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_count(acc, msg)) do
+        defp encode_count(acc, msg) do
           try do
-            if(msg.count == 0) do
+            if msg.count == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.count)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.count)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:count, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:count, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_exchange(acc, msg)) do
+        defp encode_exchange(acc, msg) do
           try do
-            if(msg.exchange == nil) do
+            if msg.exchange == nil do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_message(msg.exchange)]
+              [acc, "\x1A", Protox.Encode.encode_message(msg.exchange)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:exchange, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:exchange, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -90,7 +89,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -101,7 +100,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Tourney.Lq.RewardPlusResult))
           end
         )
@@ -109,15 +108,15 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -133,7 +132,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
 
                 {[
                    exchange:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.exchange,
                        Soulless.Tourney.Lq.RewardPlusResult.Exchange.decode!(delimited)
                      )
@@ -158,17 +157,16 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -179,17 +177,16 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -199,7 +196,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:id, {:scalar, 0}, :uint32},
         2 => {:count, {:scalar, 0}, :uint32},
@@ -212,7 +209,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         count: {2, {:scalar, 0}, :uint32},
         exchange: {3, {:scalar, nil}, {:message, Soulless.Tourney.Lq.RewardPlusResult.Exchange}},
@@ -221,7 +218,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -256,7 +253,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:id)) do
+        def field_def(:id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -269,7 +266,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
            }}
         end
 
-        def(field_def("id")) do
+        def field_def("id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -285,7 +282,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
         []
       ),
       (
-        def(field_def(:count)) do
+        def field_def(:count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -298,7 +295,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
            }}
         end
 
-        def(field_def("count")) do
+        def field_def("count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -314,7 +311,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
         []
       ),
       (
-        def(field_def(:exchange)) do
+        def field_def(:exchange) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -327,7 +324,7 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
            }}
         end
 
-        def(field_def("exchange")) do
+        def field_def("exchange") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -342,50 +339,50 @@ defmodule(Soulless.Tourney.Lq.RewardPlusResult) do
 
         []
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:id)) do
+      def default(:id) do
         {:ok, 0}
       end,
-      def(default(:count)) do
+      def default(:count) do
         {:ok, 0}
       end,
-      def(default(:exchange)) do
+      def default(:exchange) do
         {:ok, nil}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

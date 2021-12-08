@@ -1,35 +1,32 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.GameSnapshot) do
+defmodule Soulless.Game.Lq.GameSnapshot do
   @moduledoc false
   (
-    defstruct(
-      chang: 0,
-      ju: 0,
-      ben: 0,
-      index_player: 0,
-      left_tile_count: 0,
-      hands: [],
-      doras: [],
-      liqibang: 0,
-      players: [],
-      zhenting: false,
-      __uf__: []
-    )
+    defstruct chang: 0,
+              ju: 0,
+              ben: 0,
+              index_player: 0,
+              left_tile_count: 0,
+              hands: [],
+              doras: [],
+              liqibang: 0,
+              players: [],
+              zhenting: false,
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_chang(msg)
           |> encode_ju(msg)
@@ -48,75 +45,71 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
       []
 
       [
-        defp(encode_chang(acc, msg)) do
+        defp encode_chang(acc, msg) do
           try do
-            if(msg.chang == 0) do
+            if msg.chang == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.chang)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:chang, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:chang, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_ju(acc, msg)) do
+        defp encode_ju(acc, msg) do
           try do
-            if(msg.ju == 0) do
+            if msg.ju == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.ju)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.ju)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:ju, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:ju, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_ben(acc, msg)) do
+        defp encode_ben(acc, msg) do
           try do
-            if(msg.ben == 0) do
+            if msg.ben == 0 do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_uint32(msg.ben)]
+              [acc, "\x18", Protox.Encode.encode_uint32(msg.ben)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:ben, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:ben, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_index_player(acc, msg)) do
+        defp encode_index_player(acc, msg) do
           try do
-            if(msg.index_player == 0) do
+            if msg.index_player == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.index_player)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:index_player, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:index_player, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_left_tile_count(acc, msg)) do
+        defp encode_left_tile_count(acc, msg) do
           try do
-            if(msg.left_tile_count == 0) do
+            if msg.left_tile_count == 0 do
               acc
             else
               [acc, "(", Protox.Encode.encode_uint32(msg.left_tile_count)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:left_tile_count, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:left_tile_count, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_hands(acc, msg)) do
+        defp encode_hands(acc, msg) do
           try do
-            case(msg.hands) do
+            case msg.hands do
               [] ->
                 acc
 
@@ -130,12 +123,12 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:hands, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:hands, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_doras(acc, msg)) do
+        defp encode_doras(acc, msg) do
           try do
-            case(msg.doras) do
+            case msg.doras do
               [] ->
                 acc
 
@@ -149,24 +142,24 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:doras, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:doras, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_liqibang(acc, msg)) do
+        defp encode_liqibang(acc, msg) do
           try do
-            if(msg.liqibang == 0) do
+            if msg.liqibang == 0 do
               acc
             else
               [acc, "@", Protox.Encode.encode_uint32(msg.liqibang)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:liqibang, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:liqibang, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_players(acc, msg)) do
+        defp encode_players(acc, msg) do
           try do
-            case(msg.players) do
+            case msg.players do
               [] ->
                 acc
 
@@ -180,26 +173,26 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:players, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:players, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_zhenting(acc, msg)) do
+        defp encode_zhenting(acc, msg) do
           try do
-            if(msg.zhenting == false) do
+            if msg.zhenting == false do
               acc
             else
               [acc, "P", Protox.Encode.encode_bool(msg.zhenting)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:zhenting, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:zhenting, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -220,7 +213,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -231,7 +224,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.GameSnapshot))
           end
         )
@@ -239,15 +232,15 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -316,17 +309,16 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -337,17 +329,16 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -357,7 +348,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:chang, {:scalar, 0}, :uint32},
         2 => {:ju, {:scalar, 0}, :uint32},
@@ -376,7 +367,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         ben: {3, {:scalar, 0}, :uint32},
         chang: {1, {:scalar, 0}, :uint32},
@@ -392,7 +383,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -490,7 +481,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:chang)) do
+        def field_def(:chang) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -503,7 +494,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("chang")) do
+        def field_def("chang") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -519,7 +510,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         []
       ),
       (
-        def(field_def(:ju)) do
+        def field_def(:ju) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -532,7 +523,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("ju")) do
+        def field_def("ju") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -548,7 +539,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         []
       ),
       (
-        def(field_def(:ben)) do
+        def field_def(:ben) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -561,7 +552,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("ben")) do
+        def field_def("ben") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -577,7 +568,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         []
       ),
       (
-        def(field_def(:index_player)) do
+        def field_def(:index_player) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -590,7 +581,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("indexPlayer")) do
+        def field_def("indexPlayer") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -603,7 +594,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("index_player")) do
+        def field_def("index_player") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -617,7 +608,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         end
       ),
       (
-        def(field_def(:left_tile_count)) do
+        def field_def(:left_tile_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -630,7 +621,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("leftTileCount")) do
+        def field_def("leftTileCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -643,7 +634,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("left_tile_count")) do
+        def field_def("left_tile_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -657,7 +648,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         end
       ),
       (
-        def(field_def(:hands)) do
+        def field_def(:hands) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -670,7 +661,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("hands")) do
+        def field_def("hands") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -686,7 +677,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         []
       ),
       (
-        def(field_def(:doras)) do
+        def field_def(:doras) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -699,7 +690,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("doras")) do
+        def field_def("doras") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -715,7 +706,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         []
       ),
       (
-        def(field_def(:liqibang)) do
+        def field_def(:liqibang) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -728,7 +719,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("liqibang")) do
+        def field_def("liqibang") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -744,7 +735,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         []
       ),
       (
-        def(field_def(:players)) do
+        def field_def(:players) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -757,7 +748,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("players")) do
+        def field_def("players") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -773,7 +764,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
         []
       ),
       (
-        def(field_def(:zhenting)) do
+        def field_def(:zhenting) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -786,7 +777,7 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
            }}
         end
 
-        def(field_def("zhenting")) do
+        def field_def("zhenting") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -801,71 +792,71 @@ defmodule(Soulless.Game.Lq.GameSnapshot) do
 
         []
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:chang)) do
+      def default(:chang) do
         {:ok, 0}
       end,
-      def(default(:ju)) do
+      def default(:ju) do
         {:ok, 0}
       end,
-      def(default(:ben)) do
+      def default(:ben) do
         {:ok, 0}
       end,
-      def(default(:index_player)) do
+      def default(:index_player) do
         {:ok, 0}
       end,
-      def(default(:left_tile_count)) do
+      def default(:left_tile_count) do
         {:ok, 0}
       end,
-      def(default(:hands)) do
+      def default(:hands) do
         {:error, :no_default_value}
       end,
-      def(default(:doras)) do
+      def default(:doras) do
         {:error, :no_default_value}
       end,
-      def(default(:liqibang)) do
+      def default(:liqibang) do
         {:ok, 0}
       end,
-      def(default(:players)) do
+      def default(:players) do
         {:error, :no_default_value}
       end,
-      def(default(:zhenting)) do
+      def default(:zhenting) do
         {:ok, false}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

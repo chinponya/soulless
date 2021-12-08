@@ -1,31 +1,28 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.RecordGame) do
+defmodule Soulless.Tourney.Lq.RecordGame do
   @moduledoc false
   (
-    defstruct(
-      uuid: "",
-      start_time: 0,
-      end_time: 0,
-      config: nil,
-      accounts: [],
-      result: nil,
-      __uf__: []
-    )
+    defstruct uuid: "",
+              start_time: 0,
+              end_time: 0,
+              config: nil,
+              accounts: [],
+              result: nil,
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_uuid(msg)
           |> encode_start_time(msg)
@@ -40,60 +37,57 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
       []
 
       [
-        defp(encode_uuid(acc, msg)) do
+        defp encode_uuid(acc, msg) do
           try do
-            if(msg.uuid == "") do
+            if msg.uuid == "" do
               acc
             else
               [acc, "\n", Protox.Encode.encode_string(msg.uuid)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:uuid, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:uuid, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_start_time(acc, msg)) do
+        defp encode_start_time(acc, msg) do
           try do
-            if(msg.start_time == 0) do
+            if msg.start_time == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.start_time)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.start_time)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:start_time, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:start_time, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_end_time(acc, msg)) do
+        defp encode_end_time(acc, msg) do
           try do
-            if(msg.end_time == 0) do
+            if msg.end_time == 0 do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_uint32(msg.end_time)]
+              [acc, "\x18", Protox.Encode.encode_uint32(msg.end_time)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:end_time, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:end_time, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_config(acc, msg)) do
+        defp encode_config(acc, msg) do
           try do
-            if(msg.config == nil) do
+            if msg.config == nil do
               acc
             else
               [acc, "*", Protox.Encode.encode_message(msg.config)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:config, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:config, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_accounts(acc, msg)) do
+        defp encode_accounts(acc, msg) do
           try do
-            case(msg.accounts) do
+            case msg.accounts do
               [] ->
                 acc
 
@@ -107,26 +101,26 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:accounts, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:accounts, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_result(acc, msg)) do
+        defp encode_result(acc, msg) do
           try do
-            if(msg.result == nil) do
+            if msg.result == nil do
               acc
             else
               [acc, "b", Protox.Encode.encode_message(msg.result)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:result, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:result, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -147,7 +141,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -158,7 +152,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Tourney.Lq.RecordGame))
           end
         )
@@ -166,15 +160,15 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -195,7 +189,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
 
                 {[
                    config:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.config,
                        Soulless.Tourney.Lq.GameConfig.decode!(delimited)
                      )
@@ -217,7 +211,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
 
                 {[
                    result:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.result,
                        Soulless.Tourney.Lq.GameEndResult.decode!(delimited)
                      )
@@ -242,17 +236,16 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -263,17 +256,16 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -283,7 +275,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:uuid, {:scalar, ""}, :string},
         2 => {:start_time, {:scalar, 0}, :uint32},
@@ -298,7 +290,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         accounts: {11, :unpacked, {:message, Soulless.Tourney.Lq.RecordGame.AccountInfo}},
         config: {5, {:scalar, nil}, {:message, Soulless.Tourney.Lq.GameConfig}},
@@ -310,7 +302,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -372,7 +364,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:uuid)) do
+        def field_def(:uuid) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -385,7 +377,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
            }}
         end
 
-        def(field_def("uuid")) do
+        def field_def("uuid") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -401,7 +393,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
         []
       ),
       (
-        def(field_def(:start_time)) do
+        def field_def(:start_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -414,7 +406,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
            }}
         end
 
-        def(field_def("startTime")) do
+        def field_def("startTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -427,7 +419,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
            }}
         end
 
-        def(field_def("start_time")) do
+        def field_def("start_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -441,7 +433,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
         end
       ),
       (
-        def(field_def(:end_time)) do
+        def field_def(:end_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -454,7 +446,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
            }}
         end
 
-        def(field_def("endTime")) do
+        def field_def("endTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -467,7 +459,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
            }}
         end
 
-        def(field_def("end_time")) do
+        def field_def("end_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -481,7 +473,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
         end
       ),
       (
-        def(field_def(:config)) do
+        def field_def(:config) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -494,7 +486,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
            }}
         end
 
-        def(field_def("config")) do
+        def field_def("config") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -510,7 +502,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
         []
       ),
       (
-        def(field_def(:accounts)) do
+        def field_def(:accounts) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -523,7 +515,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
            }}
         end
 
-        def(field_def("accounts")) do
+        def field_def("accounts") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -539,7 +531,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
         []
       ),
       (
-        def(field_def(:result)) do
+        def field_def(:result) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -552,7 +544,7 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
            }}
         end
 
-        def(field_def("result")) do
+        def field_def("result") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -567,59 +559,59 @@ defmodule(Soulless.Tourney.Lq.RecordGame) do
 
         []
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:uuid)) do
+      def default(:uuid) do
         {:ok, ""}
       end,
-      def(default(:start_time)) do
+      def default(:start_time) do
         {:ok, 0}
       end,
-      def(default(:end_time)) do
+      def default(:end_time) do
         {:ok, 0}
       end,
-      def(default(:config)) do
+      def default(:config) do
         {:ok, nil}
       end,
-      def(default(:accounts)) do
+      def default(:accounts) do
         {:error, :no_default_value}
       end,
-      def(default(:result)) do
+      def default(:result) do
         {:ok, nil}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

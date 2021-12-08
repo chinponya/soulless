@@ -1,23 +1,22 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.ResGameRecord) do
+defmodule Soulless.Game.Lq.ResGameRecord do
   @moduledoc false
   (
-    defstruct(error: nil, head: nil, data: nil, data_url: "", __uf__: [])
+    defstruct error: nil, head: nil, data: nil, data_url: "", __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_error(msg)
           |> encode_head(msg)
@@ -30,59 +29,59 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
       []
 
       [
-        defp(encode_error(acc, msg)) do
+        defp encode_error(acc, msg) do
           try do
-            if(msg.error == nil) do
+            if msg.error == nil do
               acc
             else
               [acc, "\n", Protox.Encode.encode_message(msg.error)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_head(acc, msg)) do
+        defp encode_head(acc, msg) do
           try do
-            if(msg.head == nil) do
+            if msg.head == nil do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_message(msg.head)]
+              [acc, "\x1A", Protox.Encode.encode_message(msg.head)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:head, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:head, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_data(acc, msg)) do
+        defp encode_data(acc, msg) do
           try do
-            if(msg.data == nil) do
+            if msg.data == nil do
               acc
             else
               [acc, "\"", Protox.Encode.encode_message(msg.data)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:data, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:data, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_data_url(acc, msg)) do
+        defp encode_data_url(acc, msg) do
           try do
-            if(msg.data_url == "") do
+            if msg.data_url == "" do
               acc
             else
               [acc, "*", Protox.Encode.encode_string(msg.data_url)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:data_url, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:data_url, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -103,7 +102,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -114,7 +113,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.ResGameRecord))
           end
         )
@@ -122,15 +121,15 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -138,7 +137,10 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
 
                 {[
                    error:
-                     Protox.Message.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
+                     Protox.MergeMessage.merge(
+                       msg.error,
+                       Soulless.Game.Lq.Error.decode!(delimited)
+                     )
                  ], rest}
 
               {3, _, bytes} ->
@@ -147,7 +149,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
 
                 {[
                    head:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.head,
                        Soulless.Game.Lq.RecordGame.decode!(delimited)
                      )
@@ -159,7 +161,10 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
 
                 {[
                    data:
-                     Protox.Message.merge(msg.data, Soulless.Game.Lq.Wrapper.decode!(delimited))
+                     Protox.MergeMessage.merge(
+                       msg.data,
+                       Soulless.Game.Lq.Wrapper.decode!(delimited)
+                     )
                  ], rest}
 
               {5, _, bytes} ->
@@ -186,17 +191,16 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -207,17 +211,16 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -227,7 +230,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
         3 => {:head, {:scalar, nil}, {:message, Soulless.Game.Lq.RecordGame}},
@@ -240,7 +243,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         data: {4, {:scalar, nil}, {:message, Soulless.Game.Lq.Wrapper}},
         data_url: {5, {:scalar, ""}, :string},
@@ -250,7 +253,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -294,7 +297,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:error)) do
+        def field_def(:error) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -307,7 +310,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
            }}
         end
 
-        def(field_def("error")) do
+        def field_def("error") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -323,7 +326,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
         []
       ),
       (
-        def(field_def(:head)) do
+        def field_def(:head) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -336,7 +339,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
            }}
         end
 
-        def(field_def("head")) do
+        def field_def("head") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -352,7 +355,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
         []
       ),
       (
-        def(field_def(:data)) do
+        def field_def(:data) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -365,7 +368,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
            }}
         end
 
-        def(field_def("data")) do
+        def field_def("data") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -381,7 +384,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
         []
       ),
       (
-        def(field_def(:data_url)) do
+        def field_def(:data_url) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -394,7 +397,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
            }}
         end
 
-        def(field_def("dataUrl")) do
+        def field_def("dataUrl") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -407,7 +410,7 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
            }}
         end
 
-        def(field_def("data_url")) do
+        def field_def("data_url") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -420,53 +423,53 @@ defmodule(Soulless.Game.Lq.ResGameRecord) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:error)) do
+      def default(:error) do
         {:ok, nil}
       end,
-      def(default(:head)) do
+      def default(:head) do
         {:ok, nil}
       end,
-      def(default(:data)) do
+      def default(:data) do
         {:ok, nil}
       end,
-      def(default(:data_url)) do
+      def default(:data_url) do
         {:ok, ""}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

@@ -1,23 +1,22 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.ResFetchCommentList) do
+defmodule Soulless.Game.Lq.ResFetchCommentList do
   @moduledoc false
   (
-    defstruct(error: nil, comment_allow: 0, comment_id_list: [], last_read_id: 0, __uf__: [])
+    defstruct error: nil, comment_allow: 0, comment_id_list: [], last_read_id: 0, __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_error(msg)
           |> encode_comment_allow(msg)
@@ -30,43 +29,41 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
       []
 
       [
-        defp(encode_error(acc, msg)) do
+        defp encode_error(acc, msg) do
           try do
-            if(msg.error == nil) do
+            if msg.error == nil do
               acc
             else
               [acc, "\n", Protox.Encode.encode_message(msg.error)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_comment_allow(acc, msg)) do
+        defp encode_comment_allow(acc, msg) do
           try do
-            if(msg.comment_allow == 0) do
+            if msg.comment_allow == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.comment_allow)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.comment_allow)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:comment_allow, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:comment_allow, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_comment_id_list(acc, msg)) do
+        defp encode_comment_id_list(acc, msg) do
           try do
-            case(msg.comment_id_list) do
+            case msg.comment_id_list do
               [] ->
                 acc
 
               values ->
                 [
                   acc,
-                  <<26>>,
+                  "\x1A",
                   (
                     {bytes, len} =
                       Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
@@ -80,32 +77,28 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:comment_id_list, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:comment_id_list, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_last_read_id(acc, msg)) do
+        defp encode_last_read_id(acc, msg) do
           try do
-            if(msg.last_read_id == 0) do
+            if msg.last_read_id == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.last_read_id)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:last_read_id, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:last_read_id, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -126,7 +119,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -137,7 +130,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.ResFetchCommentList))
           end
         )
@@ -145,15 +138,15 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -161,7 +154,10 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
 
                 {[
                    error:
-                     Protox.Message.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
+                     Protox.MergeMessage.merge(
+                       msg.error,
+                       Soulless.Game.Lq.Error.decode!(delimited)
+                     )
                  ], rest}
 
               {2, _, bytes} ->
@@ -204,17 +200,16 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -225,17 +220,16 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -245,7 +239,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
         2 => {:comment_allow, {:scalar, 0}, :uint32},
@@ -258,7 +252,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         comment_allow: {2, {:scalar, 0}, :uint32},
         comment_id_list: {3, :packed, :uint32},
@@ -268,7 +262,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -312,7 +306,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:error)) do
+        def field_def(:error) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -325,7 +319,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
            }}
         end
 
-        def(field_def("error")) do
+        def field_def("error") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -341,7 +335,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
         []
       ),
       (
-        def(field_def(:comment_allow)) do
+        def field_def(:comment_allow) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -354,7 +348,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
            }}
         end
 
-        def(field_def("commentAllow")) do
+        def field_def("commentAllow") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -367,7 +361,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
            }}
         end
 
-        def(field_def("comment_allow")) do
+        def field_def("comment_allow") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -381,7 +375,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
         end
       ),
       (
-        def(field_def(:comment_id_list)) do
+        def field_def(:comment_id_list) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -394,7 +388,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
            }}
         end
 
-        def(field_def("commentIdList")) do
+        def field_def("commentIdList") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -407,7 +401,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
            }}
         end
 
-        def(field_def("comment_id_list")) do
+        def field_def("comment_id_list") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -421,7 +415,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
         end
       ),
       (
-        def(field_def(:last_read_id)) do
+        def field_def(:last_read_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -434,7 +428,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
            }}
         end
 
-        def(field_def("lastReadId")) do
+        def field_def("lastReadId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -447,7 +441,7 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
            }}
         end
 
-        def(field_def("last_read_id")) do
+        def field_def("last_read_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -460,53 +454,53 @@ defmodule(Soulless.Game.Lq.ResFetchCommentList) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:error)) do
+      def default(:error) do
         {:ok, nil}
       end,
-      def(default(:comment_allow)) do
+      def default(:comment_allow) do
         {:ok, 0}
       end,
-      def(default(:comment_id_list)) do
+      def default(:comment_id_list) do
         {:error, :no_default_value}
       end,
-      def(default(:last_read_id)) do
+      def default(:last_read_id) do
         {:ok, 0}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

@@ -1,31 +1,28 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
+defmodule Soulless.Tourney.Lq.NotifyRoomPlayerUpdate do
   @moduledoc false
   (
-    defstruct(
-      update_list: [],
-      remove_list: [],
-      owner_id: 0,
-      robot_count: 0,
-      player_list: [],
-      seq: 0,
-      __uf__: []
-    )
+    defstruct update_list: [],
+              remove_list: [],
+              owner_id: 0,
+              robot_count: 0,
+              player_list: [],
+              seq: 0,
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_update_list(msg)
           |> encode_remove_list(msg)
@@ -40,9 +37,9 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
       []
 
       [
-        defp(encode_update_list(acc, msg)) do
+        defp encode_update_list(acc, msg) do
           try do
-            case(msg.update_list) do
+            case msg.update_list do
               [] ->
                 acc
 
@@ -56,22 +53,20 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:update_list, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:update_list, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_remove_list(acc, msg)) do
+        defp encode_remove_list(acc, msg) do
           try do
-            case(msg.remove_list) do
+            case msg.remove_list do
               [] ->
                 acc
 
               values ->
                 [
                   acc,
-                  <<18>>,
+                  "\x12",
                   (
                     {bytes, len} =
                       Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
@@ -85,42 +80,38 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:remove_list, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:remove_list, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_owner_id(acc, msg)) do
+        defp encode_owner_id(acc, msg) do
           try do
-            if(msg.owner_id == 0) do
+            if msg.owner_id == 0 do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_uint32(msg.owner_id)]
+              [acc, "\x18", Protox.Encode.encode_uint32(msg.owner_id)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:owner_id, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:owner_id, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_robot_count(acc, msg)) do
+        defp encode_robot_count(acc, msg) do
           try do
-            if(msg.robot_count == 0) do
+            if msg.robot_count == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.robot_count)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:robot_count, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:robot_count, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_player_list(acc, msg)) do
+        defp encode_player_list(acc, msg) do
           try do
-            case(msg.player_list) do
+            case msg.player_list do
               [] ->
                 acc
 
@@ -134,29 +125,27 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:player_list, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:player_list, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_seq(acc, msg)) do
+        defp encode_seq(acc, msg) do
           try do
-            if(msg.seq == 0) do
+            if msg.seq == 0 do
               acc
             else
               [acc, "0", Protox.Encode.encode_uint32(msg.seq)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:seq, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:seq, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -177,7 +166,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -188,7 +177,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate))
           end
         )
@@ -196,15 +185,15 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -268,17 +257,16 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -289,17 +277,16 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -309,7 +296,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:update_list, :unpacked, {:message, Soulless.Tourney.Lq.PlayerBaseView}},
         2 => {:remove_list, :packed, :uint32},
@@ -324,7 +311,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         owner_id: {3, {:scalar, 0}, :uint32},
         player_list: {5, :unpacked, {:message, Soulless.Tourney.Lq.PlayerBaseView}},
@@ -336,7 +323,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -398,7 +385,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:update_list)) do
+        def field_def(:update_list) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -411,7 +398,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("updateList")) do
+        def field_def("updateList") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -424,7 +411,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("update_list")) do
+        def field_def("update_list") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -438,7 +425,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
         end
       ),
       (
-        def(field_def(:remove_list)) do
+        def field_def(:remove_list) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -451,7 +438,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("removeList")) do
+        def field_def("removeList") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -464,7 +451,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("remove_list")) do
+        def field_def("remove_list") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -478,7 +465,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
         end
       ),
       (
-        def(field_def(:owner_id)) do
+        def field_def(:owner_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -491,7 +478,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("ownerId")) do
+        def field_def("ownerId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -504,7 +491,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("owner_id")) do
+        def field_def("owner_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -518,7 +505,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
         end
       ),
       (
-        def(field_def(:robot_count)) do
+        def field_def(:robot_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -531,7 +518,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("robotCount")) do
+        def field_def("robotCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -544,7 +531,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("robot_count")) do
+        def field_def("robot_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -558,7 +545,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
         end
       ),
       (
-        def(field_def(:player_list)) do
+        def field_def(:player_list) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -571,7 +558,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("playerList")) do
+        def field_def("playerList") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -584,7 +571,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("player_list")) do
+        def field_def("player_list") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -598,7 +585,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
         end
       ),
       (
-        def(field_def(:seq)) do
+        def field_def(:seq) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -611,7 +598,7 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
            }}
         end
 
-        def(field_def("seq")) do
+        def field_def("seq") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -626,59 +613,59 @@ defmodule(Soulless.Tourney.Lq.NotifyRoomPlayerUpdate) do
 
         []
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:update_list)) do
+      def default(:update_list) do
         {:error, :no_default_value}
       end,
-      def(default(:remove_list)) do
+      def default(:remove_list) do
         {:error, :no_default_value}
       end,
-      def(default(:owner_id)) do
+      def default(:owner_id) do
         {:ok, 0}
       end,
-      def(default(:robot_count)) do
+      def default(:robot_count) do
         {:ok, 0}
       end,
-      def(default(:player_list)) do
+      def default(:player_list) do
         {:error, :no_default_value}
       end,
-      def(default(:seq)) do
+      def default(:seq) do
         {:ok, 0}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

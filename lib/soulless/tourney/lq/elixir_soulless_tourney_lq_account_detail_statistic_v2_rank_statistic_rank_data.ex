@@ -1,23 +1,22 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) do
+defmodule Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData do
   @moduledoc false
   (
-    defstruct(all_level_statistic: nil, level_data_list: [], __uf__: [])
+    defstruct all_level_statistic: nil, level_data_list: [], __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_all_level_statistic(msg)
           |> encode_level_data_list(msg)
@@ -28,24 +27,22 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
       []
 
       [
-        defp(encode_all_level_statistic(acc, msg)) do
+        defp encode_all_level_statistic(acc, msg) do
           try do
-            if(msg.all_level_statistic == nil) do
+            if msg.all_level_statistic == nil do
               acc
             else
               [acc, "\n", Protox.Encode.encode_message(msg.all_level_statistic)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:all_level_statistic, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:all_level_statistic, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_level_data_list(acc, msg)) do
+        defp encode_level_data_list(acc, msg) do
           try do
-            case(msg.level_data_list) do
+            case msg.level_data_list do
               [] ->
                 acc
 
@@ -53,23 +50,21 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
                 [
                   acc,
                   Enum.reduce(values, [], fn value, acc ->
-                    [acc, <<18>>, Protox.Encode.encode_message(value)]
+                    [acc, "\x12", Protox.Encode.encode_message(value)]
                   end)
                 ]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:level_data_list, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:level_data_list, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -90,7 +85,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -101,7 +96,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(
               bytes,
               struct(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData)
@@ -112,15 +107,15 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -128,7 +123,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
 
                 {[
                    all_level_statistic:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.all_level_statistic,
                        Soulless.Tourney.Lq.AccountDetailStatistic.decode!(delimited)
                      )
@@ -167,17 +162,16 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -188,17 +182,16 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -208,7 +201,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 =>
           {:all_level_statistic, {:scalar, nil},
@@ -224,7 +217,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         all_level_statistic:
           {1, {:scalar, nil}, {:message, Soulless.Tourney.Lq.AccountDetailStatistic}},
@@ -236,7 +229,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -264,7 +257,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:all_level_statistic)) do
+        def field_def(:all_level_statistic) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -277,7 +270,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
            }}
         end
 
-        def(field_def("allLevelStatistic")) do
+        def field_def("allLevelStatistic") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -290,7 +283,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
            }}
         end
 
-        def(field_def("all_level_statistic")) do
+        def field_def("all_level_statistic") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -304,7 +297,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
         end
       ),
       (
-        def(field_def(:level_data_list)) do
+        def field_def(:level_data_list) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -319,7 +312,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
            }}
         end
 
-        def(field_def("levelDataList")) do
+        def field_def("levelDataList") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -334,7 +327,7 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
            }}
         end
 
-        def(field_def("level_data_list")) do
+        def field_def("level_data_list") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -349,47 +342,47 @@ defmodule(Soulless.Tourney.Lq.AccountDetailStatisticV2.RankStatistic.RankData) d
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:all_level_statistic)) do
+      def default(:all_level_statistic) do
         {:ok, nil}
       end,
-      def(default(:level_data_list)) do
+      def default(:level_data_list) do
         {:error, :no_default_value}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

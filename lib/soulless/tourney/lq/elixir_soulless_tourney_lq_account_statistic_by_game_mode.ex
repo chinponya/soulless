@@ -1,39 +1,36 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
+defmodule Soulless.Tourney.Lq.AccountStatisticByGameMode do
   @moduledoc false
   (
-    defstruct(
-      mode: 0,
-      game_count_sum: 0,
-      game_final_position: [],
-      fly_count: 0,
-      gold_earn_sum: 0.0,
-      round_count_sum: 0,
-      dadian_sum: 0.0,
-      round_end: [],
-      ming_count_sum: 0,
-      liqi_count_sum: 0,
-      xun_count_sum: 0,
-      highest_lianzhuang: 0,
-      score_earn_sum: 0,
-      rank_score: [],
-      __uf__: []
-    )
+    defstruct mode: 0,
+              game_count_sum: 0,
+              game_final_position: [],
+              fly_count: 0,
+              gold_earn_sum: 0.0,
+              round_count_sum: 0,
+              dadian_sum: 0.0,
+              round_end: [],
+              ming_count_sum: 0,
+              liqi_count_sum: 0,
+              xun_count_sum: 0,
+              highest_lianzhuang: 0,
+              score_earn_sum: 0,
+              rank_score: [],
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_mode(msg)
           |> encode_game_count_sum(msg)
@@ -56,43 +53,41 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
       []
 
       [
-        defp(encode_mode(acc, msg)) do
+        defp encode_mode(acc, msg) do
           try do
-            if(msg.mode == 0) do
+            if msg.mode == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.mode)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:mode, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:mode, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_game_count_sum(acc, msg)) do
+        defp encode_game_count_sum(acc, msg) do
           try do
-            if(msg.game_count_sum == 0) do
+            if msg.game_count_sum == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.game_count_sum)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.game_count_sum)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:game_count_sum, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:game_count_sum, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_game_final_position(acc, msg)) do
+        defp encode_game_final_position(acc, msg) do
           try do
-            case(msg.game_final_position) do
+            case msg.game_final_position do
               [] ->
                 acc
 
               values ->
                 [
                   acc,
-                  <<26>>,
+                  "\x1A",
                   (
                     {bytes, len} =
                       Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
@@ -106,72 +101,63 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:game_final_position, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:game_final_position, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_fly_count(acc, msg)) do
+        defp encode_fly_count(acc, msg) do
           try do
-            if(msg.fly_count == 0) do
+            if msg.fly_count == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.fly_count)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:fly_count, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:fly_count, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_gold_earn_sum(acc, msg)) do
+        defp encode_gold_earn_sum(acc, msg) do
           try do
-            if(msg.gold_earn_sum == 0.0) do
+            if msg.gold_earn_sum == 0.0 do
               acc
             else
               [acc, "-", Protox.Encode.encode_float(msg.gold_earn_sum)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:gold_earn_sum, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:gold_earn_sum, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_round_count_sum(acc, msg)) do
+        defp encode_round_count_sum(acc, msg) do
           try do
-            if(msg.round_count_sum == 0) do
+            if msg.round_count_sum == 0 do
               acc
             else
               [acc, "0", Protox.Encode.encode_uint32(msg.round_count_sum)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:round_count_sum, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:round_count_sum, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_dadian_sum(acc, msg)) do
+        defp encode_dadian_sum(acc, msg) do
           try do
-            if(msg.dadian_sum == 0.0) do
+            if msg.dadian_sum == 0.0 do
               acc
             else
               [acc, "=", Protox.Encode.encode_float(msg.dadian_sum)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:dadian_sum, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:dadian_sum, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_round_end(acc, msg)) do
+        defp encode_round_end(acc, msg) do
           try do
-            case(msg.round_end) do
+            case msg.round_end do
               [] ->
                 acc
 
@@ -185,87 +171,77 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:round_end, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:round_end, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_ming_count_sum(acc, msg)) do
+        defp encode_ming_count_sum(acc, msg) do
           try do
-            if(msg.ming_count_sum == 0) do
+            if msg.ming_count_sum == 0 do
               acc
             else
               [acc, "H", Protox.Encode.encode_uint32(msg.ming_count_sum)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:ming_count_sum, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:ming_count_sum, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_liqi_count_sum(acc, msg)) do
+        defp encode_liqi_count_sum(acc, msg) do
           try do
-            if(msg.liqi_count_sum == 0) do
+            if msg.liqi_count_sum == 0 do
               acc
             else
               [acc, "P", Protox.Encode.encode_uint32(msg.liqi_count_sum)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:liqi_count_sum, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:liqi_count_sum, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_xun_count_sum(acc, msg)) do
+        defp encode_xun_count_sum(acc, msg) do
           try do
-            if(msg.xun_count_sum == 0) do
+            if msg.xun_count_sum == 0 do
               acc
             else
               [acc, "X", Protox.Encode.encode_uint32(msg.xun_count_sum)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:xun_count_sum, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:xun_count_sum, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_highest_lianzhuang(acc, msg)) do
+        defp encode_highest_lianzhuang(acc, msg) do
           try do
-            if(msg.highest_lianzhuang == 0) do
+            if msg.highest_lianzhuang == 0 do
               acc
             else
               [acc, "`", Protox.Encode.encode_uint32(msg.highest_lianzhuang)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:highest_lianzhuang, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:highest_lianzhuang, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_score_earn_sum(acc, msg)) do
+        defp encode_score_earn_sum(acc, msg) do
           try do
-            if(msg.score_earn_sum == 0) do
+            if msg.score_earn_sum == 0 do
               acc
             else
               [acc, "h", Protox.Encode.encode_uint32(msg.score_earn_sum)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:score_earn_sum, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:score_earn_sum, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_rank_score(acc, msg)) do
+        defp encode_rank_score(acc, msg) do
           try do
-            case(msg.rank_score) do
+            case msg.rank_score do
               [] ->
                 acc
 
@@ -279,17 +255,14 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:rank_score, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:rank_score, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -310,7 +283,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -321,7 +294,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Tourney.Lq.AccountStatisticByGameMode))
           end
         )
@@ -329,15 +302,15 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -443,17 +416,16 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -464,17 +436,16 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -484,7 +455,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:mode, {:scalar, 0}, :uint32},
         2 => {:game_count_sum, {:scalar, 0}, :uint32},
@@ -511,7 +482,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         dadian_sum: {7, {:scalar, 0.0}, :float},
         fly_count: {4, {:scalar, 0}, :uint32},
@@ -533,7 +504,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -667,7 +638,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:mode)) do
+        def field_def(:mode) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -680,7 +651,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("mode")) do
+        def field_def("mode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -696,7 +667,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         []
       ),
       (
-        def(field_def(:game_count_sum)) do
+        def field_def(:game_count_sum) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -709,7 +680,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("gameCountSum")) do
+        def field_def("gameCountSum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -722,7 +693,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("game_count_sum")) do
+        def field_def("game_count_sum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -736,7 +707,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:game_final_position)) do
+        def field_def(:game_final_position) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -749,7 +720,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("gameFinalPosition")) do
+        def field_def("gameFinalPosition") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -762,7 +733,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("game_final_position")) do
+        def field_def("game_final_position") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -776,7 +747,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:fly_count)) do
+        def field_def(:fly_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -789,7 +760,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("flyCount")) do
+        def field_def("flyCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -802,7 +773,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("fly_count")) do
+        def field_def("fly_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -816,7 +787,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:gold_earn_sum)) do
+        def field_def(:gold_earn_sum) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -829,7 +800,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("goldEarnSum")) do
+        def field_def("goldEarnSum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -842,7 +813,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("gold_earn_sum")) do
+        def field_def("gold_earn_sum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -856,7 +827,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:round_count_sum)) do
+        def field_def(:round_count_sum) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -869,7 +840,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("roundCountSum")) do
+        def field_def("roundCountSum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -882,7 +853,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("round_count_sum")) do
+        def field_def("round_count_sum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -896,7 +867,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:dadian_sum)) do
+        def field_def(:dadian_sum) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -909,7 +880,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("dadianSum")) do
+        def field_def("dadianSum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -922,7 +893,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("dadian_sum")) do
+        def field_def("dadian_sum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -936,7 +907,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:round_end)) do
+        def field_def(:round_end) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -949,7 +920,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("roundEnd")) do
+        def field_def("roundEnd") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -962,7 +933,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("round_end")) do
+        def field_def("round_end") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -976,7 +947,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:ming_count_sum)) do
+        def field_def(:ming_count_sum) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -989,7 +960,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("mingCountSum")) do
+        def field_def("mingCountSum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1002,7 +973,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("ming_count_sum")) do
+        def field_def("ming_count_sum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1016,7 +987,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:liqi_count_sum)) do
+        def field_def(:liqi_count_sum) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1029,7 +1000,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("liqiCountSum")) do
+        def field_def("liqiCountSum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1042,7 +1013,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("liqi_count_sum")) do
+        def field_def("liqi_count_sum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1056,7 +1027,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:xun_count_sum)) do
+        def field_def(:xun_count_sum) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1069,7 +1040,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("xunCountSum")) do
+        def field_def("xunCountSum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1082,7 +1053,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("xun_count_sum")) do
+        def field_def("xun_count_sum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1096,7 +1067,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:highest_lianzhuang)) do
+        def field_def(:highest_lianzhuang) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1109,7 +1080,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("highestLianzhuang")) do
+        def field_def("highestLianzhuang") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1122,7 +1093,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("highest_lianzhuang")) do
+        def field_def("highest_lianzhuang") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1136,7 +1107,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:score_earn_sum)) do
+        def field_def(:score_earn_sum) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1149,7 +1120,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("scoreEarnSum")) do
+        def field_def("scoreEarnSum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1162,7 +1133,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("score_earn_sum")) do
+        def field_def("score_earn_sum") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1176,7 +1147,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
         end
       ),
       (
-        def(field_def(:rank_score)) do
+        def field_def(:rank_score) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1189,7 +1160,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("rankScore")) do
+        def field_def("rankScore") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1202,7 +1173,7 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
 
-        def(field_def("rank_score")) do
+        def field_def("rank_score") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1215,83 +1186,83 @@ defmodule(Soulless.Tourney.Lq.AccountStatisticByGameMode) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:mode)) do
+      def default(:mode) do
         {:ok, 0}
       end,
-      def(default(:game_count_sum)) do
+      def default(:game_count_sum) do
         {:ok, 0}
       end,
-      def(default(:game_final_position)) do
+      def default(:game_final_position) do
         {:error, :no_default_value}
       end,
-      def(default(:fly_count)) do
+      def default(:fly_count) do
         {:ok, 0}
       end,
-      def(default(:gold_earn_sum)) do
+      def default(:gold_earn_sum) do
         {:ok, 0.0}
       end,
-      def(default(:round_count_sum)) do
+      def default(:round_count_sum) do
         {:ok, 0}
       end,
-      def(default(:dadian_sum)) do
+      def default(:dadian_sum) do
         {:ok, 0.0}
       end,
-      def(default(:round_end)) do
+      def default(:round_end) do
         {:error, :no_default_value}
       end,
-      def(default(:ming_count_sum)) do
+      def default(:ming_count_sum) do
         {:ok, 0}
       end,
-      def(default(:liqi_count_sum)) do
+      def default(:liqi_count_sum) do
         {:ok, 0}
       end,
-      def(default(:xun_count_sum)) do
+      def default(:xun_count_sum) do
         {:ok, 0}
       end,
-      def(default(:highest_lianzhuang)) do
+      def default(:highest_lianzhuang) do
         {:ok, 0}
       end,
-      def(default(:score_earn_sum)) do
+      def default(:score_earn_sum) do
         {:ok, 0}
       end,
-      def(default(:rank_score)) do
+      def default(:rank_score) do
         {:error, :no_default_value}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

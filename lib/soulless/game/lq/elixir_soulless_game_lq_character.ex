@@ -1,32 +1,29 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.Character) do
+defmodule Soulless.Game.Lq.Character do
   @moduledoc false
   (
-    defstruct(
-      charid: 0,
-      level: 0,
-      exp: 0,
-      views: [],
-      skin: 0,
-      is_upgraded: false,
-      extra_emoji: [],
-      __uf__: []
-    )
+    defstruct charid: 0,
+              level: 0,
+              exp: 0,
+              views: [],
+              skin: 0,
+              is_upgraded: false,
+              extra_emoji: [],
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_charid(msg)
           |> encode_level(msg)
@@ -42,45 +39,45 @@ defmodule(Soulless.Game.Lq.Character) do
       []
 
       [
-        defp(encode_charid(acc, msg)) do
+        defp encode_charid(acc, msg) do
           try do
-            if(msg.charid == 0) do
+            if msg.charid == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.charid)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:charid, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:charid, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_level(acc, msg)) do
+        defp encode_level(acc, msg) do
           try do
-            if(msg.level == 0) do
+            if msg.level == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.level)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.level)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_exp(acc, msg)) do
+        defp encode_exp(acc, msg) do
           try do
-            if(msg.exp == 0) do
+            if msg.exp == 0 do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_uint32(msg.exp)]
+              [acc, "\x18", Protox.Encode.encode_uint32(msg.exp)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:exp, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:exp, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_views(acc, msg)) do
+        defp encode_views(acc, msg) do
           try do
-            case(msg.views) do
+            case msg.views do
               [] ->
                 acc
 
@@ -94,39 +91,37 @@ defmodule(Soulless.Game.Lq.Character) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:views, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:views, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_skin(acc, msg)) do
+        defp encode_skin(acc, msg) do
           try do
-            if(msg.skin == 0) do
+            if msg.skin == 0 do
               acc
             else
               [acc, "(", Protox.Encode.encode_uint32(msg.skin)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:skin, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:skin, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_is_upgraded(acc, msg)) do
+        defp encode_is_upgraded(acc, msg) do
           try do
-            if(msg.is_upgraded == false) do
+            if msg.is_upgraded == false do
               acc
             else
               [acc, "0", Protox.Encode.encode_bool(msg.is_upgraded)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:is_upgraded, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:is_upgraded, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_extra_emoji(acc, msg)) do
+        defp encode_extra_emoji(acc, msg) do
           try do
-            case(msg.extra_emoji) do
+            case msg.extra_emoji do
               [] ->
                 acc
 
@@ -147,17 +142,15 @@ defmodule(Soulless.Game.Lq.Character) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:extra_emoji, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:extra_emoji, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -178,7 +171,7 @@ defmodule(Soulless.Game.Lq.Character) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -189,7 +182,7 @@ defmodule(Soulless.Game.Lq.Character) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.Character))
           end
         )
@@ -197,15 +190,15 @@ defmodule(Soulless.Game.Lq.Character) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -264,17 +257,16 @@ defmodule(Soulless.Game.Lq.Character) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -285,17 +277,16 @@ defmodule(Soulless.Game.Lq.Character) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -305,7 +296,7 @@ defmodule(Soulless.Game.Lq.Character) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:charid, {:scalar, 0}, :uint32},
         2 => {:level, {:scalar, 0}, :uint32},
@@ -321,7 +312,7 @@ defmodule(Soulless.Game.Lq.Character) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         charid: {1, {:scalar, 0}, :uint32},
         exp: {3, {:scalar, 0}, :uint32},
@@ -334,7 +325,7 @@ defmodule(Soulless.Game.Lq.Character) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -405,7 +396,7 @@ defmodule(Soulless.Game.Lq.Character) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:charid)) do
+        def field_def(:charid) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -418,7 +409,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("charid")) do
+        def field_def("charid") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -434,7 +425,7 @@ defmodule(Soulless.Game.Lq.Character) do
         []
       ),
       (
-        def(field_def(:level)) do
+        def field_def(:level) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -447,7 +438,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("level")) do
+        def field_def("level") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -463,7 +454,7 @@ defmodule(Soulless.Game.Lq.Character) do
         []
       ),
       (
-        def(field_def(:exp)) do
+        def field_def(:exp) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -476,7 +467,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("exp")) do
+        def field_def("exp") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -492,7 +483,7 @@ defmodule(Soulless.Game.Lq.Character) do
         []
       ),
       (
-        def(field_def(:views)) do
+        def field_def(:views) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -505,7 +496,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("views")) do
+        def field_def("views") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -521,7 +512,7 @@ defmodule(Soulless.Game.Lq.Character) do
         []
       ),
       (
-        def(field_def(:skin)) do
+        def field_def(:skin) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -534,7 +525,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("skin")) do
+        def field_def("skin") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -550,7 +541,7 @@ defmodule(Soulless.Game.Lq.Character) do
         []
       ),
       (
-        def(field_def(:is_upgraded)) do
+        def field_def(:is_upgraded) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -563,7 +554,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("isUpgraded")) do
+        def field_def("isUpgraded") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -576,7 +567,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("is_upgraded")) do
+        def field_def("is_upgraded") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -590,7 +581,7 @@ defmodule(Soulless.Game.Lq.Character) do
         end
       ),
       (
-        def(field_def(:extra_emoji)) do
+        def field_def(:extra_emoji) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -603,7 +594,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("extraEmoji")) do
+        def field_def("extraEmoji") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -616,7 +607,7 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
 
-        def(field_def("extra_emoji")) do
+        def field_def("extra_emoji") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -629,62 +620,62 @@ defmodule(Soulless.Game.Lq.Character) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:charid)) do
+      def default(:charid) do
         {:ok, 0}
       end,
-      def(default(:level)) do
+      def default(:level) do
         {:ok, 0}
       end,
-      def(default(:exp)) do
+      def default(:exp) do
         {:ok, 0}
       end,
-      def(default(:views)) do
+      def default(:views) do
         {:error, :no_default_value}
       end,
-      def(default(:skin)) do
+      def default(:skin) do
         {:ok, 0}
       end,
-      def(default(:is_upgraded)) do
+      def default(:is_upgraded) do
         {:ok, false}
       end,
-      def(default(:extra_emoji)) do
+      def default(:extra_emoji) do
         {:error, :no_default_value}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

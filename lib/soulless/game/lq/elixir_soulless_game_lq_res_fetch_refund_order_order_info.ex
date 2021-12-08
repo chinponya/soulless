@@ -1,23 +1,22 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
+defmodule Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo do
   @moduledoc false
   (
-    defstruct(success_time: 0, goods_id: 0, cleared: 0, order_id: "", __uf__: [])
+    defstruct success_time: 0, goods_id: 0, cleared: 0, order_id: "", __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_success_time(msg)
           |> encode_goods_id(msg)
@@ -30,62 +29,60 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
       []
 
       [
-        defp(encode_success_time(acc, msg)) do
+        defp encode_success_time(acc, msg) do
           try do
-            if(msg.success_time == 0) do
+            if msg.success_time == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.success_time)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:success_time, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:success_time, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_goods_id(acc, msg)) do
+        defp encode_goods_id(acc, msg) do
           try do
-            if(msg.goods_id == 0) do
+            if msg.goods_id == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.goods_id)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.goods_id)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:goods_id, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:goods_id, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_cleared(acc, msg)) do
+        defp encode_cleared(acc, msg) do
           try do
-            if(msg.cleared == 0) do
+            if msg.cleared == 0 do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_uint32(msg.cleared)]
+              [acc, "\x18", Protox.Encode.encode_uint32(msg.cleared)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:cleared, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:cleared, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_order_id(acc, msg)) do
+        defp encode_order_id(acc, msg) do
           try do
-            if(msg.order_id == "") do
+            if msg.order_id == "" do
               acc
             else
               [acc, "\"", Protox.Encode.encode_string(msg.order_id)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:order_id, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:order_id, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -106,7 +103,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -117,7 +114,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo))
           end
         )
@@ -125,15 +122,15 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -171,17 +168,16 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -192,17 +188,16 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -212,7 +207,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:success_time, {:scalar, 0}, :uint32},
         2 => {:goods_id, {:scalar, 0}, :uint32},
@@ -225,7 +220,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         cleared: {3, {:scalar, 0}, :uint32},
         goods_id: {2, {:scalar, 0}, :uint32},
@@ -235,7 +230,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -279,7 +274,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:success_time)) do
+        def field_def(:success_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -292,7 +287,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
            }}
         end
 
-        def(field_def("successTime")) do
+        def field_def("successTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -305,7 +300,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
            }}
         end
 
-        def(field_def("success_time")) do
+        def field_def("success_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -319,7 +314,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
         end
       ),
       (
-        def(field_def(:goods_id)) do
+        def field_def(:goods_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -332,7 +327,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
            }}
         end
 
-        def(field_def("goodsId")) do
+        def field_def("goodsId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -345,7 +340,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
            }}
         end
 
-        def(field_def("goods_id")) do
+        def field_def("goods_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -359,7 +354,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
         end
       ),
       (
-        def(field_def(:cleared)) do
+        def field_def(:cleared) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -372,7 +367,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
            }}
         end
 
-        def(field_def("cleared")) do
+        def field_def("cleared") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -388,7 +383,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
         []
       ),
       (
-        def(field_def(:order_id)) do
+        def field_def(:order_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -401,7 +396,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
            }}
         end
 
-        def(field_def("orderId")) do
+        def field_def("orderId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -414,7 +409,7 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
            }}
         end
 
-        def(field_def("order_id")) do
+        def field_def("order_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -427,53 +422,53 @@ defmodule(Soulless.Game.Lq.ResFetchRefundOrder.OrderInfo) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:success_time)) do
+      def default(:success_time) do
         {:ok, 0}
       end,
-      def(default(:goods_id)) do
+      def default(:goods_id) do
         {:ok, 0}
       end,
-      def(default(:cleared)) do
+      def default(:cleared) do
         {:ok, 0}
       end,
-      def(default(:order_id)) do
+      def default(:order_id) do
         {:ok, ""}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

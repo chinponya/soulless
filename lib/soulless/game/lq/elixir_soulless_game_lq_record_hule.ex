@@ -1,34 +1,31 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.RecordHule) do
+defmodule Soulless.Game.Lq.RecordHule do
   @moduledoc false
   (
-    defstruct(
-      hules: [],
-      old_scores: [],
-      delta_scores: [],
-      wait_timeout: 0,
-      scores: [],
-      gameend: nil,
-      doras: [],
-      muyu: nil,
-      baopai: 0,
-      __uf__: []
-    )
+    defstruct hules: [],
+              old_scores: [],
+              delta_scores: [],
+              wait_timeout: 0,
+              scores: [],
+              gameend: nil,
+              doras: [],
+              muyu: nil,
+              baopai: 0,
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_hules(msg)
           |> encode_old_scores(msg)
@@ -46,9 +43,9 @@ defmodule(Soulless.Game.Lq.RecordHule) do
       []
 
       [
-        defp(encode_hules(acc, msg)) do
+        defp encode_hules(acc, msg) do
           try do
-            case(msg.hules) do
+            case msg.hules do
               [] ->
                 acc
 
@@ -62,19 +59,19 @@ defmodule(Soulless.Game.Lq.RecordHule) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:hules, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:hules, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_old_scores(acc, msg)) do
+        defp encode_old_scores(acc, msg) do
           try do
-            case(msg.old_scores) do
+            case msg.old_scores do
               [] ->
                 acc
 
               values ->
                 [
                   acc,
-                  <<18>>,
+                  "\x12",
                   (
                     {bytes, len} =
                       Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
@@ -88,22 +85,19 @@ defmodule(Soulless.Game.Lq.RecordHule) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:old_scores, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:old_scores, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_delta_scores(acc, msg)) do
+        defp encode_delta_scores(acc, msg) do
           try do
-            case(msg.delta_scores) do
+            case msg.delta_scores do
               [] ->
                 acc
 
               values ->
                 [
                   acc,
-                  <<26>>,
+                  "\x1A",
                   (
                     {bytes, len} =
                       Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
@@ -117,30 +111,26 @@ defmodule(Soulless.Game.Lq.RecordHule) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:delta_scores, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:delta_scores, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_wait_timeout(acc, msg)) do
+        defp encode_wait_timeout(acc, msg) do
           try do
-            if(msg.wait_timeout == 0) do
+            if msg.wait_timeout == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.wait_timeout)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:wait_timeout, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:wait_timeout, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_scores(acc, msg)) do
+        defp encode_scores(acc, msg) do
           try do
-            case(msg.scores) do
+            case msg.scores do
               [] ->
                 acc
 
@@ -161,24 +151,24 @@ defmodule(Soulless.Game.Lq.RecordHule) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:scores, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:scores, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_gameend(acc, msg)) do
+        defp encode_gameend(acc, msg) do
           try do
-            if(msg.gameend == nil) do
+            if msg.gameend == nil do
               acc
             else
               [acc, "2", Protox.Encode.encode_message(msg.gameend)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:gameend, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:gameend, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_doras(acc, msg)) do
+        defp encode_doras(acc, msg) do
           try do
-            case(msg.doras) do
+            case msg.doras do
               [] ->
                 acc
 
@@ -192,38 +182,38 @@ defmodule(Soulless.Game.Lq.RecordHule) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:doras, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:doras, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_muyu(acc, msg)) do
+        defp encode_muyu(acc, msg) do
           try do
-            if(msg.muyu == nil) do
+            if msg.muyu == nil do
               acc
             else
               [acc, "B", Protox.Encode.encode_message(msg.muyu)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:muyu, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:muyu, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_baopai(acc, msg)) do
+        defp encode_baopai(acc, msg) do
           try do
-            if(msg.baopai == 0) do
+            if msg.baopai == 0 do
               acc
             else
               [acc, "H", Protox.Encode.encode_int32(msg.baopai)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:baopai, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:baopai, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -244,7 +234,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -255,7 +245,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.RecordHule))
           end
         )
@@ -263,15 +253,15 @@ defmodule(Soulless.Game.Lq.RecordHule) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -322,7 +312,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
 
                 {[
                    gameend:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.gameend,
                        Soulless.Game.Lq.GameEnd.decode!(delimited)
                      )
@@ -339,7 +329,10 @@ defmodule(Soulless.Game.Lq.RecordHule) do
 
                 {[
                    muyu:
-                     Protox.Message.merge(msg.muyu, Soulless.Game.Lq.MuyuInfo.decode!(delimited))
+                     Protox.MergeMessage.merge(
+                       msg.muyu,
+                       Soulless.Game.Lq.MuyuInfo.decode!(delimited)
+                     )
                  ], rest}
 
               {9, _, bytes} ->
@@ -365,17 +358,16 @@ defmodule(Soulless.Game.Lq.RecordHule) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -386,17 +378,16 @@ defmodule(Soulless.Game.Lq.RecordHule) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -406,7 +397,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:hules, :unpacked, {:message, Soulless.Game.Lq.HuleInfo}},
         2 => {:old_scores, :packed, :int32},
@@ -424,7 +415,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         baopai: {9, {:scalar, 0}, :int32},
         delta_scores: {3, :packed, :int32},
@@ -439,7 +430,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -528,7 +519,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:hules)) do
+        def field_def(:hules) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -541,7 +532,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("hules")) do
+        def field_def("hules") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -557,7 +548,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
         []
       ),
       (
-        def(field_def(:old_scores)) do
+        def field_def(:old_scores) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -570,7 +561,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("oldScores")) do
+        def field_def("oldScores") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -583,7 +574,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("old_scores")) do
+        def field_def("old_scores") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -597,7 +588,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
         end
       ),
       (
-        def(field_def(:delta_scores)) do
+        def field_def(:delta_scores) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -610,7 +601,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("deltaScores")) do
+        def field_def("deltaScores") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -623,7 +614,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("delta_scores")) do
+        def field_def("delta_scores") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -637,7 +628,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
         end
       ),
       (
-        def(field_def(:wait_timeout)) do
+        def field_def(:wait_timeout) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -650,7 +641,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("waitTimeout")) do
+        def field_def("waitTimeout") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -663,7 +654,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("wait_timeout")) do
+        def field_def("wait_timeout") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -677,7 +668,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
         end
       ),
       (
-        def(field_def(:scores)) do
+        def field_def(:scores) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -690,7 +681,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("scores")) do
+        def field_def("scores") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -706,7 +697,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
         []
       ),
       (
-        def(field_def(:gameend)) do
+        def field_def(:gameend) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -719,7 +710,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("gameend")) do
+        def field_def("gameend") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -735,7 +726,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
         []
       ),
       (
-        def(field_def(:doras)) do
+        def field_def(:doras) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -748,7 +739,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("doras")) do
+        def field_def("doras") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -764,7 +755,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
         []
       ),
       (
-        def(field_def(:muyu)) do
+        def field_def(:muyu) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -777,7 +768,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("muyu")) do
+        def field_def("muyu") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -793,7 +784,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
         []
       ),
       (
-        def(field_def(:baopai)) do
+        def field_def(:baopai) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -806,7 +797,7 @@ defmodule(Soulless.Game.Lq.RecordHule) do
            }}
         end
 
-        def(field_def("baopai")) do
+        def field_def("baopai") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -821,68 +812,68 @@ defmodule(Soulless.Game.Lq.RecordHule) do
 
         []
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:hules)) do
+      def default(:hules) do
         {:error, :no_default_value}
       end,
-      def(default(:old_scores)) do
+      def default(:old_scores) do
         {:error, :no_default_value}
       end,
-      def(default(:delta_scores)) do
+      def default(:delta_scores) do
         {:error, :no_default_value}
       end,
-      def(default(:wait_timeout)) do
+      def default(:wait_timeout) do
         {:ok, 0}
       end,
-      def(default(:scores)) do
+      def default(:scores) do
         {:error, :no_default_value}
       end,
-      def(default(:gameend)) do
+      def default(:gameend) do
         {:ok, nil}
       end,
-      def(default(:doras)) do
+      def default(:doras) do
         {:error, :no_default_value}
       end,
-      def(default(:muyu)) do
+      def default(:muyu) do
         {:ok, nil}
       end,
-      def(default(:baopai)) do
+      def default(:baopai) do
         {:ok, 0}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

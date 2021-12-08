@@ -1,34 +1,31 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.ResCharacterInfo) do
+defmodule Soulless.Game.Lq.ResCharacterInfo do
   @moduledoc false
   (
-    defstruct(
-      error: nil,
-      characters: [],
-      skins: [],
-      main_character_id: 0,
-      send_gift_count: 0,
-      send_gift_limit: 0,
-      finished_endings: [],
-      rewarded_endings: [],
-      character_sort: [],
-      __uf__: []
-    )
+    defstruct error: nil,
+              characters: [],
+              skins: [],
+              main_character_id: 0,
+              send_gift_count: 0,
+              send_gift_limit: 0,
+              finished_endings: [],
+              rewarded_endings: [],
+              character_sort: [],
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_error(msg)
           |> encode_characters(msg)
@@ -46,21 +43,21 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
       []
 
       [
-        defp(encode_error(acc, msg)) do
+        defp encode_error(acc, msg) do
           try do
-            if(msg.error == nil) do
+            if msg.error == nil do
               acc
             else
               [acc, "\n", Protox.Encode.encode_message(msg.error)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_characters(acc, msg)) do
+        defp encode_characters(acc, msg) do
           try do
-            case(msg.characters) do
+            case msg.characters do
               [] ->
                 acc
 
@@ -68,28 +65,25 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
                 [
                   acc,
                   Enum.reduce(values, [], fn value, acc ->
-                    [acc, <<18>>, Protox.Encode.encode_message(value)]
+                    [acc, "\x12", Protox.Encode.encode_message(value)]
                   end)
                 ]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:characters, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:characters, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_skins(acc, msg)) do
+        defp encode_skins(acc, msg) do
           try do
-            case(msg.skins) do
+            case msg.skins do
               [] ->
                 acc
 
               values ->
                 [
                   acc,
-                  <<26>>,
+                  "\x1A",
                   (
                     {bytes, len} =
                       Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
@@ -103,57 +97,51 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:skins, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:skins, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_main_character_id(acc, msg)) do
+        defp encode_main_character_id(acc, msg) do
           try do
-            if(msg.main_character_id == 0) do
+            if msg.main_character_id == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.main_character_id)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:main_character_id, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:main_character_id, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_send_gift_count(acc, msg)) do
+        defp encode_send_gift_count(acc, msg) do
           try do
-            if(msg.send_gift_count == 0) do
+            if msg.send_gift_count == 0 do
               acc
             else
               [acc, "(", Protox.Encode.encode_uint32(msg.send_gift_count)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:send_gift_count, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:send_gift_count, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_send_gift_limit(acc, msg)) do
+        defp encode_send_gift_limit(acc, msg) do
           try do
-            if(msg.send_gift_limit == 0) do
+            if msg.send_gift_limit == 0 do
               acc
             else
               [acc, "0", Protox.Encode.encode_uint32(msg.send_gift_limit)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:send_gift_limit, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:send_gift_limit, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_finished_endings(acc, msg)) do
+        defp encode_finished_endings(acc, msg) do
           try do
-            case(msg.finished_endings) do
+            case msg.finished_endings do
               [] ->
                 acc
 
@@ -174,15 +162,13 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:finished_endings, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:finished_endings, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_rewarded_endings(acc, msg)) do
+        defp encode_rewarded_endings(acc, msg) do
           try do
-            case(msg.rewarded_endings) do
+            case msg.rewarded_endings do
               [] ->
                 acc
 
@@ -203,15 +189,13 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:rewarded_endings, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:rewarded_endings, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_character_sort(acc, msg)) do
+        defp encode_character_sort(acc, msg) do
           try do
-            case(msg.character_sort) do
+            case msg.character_sort do
               [] ->
                 acc
 
@@ -232,17 +216,15 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:character_sort, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:character_sort, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -263,7 +245,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -274,7 +256,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.ResCharacterInfo))
           end
         )
@@ -282,15 +264,15 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -298,7 +280,10 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
 
                 {[
                    error:
-                     Protox.Message.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
+                     Protox.MergeMessage.merge(
+                       msg.error,
+                       Soulless.Game.Lq.Error.decode!(delimited)
+                     )
                  ], rest}
 
               {2, _, bytes} ->
@@ -387,17 +372,16 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -408,17 +392,16 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -428,7 +411,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
         2 => {:characters, :unpacked, {:message, Soulless.Game.Lq.Character}},
@@ -446,7 +429,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         character_sort: {9, :packed, :uint32},
         characters: {2, :unpacked, {:message, Soulless.Game.Lq.Character}},
@@ -461,7 +444,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -550,7 +533,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:error)) do
+        def field_def(:error) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -563,7 +546,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("error")) do
+        def field_def("error") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -579,7 +562,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
         []
       ),
       (
-        def(field_def(:characters)) do
+        def field_def(:characters) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -592,7 +575,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("characters")) do
+        def field_def("characters") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -608,7 +591,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
         []
       ),
       (
-        def(field_def(:skins)) do
+        def field_def(:skins) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -621,7 +604,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("skins")) do
+        def field_def("skins") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -637,7 +620,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
         []
       ),
       (
-        def(field_def(:main_character_id)) do
+        def field_def(:main_character_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -650,7 +633,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("mainCharacterId")) do
+        def field_def("mainCharacterId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -663,7 +646,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("main_character_id")) do
+        def field_def("main_character_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -677,7 +660,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
         end
       ),
       (
-        def(field_def(:send_gift_count)) do
+        def field_def(:send_gift_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -690,7 +673,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("sendGiftCount")) do
+        def field_def("sendGiftCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -703,7 +686,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("send_gift_count")) do
+        def field_def("send_gift_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -717,7 +700,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
         end
       ),
       (
-        def(field_def(:send_gift_limit)) do
+        def field_def(:send_gift_limit) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -730,7 +713,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("sendGiftLimit")) do
+        def field_def("sendGiftLimit") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -743,7 +726,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("send_gift_limit")) do
+        def field_def("send_gift_limit") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -757,7 +740,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
         end
       ),
       (
-        def(field_def(:finished_endings)) do
+        def field_def(:finished_endings) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -770,7 +753,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("finishedEndings")) do
+        def field_def("finishedEndings") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -783,7 +766,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("finished_endings")) do
+        def field_def("finished_endings") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -797,7 +780,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
         end
       ),
       (
-        def(field_def(:rewarded_endings)) do
+        def field_def(:rewarded_endings) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -810,7 +793,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("rewardedEndings")) do
+        def field_def("rewardedEndings") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -823,7 +806,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("rewarded_endings")) do
+        def field_def("rewarded_endings") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -837,7 +820,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
         end
       ),
       (
-        def(field_def(:character_sort)) do
+        def field_def(:character_sort) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -850,7 +833,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("characterSort")) do
+        def field_def("characterSort") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -863,7 +846,7 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
 
-        def(field_def("character_sort")) do
+        def field_def("character_sort") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -876,68 +859,68 @@ defmodule(Soulless.Game.Lq.ResCharacterInfo) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:error)) do
+      def default(:error) do
         {:ok, nil}
       end,
-      def(default(:characters)) do
+      def default(:characters) do
         {:error, :no_default_value}
       end,
-      def(default(:skins)) do
+      def default(:skins) do
         {:error, :no_default_value}
       end,
-      def(default(:main_character_id)) do
+      def default(:main_character_id) do
         {:ok, 0}
       end,
-      def(default(:send_gift_count)) do
+      def default(:send_gift_count) do
         {:ok, 0}
       end,
-      def(default(:send_gift_limit)) do
+      def default(:send_gift_limit) do
         {:ok, 0}
       end,
-      def(default(:finished_endings)) do
+      def default(:finished_endings) do
         {:error, :no_default_value}
       end,
-      def(default(:rewarded_endings)) do
+      def default(:rewarded_endings) do
         {:error, :no_default_value}
       end,
-      def(default(:character_sort)) do
+      def default(:character_sort) do
         {:error, :no_default_value}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

@@ -1,31 +1,28 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
+defmodule Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify do
   @moduledoc false
   (
-    defstruct(
-      contest_name: "",
-      external_notice: "",
-      internal_notice: "",
-      manager_notice: "",
-      reason: "",
-      status: 0,
-      __uf__: []
-    )
+    defstruct contest_name: "",
+              external_notice: "",
+              internal_notice: "",
+              manager_notice: "",
+              reason: "",
+              status: 0,
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_contest_name(msg)
           |> encode_external_notice(msg)
@@ -40,95 +37,87 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
       []
 
       [
-        defp(encode_contest_name(acc, msg)) do
+        defp encode_contest_name(acc, msg) do
           try do
-            if(msg.contest_name == "") do
+            if msg.contest_name == "" do
               acc
             else
               [acc, "\n", Protox.Encode.encode_string(msg.contest_name)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:contest_name, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:contest_name, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_external_notice(acc, msg)) do
+        defp encode_external_notice(acc, msg) do
           try do
-            if(msg.external_notice == "") do
+            if msg.external_notice == "" do
               acc
             else
-              [acc, <<18>>, Protox.Encode.encode_string(msg.external_notice)]
+              [acc, "\x12", Protox.Encode.encode_string(msg.external_notice)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:external_notice, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:external_notice, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_internal_notice(acc, msg)) do
+        defp encode_internal_notice(acc, msg) do
           try do
-            if(msg.internal_notice == "") do
+            if msg.internal_notice == "" do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_string(msg.internal_notice)]
+              [acc, "\x1A", Protox.Encode.encode_string(msg.internal_notice)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:internal_notice, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:internal_notice, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_manager_notice(acc, msg)) do
+        defp encode_manager_notice(acc, msg) do
           try do
-            if(msg.manager_notice == "") do
+            if msg.manager_notice == "" do
               acc
             else
               [acc, "\"", Protox.Encode.encode_string(msg.manager_notice)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:manager_notice, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:manager_notice, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_reason(acc, msg)) do
+        defp encode_reason(acc, msg) do
           try do
-            if(msg.reason == "") do
+            if msg.reason == "" do
               acc
             else
               [acc, "*", Protox.Encode.encode_string(msg.reason)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:reason, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:reason, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_status(acc, msg)) do
+        defp encode_status(acc, msg) do
           try do
-            if(msg.status == 0) do
+            if msg.status == 0 do
               acc
             else
               [acc, "0", Protox.Encode.encode_uint32(msg.status)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:status, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:status, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -149,7 +138,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -160,7 +149,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(
               bytes,
               struct(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify)
@@ -171,15 +160,15 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -229,17 +218,16 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -250,17 +238,16 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -270,7 +257,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:contest_name, {:scalar, ""}, :string},
         2 => {:external_notice, {:scalar, ""}, :string},
@@ -285,7 +272,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         contest_name: {1, {:scalar, ""}, :string},
         external_notice: {2, {:scalar, ""}, :string},
@@ -297,7 +284,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -359,7 +346,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:contest_name)) do
+        def field_def(:contest_name) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -372,7 +359,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("contestName")) do
+        def field_def("contestName") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -385,7 +372,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("contest_name")) do
+        def field_def("contest_name") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -399,7 +386,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
         end
       ),
       (
-        def(field_def(:external_notice)) do
+        def field_def(:external_notice) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -412,7 +399,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("externalNotice")) do
+        def field_def("externalNotice") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -425,7 +412,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("external_notice")) do
+        def field_def("external_notice") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -439,7 +426,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
         end
       ),
       (
-        def(field_def(:internal_notice)) do
+        def field_def(:internal_notice) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -452,7 +439,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("internalNotice")) do
+        def field_def("internalNotice") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -465,7 +452,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("internal_notice")) do
+        def field_def("internal_notice") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -479,7 +466,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
         end
       ),
       (
-        def(field_def(:manager_notice)) do
+        def field_def(:manager_notice) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -492,7 +479,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("managerNotice")) do
+        def field_def("managerNotice") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -505,7 +492,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("manager_notice")) do
+        def field_def("manager_notice") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -519,7 +506,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
         end
       ),
       (
-        def(field_def(:reason)) do
+        def field_def(:reason) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -532,7 +519,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("reason")) do
+        def field_def("reason") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -548,7 +535,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
         []
       ),
       (
-        def(field_def(:status)) do
+        def field_def(:status) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -561,7 +548,7 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
            }}
         end
 
-        def(field_def("status")) do
+        def field_def("status") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -576,59 +563,59 @@ defmodule(Soulless.Tourney.Lq.ResFetchContestLastModify.ContestLastModify) do
 
         []
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:contest_name)) do
+      def default(:contest_name) do
         {:ok, ""}
       end,
-      def(default(:external_notice)) do
+      def default(:external_notice) do
         {:ok, ""}
       end,
-      def(default(:internal_notice)) do
+      def default(:internal_notice) do
         {:ok, ""}
       end,
-      def(default(:manager_notice)) do
+      def default(:manager_notice) do
         {:ok, ""}
       end,
-      def(default(:reason)) do
+      def default(:reason) do
         {:ok, ""}
       end,
-      def(default(:status)) do
+      def default(:status) do
         {:ok, 0}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

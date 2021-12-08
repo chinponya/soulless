@@ -1,31 +1,28 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.ReqSignupAccount) do
+defmodule Soulless.Game.Lq.ReqSignupAccount do
   @moduledoc false
   (
-    defstruct(
-      account: "",
-      password: "",
-      code: "",
-      type: 0,
-      device: nil,
-      client_version_string: "",
-      __uf__: []
-    )
+    defstruct account: "",
+              password: "",
+              code: "",
+              type: 0,
+              device: nil,
+              client_version_string: "",
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_account(msg)
           |> encode_password(msg)
@@ -40,86 +37,84 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
       []
 
       [
-        defp(encode_account(acc, msg)) do
+        defp encode_account(acc, msg) do
           try do
-            if(msg.account == "") do
+            if msg.account == "" do
               acc
             else
               [acc, "\n", Protox.Encode.encode_string(msg.account)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:account, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:account, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_password(acc, msg)) do
+        defp encode_password(acc, msg) do
           try do
-            if(msg.password == "") do
+            if msg.password == "" do
               acc
             else
-              [acc, <<18>>, Protox.Encode.encode_string(msg.password)]
+              [acc, "\x12", Protox.Encode.encode_string(msg.password)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:password, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:password, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_code(acc, msg)) do
+        defp encode_code(acc, msg) do
           try do
-            if(msg.code == "") do
+            if msg.code == "" do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_string(msg.code)]
+              [acc, "\x1A", Protox.Encode.encode_string(msg.code)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:code, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:code, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_type(acc, msg)) do
+        defp encode_type(acc, msg) do
           try do
-            if(msg.type == 0) do
+            if msg.type == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.type)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:type, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:type, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_device(acc, msg)) do
+        defp encode_device(acc, msg) do
           try do
-            if(msg.device == nil) do
+            if msg.device == nil do
               acc
             else
               [acc, "*", Protox.Encode.encode_message(msg.device)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:device, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:device, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_client_version_string(acc, msg)) do
+        defp encode_client_version_string(acc, msg) do
           try do
-            if(msg.client_version_string == "") do
+            if msg.client_version_string == "" do
               acc
             else
               [acc, "2", Protox.Encode.encode_string(msg.client_version_string)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:client_version_string, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:client_version_string, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -140,7 +135,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -151,7 +146,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.ReqSignupAccount))
           end
         )
@@ -159,15 +154,15 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -194,7 +189,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
 
                 {[
                    device:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.device,
                        Soulless.Game.Lq.ClientDeviceInfo.decode!(delimited)
                      )
@@ -224,17 +219,16 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -245,17 +239,16 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -265,7 +258,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:account, {:scalar, ""}, :string},
         2 => {:password, {:scalar, ""}, :string},
@@ -280,7 +273,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         account: {1, {:scalar, ""}, :string},
         client_version_string: {6, {:scalar, ""}, :string},
@@ -292,7 +285,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -354,7 +347,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:account)) do
+        def field_def(:account) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -367,7 +360,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
            }}
         end
 
-        def(field_def("account")) do
+        def field_def("account") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -383,7 +376,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
         []
       ),
       (
-        def(field_def(:password)) do
+        def field_def(:password) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -396,7 +389,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
            }}
         end
 
-        def(field_def("password")) do
+        def field_def("password") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -412,7 +405,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
         []
       ),
       (
-        def(field_def(:code)) do
+        def field_def(:code) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -425,7 +418,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
            }}
         end
 
-        def(field_def("code")) do
+        def field_def("code") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -441,7 +434,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
         []
       ),
       (
-        def(field_def(:type)) do
+        def field_def(:type) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -454,7 +447,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
            }}
         end
 
-        def(field_def("type")) do
+        def field_def("type") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -470,7 +463,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
         []
       ),
       (
-        def(field_def(:device)) do
+        def field_def(:device) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -483,7 +476,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
            }}
         end
 
-        def(field_def("device")) do
+        def field_def("device") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -499,7 +492,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
         []
       ),
       (
-        def(field_def(:client_version_string)) do
+        def field_def(:client_version_string) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -512,7 +505,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
            }}
         end
 
-        def(field_def("clientVersionString")) do
+        def field_def("clientVersionString") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -525,7 +518,7 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
            }}
         end
 
-        def(field_def("client_version_string")) do
+        def field_def("client_version_string") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -538,59 +531,59 @@ defmodule(Soulless.Game.Lq.ReqSignupAccount) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:account)) do
+      def default(:account) do
         {:ok, ""}
       end,
-      def(default(:password)) do
+      def default(:password) do
         {:ok, ""}
       end,
-      def(default(:code)) do
+      def default(:code) do
         {:ok, ""}
       end,
-      def(default(:type)) do
+      def default(:type) do
         {:ok, 0}
       end,
-      def(default(:device)) do
+      def default(:device) do
         {:ok, nil}
       end,
-      def(default(:client_version_string)) do
+      def default(:client_version_string) do
         {:ok, ""}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

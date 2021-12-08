@@ -1,31 +1,28 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
+defmodule Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate do
   @moduledoc false
   (
-    defstruct(
-      progresses: [],
-      level: 0,
-      refresh_count: 0,
-      match_count: 0,
-      ticket_id: 0,
-      rewarded_season: [],
-      __uf__: []
-    )
+    defstruct progresses: [],
+              level: 0,
+              refresh_count: 0,
+              match_count: 0,
+              ticket_id: 0,
+              rewarded_season: [],
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_progresses(msg)
           |> encode_level(msg)
@@ -40,9 +37,9 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
       []
 
       [
-        defp(encode_progresses(acc, msg)) do
+        defp encode_progresses(acc, msg) do
           try do
-            case(msg.progresses) do
+            case msg.progresses do
               [] ->
                 acc
 
@@ -56,69 +53,62 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:progresses, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:progresses, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_level(acc, msg)) do
+        defp encode_level(acc, msg) do
           try do
-            if(msg.level == 0) do
+            if msg.level == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.level)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.level)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_refresh_count(acc, msg)) do
+        defp encode_refresh_count(acc, msg) do
           try do
-            if(msg.refresh_count == 0) do
+            if msg.refresh_count == 0 do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_uint32(msg.refresh_count)]
+              [acc, "\x18", Protox.Encode.encode_uint32(msg.refresh_count)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:refresh_count, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:refresh_count, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_match_count(acc, msg)) do
+        defp encode_match_count(acc, msg) do
           try do
-            if(msg.match_count == 0) do
+            if msg.match_count == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.match_count)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:match_count, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:match_count, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_ticket_id(acc, msg)) do
+        defp encode_ticket_id(acc, msg) do
           try do
-            if(msg.ticket_id == 0) do
+            if msg.ticket_id == 0 do
               acc
             else
               [acc, "(", Protox.Encode.encode_uint32(msg.ticket_id)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:ticket_id, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:ticket_id, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_rewarded_season(acc, msg)) do
+        defp encode_rewarded_season(acc, msg) do
           try do
-            case(msg.rewarded_season) do
+            case msg.rewarded_season do
               [] ->
                 acc
 
@@ -139,17 +129,15 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:rewarded_season, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:rewarded_season, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -170,7 +158,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -181,7 +169,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate))
           end
         )
@@ -189,15 +177,15 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -256,17 +244,16 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -277,17 +264,16 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -297,7 +283,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:progresses, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
         2 => {:level, {:scalar, 0}, :uint32},
@@ -312,7 +298,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         level: {2, {:scalar, 0}, :uint32},
         match_count: {4, {:scalar, 0}, :uint32},
@@ -324,7 +310,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -386,7 +372,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:progresses)) do
+        def field_def(:progresses) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -399,7 +385,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("progresses")) do
+        def field_def("progresses") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -415,7 +401,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
         []
       ),
       (
-        def(field_def(:level)) do
+        def field_def(:level) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -428,7 +414,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("level")) do
+        def field_def("level") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -444,7 +430,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
         []
       ),
       (
-        def(field_def(:refresh_count)) do
+        def field_def(:refresh_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -457,7 +443,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("refreshCount")) do
+        def field_def("refreshCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -470,7 +456,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("refresh_count")) do
+        def field_def("refresh_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -484,7 +470,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
         end
       ),
       (
-        def(field_def(:match_count)) do
+        def field_def(:match_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -497,7 +483,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("matchCount")) do
+        def field_def("matchCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -510,7 +496,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("match_count")) do
+        def field_def("match_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -524,7 +510,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
         end
       ),
       (
-        def(field_def(:ticket_id)) do
+        def field_def(:ticket_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -537,7 +523,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("ticketId")) do
+        def field_def("ticketId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -550,7 +536,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("ticket_id")) do
+        def field_def("ticket_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -564,7 +550,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
         end
       ),
       (
-        def(field_def(:rewarded_season)) do
+        def field_def(:rewarded_season) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -577,7 +563,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("rewardedSeason")) do
+        def field_def("rewardedSeason") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -590,7 +576,7 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
 
-        def(field_def("rewarded_season")) do
+        def field_def("rewarded_season") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -603,59 +589,59 @@ defmodule(Soulless.Game.Lq.NotifyAccountChallengeTaskUpdate) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:progresses)) do
+      def default(:progresses) do
         {:error, :no_default_value}
       end,
-      def(default(:level)) do
+      def default(:level) do
         {:ok, 0}
       end,
-      def(default(:refresh_count)) do
+      def default(:refresh_count) do
         {:ok, 0}
       end,
-      def(default(:match_count)) do
+      def default(:match_count) do
         {:ok, 0}
       end,
-      def(default(:ticket_id)) do
+      def default(:ticket_id) do
         {:ok, 0}
       end,
-      def(default(:rewarded_season)) do
+      def default(:rewarded_season) do
         {:error, :no_default_value}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

@@ -1,40 +1,37 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.AccountUpdate) do
+defmodule Soulless.Game.Lq.AccountUpdate do
   @moduledoc false
   (
-    defstruct(
-      numerical: [],
-      character: nil,
-      bag: nil,
-      achievement: nil,
-      shilian: nil,
-      daily_task: nil,
-      title: nil,
-      new_recharged_list: [],
-      activity_task: nil,
-      activity_flip_task: nil,
-      activity_period_task: nil,
-      activity_random_task: nil,
-      challenge: nil,
-      ab_match: nil,
-      activity: nil,
-      __uf__: []
-    )
+    defstruct numerical: [],
+              character: nil,
+              bag: nil,
+              achievement: nil,
+              shilian: nil,
+              daily_task: nil,
+              title: nil,
+              new_recharged_list: [],
+              activity_task: nil,
+              activity_flip_task: nil,
+              activity_period_task: nil,
+              activity_random_task: nil,
+              challenge: nil,
+              ab_match: nil,
+              activity: nil,
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_numerical(msg)
           |> encode_character(msg)
@@ -58,9 +55,9 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
       []
 
       [
-        defp(encode_numerical(acc, msg)) do
+        defp encode_numerical(acc, msg) do
           try do
-            case(msg.numerical) do
+            case msg.numerical do
               [] ->
                 acc
 
@@ -74,90 +71,85 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:numerical, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:numerical, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_character(acc, msg)) do
+        defp encode_character(acc, msg) do
           try do
-            if(msg.character == nil) do
+            if msg.character == nil do
               acc
             else
-              [acc, <<18>>, Protox.Encode.encode_message(msg.character)]
+              [acc, "\x12", Protox.Encode.encode_message(msg.character)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:character, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:character, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_bag(acc, msg)) do
+        defp encode_bag(acc, msg) do
           try do
-            if(msg.bag == nil) do
+            if msg.bag == nil do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_message(msg.bag)]
+              [acc, "\x1A", Protox.Encode.encode_message(msg.bag)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:bag, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:bag, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_achievement(acc, msg)) do
+        defp encode_achievement(acc, msg) do
           try do
-            if(msg.achievement == nil) do
+            if msg.achievement == nil do
               acc
             else
               [acc, "\"", Protox.Encode.encode_message(msg.achievement)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:achievement, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:achievement, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_shilian(acc, msg)) do
+        defp encode_shilian(acc, msg) do
           try do
-            if(msg.shilian == nil) do
+            if msg.shilian == nil do
               acc
             else
               [acc, "*", Protox.Encode.encode_message(msg.shilian)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:shilian, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:shilian, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_daily_task(acc, msg)) do
+        defp encode_daily_task(acc, msg) do
           try do
-            if(msg.daily_task == nil) do
+            if msg.daily_task == nil do
               acc
             else
               [acc, "2", Protox.Encode.encode_message(msg.daily_task)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:daily_task, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:daily_task, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_title(acc, msg)) do
+        defp encode_title(acc, msg) do
           try do
-            if(msg.title == nil) do
+            if msg.title == nil do
               acc
             else
               [acc, ":", Protox.Encode.encode_message(msg.title)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_new_recharged_list(acc, msg)) do
+        defp encode_new_recharged_list(acc, msg) do
           try do
-            case(msg.new_recharged_list) do
+            case msg.new_recharged_list do
               [] ->
                 acc
 
@@ -178,113 +170,103 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:new_recharged_list, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:new_recharged_list, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_activity_task(acc, msg)) do
+        defp encode_activity_task(acc, msg) do
           try do
-            if(msg.activity_task == nil) do
+            if msg.activity_task == nil do
               acc
             else
               [acc, "J", Protox.Encode.encode_message(msg.activity_task)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:activity_task, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:activity_task, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_activity_flip_task(acc, msg)) do
+        defp encode_activity_flip_task(acc, msg) do
           try do
-            if(msg.activity_flip_task == nil) do
+            if msg.activity_flip_task == nil do
               acc
             else
               [acc, "R", Protox.Encode.encode_message(msg.activity_flip_task)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:activity_flip_task, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:activity_flip_task, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_activity_period_task(acc, msg)) do
+        defp encode_activity_period_task(acc, msg) do
           try do
-            if(msg.activity_period_task == nil) do
+            if msg.activity_period_task == nil do
               acc
             else
               [acc, "Z", Protox.Encode.encode_message(msg.activity_period_task)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:activity_period_task, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:activity_period_task, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_activity_random_task(acc, msg)) do
+        defp encode_activity_random_task(acc, msg) do
           try do
-            if(msg.activity_random_task == nil) do
+            if msg.activity_random_task == nil do
               acc
             else
               [acc, "b", Protox.Encode.encode_message(msg.activity_random_task)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:activity_random_task, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:activity_random_task, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_challenge(acc, msg)) do
+        defp encode_challenge(acc, msg) do
           try do
-            if(msg.challenge == nil) do
+            if msg.challenge == nil do
               acc
             else
               [acc, "j", Protox.Encode.encode_message(msg.challenge)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:challenge, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:challenge, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_ab_match(acc, msg)) do
+        defp encode_ab_match(acc, msg) do
           try do
-            if(msg.ab_match == nil) do
+            if msg.ab_match == nil do
               acc
             else
               [acc, "r", Protox.Encode.encode_message(msg.ab_match)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:ab_match, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:ab_match, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_activity(acc, msg)) do
+        defp encode_activity(acc, msg) do
           try do
-            if(msg.activity == nil) do
+            if msg.activity == nil do
               acc
             else
               [acc, "z", Protox.Encode.encode_message(msg.activity)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:activity, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:activity, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -305,7 +287,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -316,7 +298,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.AccountUpdate))
           end
         )
@@ -324,15 +306,15 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -350,7 +332,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    character:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.character,
                        Soulless.Game.Lq.AccountUpdate.CharacterUpdate.decode!(delimited)
                      )
@@ -362,7 +344,10 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    bag:
-                     Protox.Message.merge(msg.bag, Soulless.Game.Lq.BagUpdate.decode!(delimited))
+                     Protox.MergeMessage.merge(
+                       msg.bag,
+                       Soulless.Game.Lq.BagUpdate.decode!(delimited)
+                     )
                  ], rest}
 
               {4, _, bytes} ->
@@ -371,7 +356,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    achievement:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.achievement,
                        Soulless.Game.Lq.AccountUpdate.AchievementUpdate.decode!(delimited)
                      )
@@ -383,7 +368,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    shilian:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.shilian,
                        Soulless.Game.Lq.AccountShiLian.decode!(delimited)
                      )
@@ -395,7 +380,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    daily_task:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.daily_task,
                        Soulless.Game.Lq.AccountUpdate.DailyTaskUpdate.decode!(delimited)
                      )
@@ -407,7 +392,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    title:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.title,
                        Soulless.Game.Lq.AccountUpdate.TitleUpdate.decode!(delimited)
                      )
@@ -432,7 +417,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    activity_task:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.activity_task,
                        Soulless.Game.Lq.AccountUpdate.TaskUpdate.decode!(delimited)
                      )
@@ -444,7 +429,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    activity_flip_task:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.activity_flip_task,
                        Soulless.Game.Lq.AccountUpdate.TaskUpdate.decode!(delimited)
                      )
@@ -456,7 +441,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    activity_period_task:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.activity_period_task,
                        Soulless.Game.Lq.AccountUpdate.TaskUpdate.decode!(delimited)
                      )
@@ -468,7 +453,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    activity_random_task:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.activity_random_task,
                        Soulless.Game.Lq.AccountUpdate.TaskUpdate.decode!(delimited)
                      )
@@ -480,7 +465,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    challenge:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.challenge,
                        Soulless.Game.Lq.AccountUpdate.AccountChallengeUpdate.decode!(delimited)
                      )
@@ -492,7 +477,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    ab_match:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.ab_match,
                        Soulless.Game.Lq.AccountUpdate.AccountABMatchUpdate.decode!(delimited)
                      )
@@ -504,7 +489,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
                 {[
                    activity:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.activity,
                        Soulless.Game.Lq.AccountUpdate.AccountActivityUpdate.decode!(delimited)
                      )
@@ -529,17 +514,16 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -550,17 +534,16 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -570,7 +553,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:numerical, :unpacked, {:message, Soulless.Game.Lq.AccountUpdate.NumericalUpdate}},
         2 =>
@@ -612,7 +595,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         ab_match:
           {14, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountUpdate.AccountABMatchUpdate}},
@@ -642,7 +625,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -785,7 +768,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:numerical)) do
+        def field_def(:numerical) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -798,7 +781,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("numerical")) do
+        def field_def("numerical") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -814,7 +797,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         []
       ),
       (
-        def(field_def(:character)) do
+        def field_def(:character) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -827,7 +810,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("character")) do
+        def field_def("character") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -843,7 +826,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         []
       ),
       (
-        def(field_def(:bag)) do
+        def field_def(:bag) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -856,7 +839,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("bag")) do
+        def field_def("bag") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -872,7 +855,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         []
       ),
       (
-        def(field_def(:achievement)) do
+        def field_def(:achievement) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -885,7 +868,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("achievement")) do
+        def field_def("achievement") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -901,7 +884,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         []
       ),
       (
-        def(field_def(:shilian)) do
+        def field_def(:shilian) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -914,7 +897,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("shilian")) do
+        def field_def("shilian") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -930,7 +913,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         []
       ),
       (
-        def(field_def(:daily_task)) do
+        def field_def(:daily_task) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -943,7 +926,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("dailyTask")) do
+        def field_def("dailyTask") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -956,7 +939,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("daily_task")) do
+        def field_def("daily_task") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -970,7 +953,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         end
       ),
       (
-        def(field_def(:title)) do
+        def field_def(:title) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -983,7 +966,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("title")) do
+        def field_def("title") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -999,7 +982,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         []
       ),
       (
-        def(field_def(:new_recharged_list)) do
+        def field_def(:new_recharged_list) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1012,7 +995,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("newRechargedList")) do
+        def field_def("newRechargedList") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1025,7 +1008,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("new_recharged_list")) do
+        def field_def("new_recharged_list") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1039,7 +1022,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         end
       ),
       (
-        def(field_def(:activity_task)) do
+        def field_def(:activity_task) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1052,7 +1035,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activityTask")) do
+        def field_def("activityTask") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1065,7 +1048,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activity_task")) do
+        def field_def("activity_task") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1079,7 +1062,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         end
       ),
       (
-        def(field_def(:activity_flip_task)) do
+        def field_def(:activity_flip_task) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1092,7 +1075,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activityFlipTask")) do
+        def field_def("activityFlipTask") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1105,7 +1088,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activity_flip_task")) do
+        def field_def("activity_flip_task") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1119,7 +1102,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         end
       ),
       (
-        def(field_def(:activity_period_task)) do
+        def field_def(:activity_period_task) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1132,7 +1115,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activityPeriodTask")) do
+        def field_def("activityPeriodTask") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1145,7 +1128,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activity_period_task")) do
+        def field_def("activity_period_task") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1159,7 +1142,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         end
       ),
       (
-        def(field_def(:activity_random_task)) do
+        def field_def(:activity_random_task) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1172,7 +1155,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activityRandomTask")) do
+        def field_def("activityRandomTask") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1185,7 +1168,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activity_random_task")) do
+        def field_def("activity_random_task") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1199,7 +1182,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         end
       ),
       (
-        def(field_def(:challenge)) do
+        def field_def(:challenge) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1212,7 +1195,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("challenge")) do
+        def field_def("challenge") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1228,7 +1211,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         []
       ),
       (
-        def(field_def(:ab_match)) do
+        def field_def(:ab_match) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1241,7 +1224,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("abMatch")) do
+        def field_def("abMatch") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1254,7 +1237,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("ab_match")) do
+        def field_def("ab_match") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1268,7 +1251,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
         end
       ),
       (
-        def(field_def(:activity)) do
+        def field_def(:activity) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1281,7 +1264,7 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
            }}
         end
 
-        def(field_def("activity")) do
+        def field_def("activity") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1296,86 +1279,86 @@ defmodule(Soulless.Game.Lq.AccountUpdate) do
 
         []
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:numerical)) do
+      def default(:numerical) do
         {:error, :no_default_value}
       end,
-      def(default(:character)) do
+      def default(:character) do
         {:ok, nil}
       end,
-      def(default(:bag)) do
+      def default(:bag) do
         {:ok, nil}
       end,
-      def(default(:achievement)) do
+      def default(:achievement) do
         {:ok, nil}
       end,
-      def(default(:shilian)) do
+      def default(:shilian) do
         {:ok, nil}
       end,
-      def(default(:daily_task)) do
+      def default(:daily_task) do
         {:ok, nil}
       end,
-      def(default(:title)) do
+      def default(:title) do
         {:ok, nil}
       end,
-      def(default(:new_recharged_list)) do
+      def default(:new_recharged_list) do
         {:error, :no_default_value}
       end,
-      def(default(:activity_task)) do
+      def default(:activity_task) do
         {:ok, nil}
       end,
-      def(default(:activity_flip_task)) do
+      def default(:activity_flip_task) do
         {:ok, nil}
       end,
-      def(default(:activity_period_task)) do
+      def default(:activity_period_task) do
         {:ok, nil}
       end,
-      def(default(:activity_random_task)) do
+      def default(:activity_random_task) do
         {:ok, nil}
       end,
-      def(default(:challenge)) do
+      def default(:challenge) do
         {:ok, nil}
       end,
-      def(default(:ab_match)) do
+      def default(:ab_match) do
         {:ok, nil}
       end,
-      def(default(:activity)) do
+      def default(:activity) do
         {:ok, nil}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

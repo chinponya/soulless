@@ -1,23 +1,22 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
+defmodule Soulless.Game.Lq.ReqUnbindPhoneNumber do
   @moduledoc false
   (
-    defstruct(code: "", phone: "", password: "", __uf__: [])
+    defstruct code: "", phone: "", password: "", __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_code(msg)
           |> encode_phone(msg)
@@ -29,47 +28,47 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
       []
 
       [
-        defp(encode_code(acc, msg)) do
+        defp encode_code(acc, msg) do
           try do
-            if(msg.code == "") do
+            if msg.code == "" do
               acc
             else
               [acc, "\n", Protox.Encode.encode_string(msg.code)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:code, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:code, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_phone(acc, msg)) do
+        defp encode_phone(acc, msg) do
           try do
-            if(msg.phone == "") do
+            if msg.phone == "" do
               acc
             else
-              [acc, <<18>>, Protox.Encode.encode_string(msg.phone)]
+              [acc, "\x12", Protox.Encode.encode_string(msg.phone)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:phone, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:phone, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_password(acc, msg)) do
+        defp encode_password(acc, msg) do
           try do
-            if(msg.password == "") do
+            if msg.password == "" do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_string(msg.password)]
+              [acc, "\x1A", Protox.Encode.encode_string(msg.password)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:password, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:password, "invalid field value"), __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -90,7 +89,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -101,7 +100,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.ReqUnbindPhoneNumber))
           end
         )
@@ -109,15 +108,15 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -153,17 +152,16 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -174,17 +172,16 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -194,7 +191,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:code, {:scalar, ""}, :string},
         2 => {:phone, {:scalar, ""}, :string},
@@ -206,7 +203,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         code: {1, {:scalar, ""}, :string},
         password: {3, {:scalar, ""}, :string},
@@ -215,7 +212,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -250,7 +247,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:code)) do
+        def field_def(:code) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -263,7 +260,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
            }}
         end
 
-        def(field_def("code")) do
+        def field_def("code") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -279,7 +276,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
         []
       ),
       (
-        def(field_def(:phone)) do
+        def field_def(:phone) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -292,7 +289,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
            }}
         end
 
-        def(field_def("phone")) do
+        def field_def("phone") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -308,7 +305,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
         []
       ),
       (
-        def(field_def(:password)) do
+        def field_def(:password) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -321,7 +318,7 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
            }}
         end
 
-        def(field_def("password")) do
+        def field_def("password") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -336,50 +333,50 @@ defmodule(Soulless.Game.Lq.ReqUnbindPhoneNumber) do
 
         []
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:code)) do
+      def default(:code) do
         {:ok, ""}
       end,
-      def(default(:phone)) do
+      def default(:phone) do
         {:ok, ""}
       end,
-      def(default(:password)) do
+      def default(:password) do
         {:ok, ""}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

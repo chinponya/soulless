@@ -1,31 +1,28 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
+defmodule Soulless.Tourney.Lq.GameRuleSetting do
   @moduledoc false
   (
-    defstruct(
-      round_type: 0,
-      shiduan: false,
-      dora_count: 0,
-      thinking_type: 0,
-      use_detail_rule: false,
-      detail_rule_v2: nil,
-      __uf__: []
-    )
+    defstruct round_type: 0,
+              shiduan: false,
+              dora_count: 0,
+              thinking_type: 0,
+              use_detail_rule: false,
+              detail_rule_v2: nil,
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_round_type(msg)
           |> encode_shiduan(msg)
@@ -40,98 +37,86 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
       []
 
       [
-        defp(encode_round_type(acc, msg)) do
+        defp encode_round_type(acc, msg) do
           try do
-            if(msg.round_type == 0) do
+            if msg.round_type == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.round_type)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:round_type, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:round_type, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_shiduan(acc, msg)) do
+        defp encode_shiduan(acc, msg) do
           try do
-            if(msg.shiduan == false) do
+            if msg.shiduan == false do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_bool(msg.shiduan)]
+              [acc, "\x10", Protox.Encode.encode_bool(msg.shiduan)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:shiduan, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:shiduan, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_dora_count(acc, msg)) do
+        defp encode_dora_count(acc, msg) do
           try do
-            if(msg.dora_count == 0) do
+            if msg.dora_count == 0 do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_uint32(msg.dora_count)]
+              [acc, "\x18", Protox.Encode.encode_uint32(msg.dora_count)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:dora_count, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:dora_count, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_thinking_type(acc, msg)) do
+        defp encode_thinking_type(acc, msg) do
           try do
-            if(msg.thinking_type == 0) do
+            if msg.thinking_type == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.thinking_type)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:thinking_type, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:thinking_type, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_use_detail_rule(acc, msg)) do
+        defp encode_use_detail_rule(acc, msg) do
           try do
-            if(msg.use_detail_rule == false) do
+            if msg.use_detail_rule == false do
               acc
             else
               [acc, "(", Protox.Encode.encode_bool(msg.use_detail_rule)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:use_detail_rule, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:use_detail_rule, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_detail_rule_v2(acc, msg)) do
+        defp encode_detail_rule_v2(acc, msg) do
           try do
-            if(msg.detail_rule_v2 == nil) do
+            if msg.detail_rule_v2 == nil do
               acc
             else
               [acc, "2", Protox.Encode.encode_message(msg.detail_rule_v2)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:detail_rule_v2, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:detail_rule_v2, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -152,7 +137,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -163,7 +148,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Tourney.Lq.GameRuleSetting))
           end
         )
@@ -171,15 +156,15 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -207,7 +192,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
 
                 {[
                    detail_rule_v2:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.detail_rule_v2,
                        Soulless.Tourney.Lq.ContestDetailRuleV2.decode!(delimited)
                      )
@@ -232,17 +217,16 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -253,17 +237,16 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -273,7 +256,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:round_type, {:scalar, 0}, :uint32},
         2 => {:shiduan, {:scalar, false}, :bool},
@@ -289,7 +272,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         detail_rule_v2: {6, {:scalar, nil}, {:message, Soulless.Tourney.Lq.ContestDetailRuleV2}},
         dora_count: {3, {:scalar, 0}, :uint32},
@@ -301,7 +284,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -363,7 +346,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:round_type)) do
+        def field_def(:round_type) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -376,7 +359,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("roundType")) do
+        def field_def("roundType") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -389,7 +372,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("round_type")) do
+        def field_def("round_type") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -403,7 +386,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
         end
       ),
       (
-        def(field_def(:shiduan)) do
+        def field_def(:shiduan) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -416,7 +399,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("shiduan")) do
+        def field_def("shiduan") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -432,7 +415,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
         []
       ),
       (
-        def(field_def(:dora_count)) do
+        def field_def(:dora_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -445,7 +428,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("doraCount")) do
+        def field_def("doraCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -458,7 +441,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("dora_count")) do
+        def field_def("dora_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -472,7 +455,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
         end
       ),
       (
-        def(field_def(:thinking_type)) do
+        def field_def(:thinking_type) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -485,7 +468,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("thinkingType")) do
+        def field_def("thinkingType") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -498,7 +481,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("thinking_type")) do
+        def field_def("thinking_type") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -512,7 +495,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
         end
       ),
       (
-        def(field_def(:use_detail_rule)) do
+        def field_def(:use_detail_rule) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -525,7 +508,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("useDetailRule")) do
+        def field_def("useDetailRule") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -538,7 +521,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("use_detail_rule")) do
+        def field_def("use_detail_rule") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -552,7 +535,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
         end
       ),
       (
-        def(field_def(:detail_rule_v2)) do
+        def field_def(:detail_rule_v2) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -565,7 +548,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("detailRuleV2")) do
+        def field_def("detailRuleV2") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -578,7 +561,7 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
 
-        def(field_def("detail_rule_v2")) do
+        def field_def("detail_rule_v2") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -591,59 +574,59 @@ defmodule(Soulless.Tourney.Lq.GameRuleSetting) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:round_type)) do
+      def default(:round_type) do
         {:ok, 0}
       end,
-      def(default(:shiduan)) do
+      def default(:shiduan) do
         {:ok, false}
       end,
-      def(default(:dora_count)) do
+      def default(:dora_count) do
         {:ok, 0}
       end,
-      def(default(:thinking_type)) do
+      def default(:thinking_type) do
         {:ok, 0}
       end,
-      def(default(:use_detail_rule)) do
+      def default(:use_detail_rule) do
         {:ok, false}
       end,
-      def(default(:detail_rule_v2)) do
+      def default(:detail_rule_v2) do
         {:ok, nil}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

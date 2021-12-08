@@ -1,36 +1,33 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.Mail) do
+defmodule Soulless.Game.Lq.Mail do
   @moduledoc false
   (
-    defstruct(
-      mail_id: 0,
-      state: 0,
-      take_attachment: false,
-      title: "",
-      content: "",
-      attachments: [],
-      create_time: 0,
-      expire_time: 0,
-      reference_id: 0,
-      title_i18n: [],
-      content_i18n: [],
-      __uf__: []
-    )
+    defstruct mail_id: 0,
+              state: 0,
+              take_attachment: false,
+              title: "",
+              content: "",
+              attachments: [],
+              create_time: 0,
+              expire_time: 0,
+              reference_id: 0,
+              title_i18n: [],
+              content_i18n: [],
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_mail_id(msg)
           |> encode_state(msg)
@@ -50,72 +47,70 @@ defmodule(Soulless.Game.Lq.Mail) do
       []
 
       [
-        defp(encode_mail_id(acc, msg)) do
+        defp encode_mail_id(acc, msg) do
           try do
-            if(msg.mail_id == 0) do
+            if msg.mail_id == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.mail_id)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:mail_id, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:mail_id, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_state(acc, msg)) do
+        defp encode_state(acc, msg) do
           try do
-            if(msg.state == 0) do
+            if msg.state == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.state)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.state)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:state, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:state, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_take_attachment(acc, msg)) do
+        defp encode_take_attachment(acc, msg) do
           try do
-            if(msg.take_attachment == false) do
+            if msg.take_attachment == false do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_bool(msg.take_attachment)]
+              [acc, "\x18", Protox.Encode.encode_bool(msg.take_attachment)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:take_attachment, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:take_attachment, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_title(acc, msg)) do
+        defp encode_title(acc, msg) do
           try do
-            if(msg.title == "") do
+            if msg.title == "" do
               acc
             else
               [acc, "\"", Protox.Encode.encode_string(msg.title)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_content(acc, msg)) do
+        defp encode_content(acc, msg) do
           try do
-            if(msg.content == "") do
+            if msg.content == "" do
               acc
             else
               [acc, "*", Protox.Encode.encode_string(msg.content)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:content, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:content, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_attachments(acc, msg)) do
+        defp encode_attachments(acc, msg) do
           try do
-            case(msg.attachments) do
+            case msg.attachments do
               [] ->
                 acc
 
@@ -129,60 +124,52 @@ defmodule(Soulless.Game.Lq.Mail) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:attachments, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:attachments, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_create_time(acc, msg)) do
+        defp encode_create_time(acc, msg) do
           try do
-            if(msg.create_time == 0) do
+            if msg.create_time == 0 do
               acc
             else
               [acc, "8", Protox.Encode.encode_uint32(msg.create_time)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:create_time, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:create_time, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_expire_time(acc, msg)) do
+        defp encode_expire_time(acc, msg) do
           try do
-            if(msg.expire_time == 0) do
+            if msg.expire_time == 0 do
               acc
             else
               [acc, "@", Protox.Encode.encode_uint32(msg.expire_time)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:expire_time, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:expire_time, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_reference_id(acc, msg)) do
+        defp encode_reference_id(acc, msg) do
           try do
-            if(msg.reference_id == 0) do
+            if msg.reference_id == 0 do
               acc
             else
               [acc, "H", Protox.Encode.encode_uint32(msg.reference_id)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:reference_id, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:reference_id, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_title_i18n(acc, msg)) do
+        defp encode_title_i18n(acc, msg) do
           try do
-            case(msg.title_i18n) do
+            case msg.title_i18n do
               [] ->
                 acc
 
@@ -196,15 +183,12 @@ defmodule(Soulless.Game.Lq.Mail) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:title_i18n, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:title_i18n, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_content_i18n(acc, msg)) do
+        defp encode_content_i18n(acc, msg) do
           try do
-            case(msg.content_i18n) do
+            case msg.content_i18n do
               [] ->
                 acc
 
@@ -218,17 +202,15 @@ defmodule(Soulless.Game.Lq.Mail) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:content_i18n, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:content_i18n, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -249,7 +231,7 @@ defmodule(Soulless.Game.Lq.Mail) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -260,7 +242,7 @@ defmodule(Soulless.Game.Lq.Mail) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.Mail))
           end
         )
@@ -268,15 +250,15 @@ defmodule(Soulless.Game.Lq.Mail) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -357,17 +339,16 @@ defmodule(Soulless.Game.Lq.Mail) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -378,17 +359,16 @@ defmodule(Soulless.Game.Lq.Mail) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -398,7 +378,7 @@ defmodule(Soulless.Game.Lq.Mail) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:mail_id, {:scalar, 0}, :uint32},
         2 => {:state, {:scalar, 0}, :uint32},
@@ -418,7 +398,7 @@ defmodule(Soulless.Game.Lq.Mail) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         attachments: {6, :unpacked, {:message, Soulless.Game.Lq.RewardSlot}},
         content: {5, {:scalar, ""}, :string},
@@ -435,7 +415,7 @@ defmodule(Soulless.Game.Lq.Mail) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -542,7 +522,7 @@ defmodule(Soulless.Game.Lq.Mail) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:mail_id)) do
+        def field_def(:mail_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -555,7 +535,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("mailId")) do
+        def field_def("mailId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -568,7 +548,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("mail_id")) do
+        def field_def("mail_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -582,7 +562,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         end
       ),
       (
-        def(field_def(:state)) do
+        def field_def(:state) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -595,7 +575,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("state")) do
+        def field_def("state") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -611,7 +591,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         []
       ),
       (
-        def(field_def(:take_attachment)) do
+        def field_def(:take_attachment) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -624,7 +604,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("takeAttachment")) do
+        def field_def("takeAttachment") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -637,7 +617,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("take_attachment")) do
+        def field_def("take_attachment") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -651,7 +631,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         end
       ),
       (
-        def(field_def(:title)) do
+        def field_def(:title) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -664,7 +644,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("title")) do
+        def field_def("title") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -680,7 +660,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         []
       ),
       (
-        def(field_def(:content)) do
+        def field_def(:content) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -693,7 +673,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("content")) do
+        def field_def("content") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -709,7 +689,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         []
       ),
       (
-        def(field_def(:attachments)) do
+        def field_def(:attachments) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -722,7 +702,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("attachments")) do
+        def field_def("attachments") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -738,7 +718,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         []
       ),
       (
-        def(field_def(:create_time)) do
+        def field_def(:create_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -751,7 +731,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("createTime")) do
+        def field_def("createTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -764,7 +744,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("create_time")) do
+        def field_def("create_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -778,7 +758,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         end
       ),
       (
-        def(field_def(:expire_time)) do
+        def field_def(:expire_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -791,7 +771,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("expireTime")) do
+        def field_def("expireTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -804,7 +784,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("expire_time")) do
+        def field_def("expire_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -818,7 +798,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         end
       ),
       (
-        def(field_def(:reference_id)) do
+        def field_def(:reference_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -831,7 +811,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("referenceId")) do
+        def field_def("referenceId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -844,7 +824,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("reference_id")) do
+        def field_def("reference_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -858,7 +838,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         end
       ),
       (
-        def(field_def(:title_i18n)) do
+        def field_def(:title_i18n) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -871,7 +851,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("titleI18n")) do
+        def field_def("titleI18n") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -884,7 +864,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("title_i18n")) do
+        def field_def("title_i18n") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -898,7 +878,7 @@ defmodule(Soulless.Game.Lq.Mail) do
         end
       ),
       (
-        def(field_def(:content_i18n)) do
+        def field_def(:content_i18n) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -911,7 +891,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("contentI18n")) do
+        def field_def("contentI18n") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -924,7 +904,7 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
 
-        def(field_def("content_i18n")) do
+        def field_def("content_i18n") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -937,74 +917,74 @@ defmodule(Soulless.Game.Lq.Mail) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:mail_id)) do
+      def default(:mail_id) do
         {:ok, 0}
       end,
-      def(default(:state)) do
+      def default(:state) do
         {:ok, 0}
       end,
-      def(default(:take_attachment)) do
+      def default(:take_attachment) do
         {:ok, false}
       end,
-      def(default(:title)) do
+      def default(:title) do
         {:ok, ""}
       end,
-      def(default(:content)) do
+      def default(:content) do
         {:ok, ""}
       end,
-      def(default(:attachments)) do
+      def default(:attachments) do
         {:error, :no_default_value}
       end,
-      def(default(:create_time)) do
+      def default(:create_time) do
         {:ok, 0}
       end,
-      def(default(:expire_time)) do
+      def default(:expire_time) do
         {:ok, 0}
       end,
-      def(default(:reference_id)) do
+      def default(:reference_id) do
         {:ok, 0}
       end,
-      def(default(:title_i18n)) do
+      def default(:title_i18n) do
         {:error, :no_default_value}
       end,
-      def(default(:content_i18n)) do
+      def default(:content_i18n) do
         {:error, :no_default_value}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

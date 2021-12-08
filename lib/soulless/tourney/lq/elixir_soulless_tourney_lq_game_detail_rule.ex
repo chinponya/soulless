@@ -1,73 +1,70 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.GameDetailRule) do
+defmodule Soulless.Tourney.Lq.GameDetailRule do
   @moduledoc false
   (
-    defstruct(
-      time_fixed: 0,
-      time_add: 0,
-      dora_count: 0,
-      shiduan: 0,
-      init_point: 0,
-      fandian: 0,
-      can_jifei: false,
-      tianbian_value: 0,
-      liqibang_value: 0,
-      changbang_value: 0,
-      noting_fafu_1: 0,
-      noting_fafu_2: 0,
-      noting_fafu_3: 0,
-      have_liujumanguan: false,
-      have_qieshangmanguan: false,
-      have_biao_dora: false,
-      have_gang_biao_dora: false,
-      ming_dora_immediately_open: false,
-      have_li_dora: false,
-      have_gang_li_dora: false,
-      have_sifenglianda: false,
-      have_sigangsanle: false,
-      have_sijializhi: false,
-      have_jiuzhongjiupai: false,
-      have_sanjiahele: false,
-      have_toutiao: false,
-      have_helelianzhuang: false,
-      have_helezhongju: false,
-      have_tingpailianzhuang: false,
-      have_tingpaizhongju: false,
-      have_yifa: false,
-      have_nanruxiru: false,
-      jingsuanyuandian: 0,
-      shunweima_2: 0,
-      shunweima_3: 0,
-      shunweima_4: 0,
-      bianjietishi: false,
-      ai_level: 0,
-      have_zimosun: false,
-      disable_multi_yukaman: false,
-      fanfu: 0,
-      guyi_mode: 0,
-      dora3_mode: 0,
-      begin_open_mode: 0,
-      jiuchao_mode: 0,
-      muyu_mode: 0,
-      open_hand: 0,
-      disable_leijiyiman: false,
-      __uf__: []
-    )
+    defstruct time_fixed: 0,
+              time_add: 0,
+              dora_count: 0,
+              shiduan: 0,
+              init_point: 0,
+              fandian: 0,
+              can_jifei: false,
+              tianbian_value: 0,
+              liqibang_value: 0,
+              changbang_value: 0,
+              noting_fafu_1: 0,
+              noting_fafu_2: 0,
+              noting_fafu_3: 0,
+              have_liujumanguan: false,
+              have_qieshangmanguan: false,
+              have_biao_dora: false,
+              have_gang_biao_dora: false,
+              ming_dora_immediately_open: false,
+              have_li_dora: false,
+              have_gang_li_dora: false,
+              have_sifenglianda: false,
+              have_sigangsanle: false,
+              have_sijializhi: false,
+              have_jiuzhongjiupai: false,
+              have_sanjiahele: false,
+              have_toutiao: false,
+              have_helelianzhuang: false,
+              have_helezhongju: false,
+              have_tingpailianzhuang: false,
+              have_tingpaizhongju: false,
+              have_yifa: false,
+              have_nanruxiru: false,
+              jingsuanyuandian: 0,
+              shunweima_2: 0,
+              shunweima_3: 0,
+              shunweima_4: 0,
+              bianjietishi: false,
+              ai_level: 0,
+              have_zimosun: false,
+              disable_multi_yukaman: false,
+              fanfu: 0,
+              guyi_mode: 0,
+              dora3_mode: 0,
+              begin_open_mode: 0,
+              jiuchao_mode: 0,
+              muyu_mode: 0,
+              open_hand: 0,
+              disable_leijiyiman: false,
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_time_fixed(msg)
           |> encode_time_add(msg)
@@ -124,701 +121,624 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
       []
 
       [
-        defp(encode_time_fixed(acc, msg)) do
+        defp encode_time_fixed(acc, msg) do
           try do
-            if(msg.time_fixed == 0) do
+            if msg.time_fixed == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.time_fixed)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:time_fixed, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:time_fixed, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_time_add(acc, msg)) do
+        defp encode_time_add(acc, msg) do
           try do
-            if(msg.time_add == 0) do
+            if msg.time_add == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.time_add)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.time_add)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:time_add, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:time_add, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_dora_count(acc, msg)) do
+        defp encode_dora_count(acc, msg) do
           try do
-            if(msg.dora_count == 0) do
+            if msg.dora_count == 0 do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_uint32(msg.dora_count)]
+              [acc, "\x18", Protox.Encode.encode_uint32(msg.dora_count)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:dora_count, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:dora_count, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_shiduan(acc, msg)) do
+        defp encode_shiduan(acc, msg) do
           try do
-            if(msg.shiduan == 0) do
+            if msg.shiduan == 0 do
               acc
             else
               [acc, " ", Protox.Encode.encode_uint32(msg.shiduan)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:shiduan, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:shiduan, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_init_point(acc, msg)) do
+        defp encode_init_point(acc, msg) do
           try do
-            if(msg.init_point == 0) do
+            if msg.init_point == 0 do
               acc
             else
               [acc, "(", Protox.Encode.encode_uint32(msg.init_point)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:init_point, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:init_point, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_fandian(acc, msg)) do
+        defp encode_fandian(acc, msg) do
           try do
-            if(msg.fandian == 0) do
+            if msg.fandian == 0 do
               acc
             else
               [acc, "0", Protox.Encode.encode_uint32(msg.fandian)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:fandian, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:fandian, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_can_jifei(acc, msg)) do
+        defp encode_can_jifei(acc, msg) do
           try do
-            if(msg.can_jifei == false) do
+            if msg.can_jifei == false do
               acc
             else
               [acc, "8", Protox.Encode.encode_bool(msg.can_jifei)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:can_jifei, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:can_jifei, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_tianbian_value(acc, msg)) do
+        defp encode_tianbian_value(acc, msg) do
           try do
-            if(msg.tianbian_value == 0) do
+            if msg.tianbian_value == 0 do
               acc
             else
               [acc, "@", Protox.Encode.encode_uint32(msg.tianbian_value)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:tianbian_value, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:tianbian_value, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_liqibang_value(acc, msg)) do
+        defp encode_liqibang_value(acc, msg) do
           try do
-            if(msg.liqibang_value == 0) do
+            if msg.liqibang_value == 0 do
               acc
             else
               [acc, "H", Protox.Encode.encode_uint32(msg.liqibang_value)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:liqibang_value, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:liqibang_value, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_changbang_value(acc, msg)) do
+        defp encode_changbang_value(acc, msg) do
           try do
-            if(msg.changbang_value == 0) do
+            if msg.changbang_value == 0 do
               acc
             else
               [acc, "P", Protox.Encode.encode_uint32(msg.changbang_value)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:changbang_value, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:changbang_value, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_noting_fafu_1(acc, msg)) do
+        defp encode_noting_fafu_1(acc, msg) do
           try do
-            if(msg.noting_fafu_1 == 0) do
+            if msg.noting_fafu_1 == 0 do
               acc
             else
               [acc, "X", Protox.Encode.encode_uint32(msg.noting_fafu_1)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:noting_fafu_1, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:noting_fafu_1, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_noting_fafu_2(acc, msg)) do
+        defp encode_noting_fafu_2(acc, msg) do
           try do
-            if(msg.noting_fafu_2 == 0) do
+            if msg.noting_fafu_2 == 0 do
               acc
             else
               [acc, "`", Protox.Encode.encode_uint32(msg.noting_fafu_2)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:noting_fafu_2, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:noting_fafu_2, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_noting_fafu_3(acc, msg)) do
+        defp encode_noting_fafu_3(acc, msg) do
           try do
-            if(msg.noting_fafu_3 == 0) do
+            if msg.noting_fafu_3 == 0 do
               acc
             else
               [acc, "h", Protox.Encode.encode_uint32(msg.noting_fafu_3)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:noting_fafu_3, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:noting_fafu_3, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_liujumanguan(acc, msg)) do
+        defp encode_have_liujumanguan(acc, msg) do
           try do
-            if(msg.have_liujumanguan == false) do
+            if msg.have_liujumanguan == false do
               acc
             else
               [acc, "p", Protox.Encode.encode_bool(msg.have_liujumanguan)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_liujumanguan, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_liujumanguan, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_qieshangmanguan(acc, msg)) do
+        defp encode_have_qieshangmanguan(acc, msg) do
           try do
-            if(msg.have_qieshangmanguan == false) do
+            if msg.have_qieshangmanguan == false do
               acc
             else
               [acc, "x", Protox.Encode.encode_bool(msg.have_qieshangmanguan)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_qieshangmanguan, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_qieshangmanguan, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_biao_dora(acc, msg)) do
+        defp encode_have_biao_dora(acc, msg) do
           try do
-            if(msg.have_biao_dora == false) do
+            if msg.have_biao_dora == false do
               acc
             else
-              [acc, <<128, 1>>, Protox.Encode.encode_bool(msg.have_biao_dora)]
+              [acc, "\x80\x01", Protox.Encode.encode_bool(msg.have_biao_dora)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_biao_dora, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_biao_dora, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_gang_biao_dora(acc, msg)) do
+        defp encode_have_gang_biao_dora(acc, msg) do
           try do
-            if(msg.have_gang_biao_dora == false) do
+            if msg.have_gang_biao_dora == false do
               acc
             else
-              [acc, <<136, 1>>, Protox.Encode.encode_bool(msg.have_gang_biao_dora)]
+              [acc, "\x88\x01", Protox.Encode.encode_bool(msg.have_gang_biao_dora)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_gang_biao_dora, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_gang_biao_dora, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_ming_dora_immediately_open(acc, msg)) do
+        defp encode_ming_dora_immediately_open(acc, msg) do
           try do
-            if(msg.ming_dora_immediately_open == false) do
+            if msg.ming_dora_immediately_open == false do
               acc
             else
-              [acc, <<144, 1>>, Protox.Encode.encode_bool(msg.ming_dora_immediately_open)]
+              [acc, "\x90\x01", Protox.Encode.encode_bool(msg.ming_dora_immediately_open)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:ming_dora_immediately_open, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(
+                        :ming_dora_immediately_open,
+                        "invalid field value"
+                      ),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_li_dora(acc, msg)) do
+        defp encode_have_li_dora(acc, msg) do
           try do
-            if(msg.have_li_dora == false) do
+            if msg.have_li_dora == false do
               acc
             else
-              [acc, <<152, 1>>, Protox.Encode.encode_bool(msg.have_li_dora)]
+              [acc, "\x98\x01", Protox.Encode.encode_bool(msg.have_li_dora)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_li_dora, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_li_dora, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_gang_li_dora(acc, msg)) do
+        defp encode_have_gang_li_dora(acc, msg) do
           try do
-            if(msg.have_gang_li_dora == false) do
+            if msg.have_gang_li_dora == false do
               acc
             else
-              [acc, <<160, 1>>, Protox.Encode.encode_bool(msg.have_gang_li_dora)]
+              [acc, "\xA0\x01", Protox.Encode.encode_bool(msg.have_gang_li_dora)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_gang_li_dora, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_gang_li_dora, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_sifenglianda(acc, msg)) do
+        defp encode_have_sifenglianda(acc, msg) do
           try do
-            if(msg.have_sifenglianda == false) do
+            if msg.have_sifenglianda == false do
               acc
             else
-              [acc, <<168, 1>>, Protox.Encode.encode_bool(msg.have_sifenglianda)]
+              [acc, "\xA8\x01", Protox.Encode.encode_bool(msg.have_sifenglianda)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_sifenglianda, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_sifenglianda, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_sigangsanle(acc, msg)) do
+        defp encode_have_sigangsanle(acc, msg) do
           try do
-            if(msg.have_sigangsanle == false) do
+            if msg.have_sigangsanle == false do
               acc
             else
-              [acc, <<176, 1>>, Protox.Encode.encode_bool(msg.have_sigangsanle)]
+              [acc, "\xB0\x01", Protox.Encode.encode_bool(msg.have_sigangsanle)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_sigangsanle, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_sigangsanle, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_sijializhi(acc, msg)) do
+        defp encode_have_sijializhi(acc, msg) do
           try do
-            if(msg.have_sijializhi == false) do
+            if msg.have_sijializhi == false do
               acc
             else
-              [acc, <<184, 1>>, Protox.Encode.encode_bool(msg.have_sijializhi)]
+              [acc, "\xB8\x01", Protox.Encode.encode_bool(msg.have_sijializhi)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_sijializhi, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_sijializhi, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_jiuzhongjiupai(acc, msg)) do
+        defp encode_have_jiuzhongjiupai(acc, msg) do
           try do
-            if(msg.have_jiuzhongjiupai == false) do
+            if msg.have_jiuzhongjiupai == false do
               acc
             else
-              [acc, <<192, 1>>, Protox.Encode.encode_bool(msg.have_jiuzhongjiupai)]
+              [acc, "\xC0\x01", Protox.Encode.encode_bool(msg.have_jiuzhongjiupai)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_jiuzhongjiupai, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_jiuzhongjiupai, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_sanjiahele(acc, msg)) do
+        defp encode_have_sanjiahele(acc, msg) do
           try do
-            if(msg.have_sanjiahele == false) do
+            if msg.have_sanjiahele == false do
               acc
             else
-              [acc, <<200, 1>>, Protox.Encode.encode_bool(msg.have_sanjiahele)]
+              [acc, "\xC8\x01", Protox.Encode.encode_bool(msg.have_sanjiahele)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_sanjiahele, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_sanjiahele, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_toutiao(acc, msg)) do
+        defp encode_have_toutiao(acc, msg) do
           try do
-            if(msg.have_toutiao == false) do
+            if msg.have_toutiao == false do
               acc
             else
-              [acc, <<208, 1>>, Protox.Encode.encode_bool(msg.have_toutiao)]
+              [acc, "\xD0\x01", Protox.Encode.encode_bool(msg.have_toutiao)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_toutiao, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_toutiao, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_helelianzhuang(acc, msg)) do
+        defp encode_have_helelianzhuang(acc, msg) do
           try do
-            if(msg.have_helelianzhuang == false) do
+            if msg.have_helelianzhuang == false do
               acc
             else
-              [acc, <<216, 1>>, Protox.Encode.encode_bool(msg.have_helelianzhuang)]
+              [acc, "\xD8\x01", Protox.Encode.encode_bool(msg.have_helelianzhuang)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_helelianzhuang, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_helelianzhuang, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_helezhongju(acc, msg)) do
+        defp encode_have_helezhongju(acc, msg) do
           try do
-            if(msg.have_helezhongju == false) do
+            if msg.have_helezhongju == false do
               acc
             else
-              [acc, <<224, 1>>, Protox.Encode.encode_bool(msg.have_helezhongju)]
+              [acc, "\xE0\x01", Protox.Encode.encode_bool(msg.have_helezhongju)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_helezhongju, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_helezhongju, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_tingpailianzhuang(acc, msg)) do
+        defp encode_have_tingpailianzhuang(acc, msg) do
           try do
-            if(msg.have_tingpailianzhuang == false) do
+            if msg.have_tingpailianzhuang == false do
               acc
             else
-              [acc, <<232, 1>>, Protox.Encode.encode_bool(msg.have_tingpailianzhuang)]
+              [acc, "\xE8\x01", Protox.Encode.encode_bool(msg.have_tingpailianzhuang)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_tingpailianzhuang, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_tingpailianzhuang, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_tingpaizhongju(acc, msg)) do
+        defp encode_have_tingpaizhongju(acc, msg) do
           try do
-            if(msg.have_tingpaizhongju == false) do
+            if msg.have_tingpaizhongju == false do
               acc
             else
-              [acc, <<240, 1>>, Protox.Encode.encode_bool(msg.have_tingpaizhongju)]
+              [acc, "\xF0\x01", Protox.Encode.encode_bool(msg.have_tingpaizhongju)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_tingpaizhongju, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_tingpaizhongju, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_have_yifa(acc, msg)) do
+        defp encode_have_yifa(acc, msg) do
           try do
-            if(msg.have_yifa == false) do
+            if msg.have_yifa == false do
               acc
             else
-              [acc, <<248, 1>>, Protox.Encode.encode_bool(msg.have_yifa)]
+              [acc, "\xF8\x01", Protox.Encode.encode_bool(msg.have_yifa)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:have_yifa, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:have_yifa, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_have_nanruxiru(acc, msg)) do
+        defp encode_have_nanruxiru(acc, msg) do
           try do
-            if(msg.have_nanruxiru == false) do
+            if msg.have_nanruxiru == false do
               acc
             else
-              [acc, <<128, 2>>, Protox.Encode.encode_bool(msg.have_nanruxiru)]
+              [acc, "\x80\x02", Protox.Encode.encode_bool(msg.have_nanruxiru)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_nanruxiru, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_nanruxiru, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_jingsuanyuandian(acc, msg)) do
+        defp encode_jingsuanyuandian(acc, msg) do
           try do
-            if(msg.jingsuanyuandian == 0) do
+            if msg.jingsuanyuandian == 0 do
               acc
             else
-              [acc, <<136, 2>>, Protox.Encode.encode_uint32(msg.jingsuanyuandian)]
+              [acc, "\x88\x02", Protox.Encode.encode_uint32(msg.jingsuanyuandian)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:jingsuanyuandian, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:jingsuanyuandian, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_shunweima_2(acc, msg)) do
+        defp encode_shunweima_2(acc, msg) do
           try do
-            if(msg.shunweima_2 == 0) do
+            if msg.shunweima_2 == 0 do
               acc
             else
-              [acc, <<144, 2>>, Protox.Encode.encode_int32(msg.shunweima_2)]
+              [acc, "\x90\x02", Protox.Encode.encode_int32(msg.shunweima_2)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:shunweima_2, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:shunweima_2, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_shunweima_3(acc, msg)) do
+        defp encode_shunweima_3(acc, msg) do
           try do
-            if(msg.shunweima_3 == 0) do
+            if msg.shunweima_3 == 0 do
               acc
             else
-              [acc, <<152, 2>>, Protox.Encode.encode_int32(msg.shunweima_3)]
+              [acc, "\x98\x02", Protox.Encode.encode_int32(msg.shunweima_3)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:shunweima_3, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:shunweima_3, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_shunweima_4(acc, msg)) do
+        defp encode_shunweima_4(acc, msg) do
           try do
-            if(msg.shunweima_4 == 0) do
+            if msg.shunweima_4 == 0 do
               acc
             else
-              [acc, <<160, 2>>, Protox.Encode.encode_int32(msg.shunweima_4)]
+              [acc, "\xA0\x02", Protox.Encode.encode_int32(msg.shunweima_4)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:shunweima_4, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:shunweima_4, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_bianjietishi(acc, msg)) do
+        defp encode_bianjietishi(acc, msg) do
           try do
-            if(msg.bianjietishi == false) do
+            if msg.bianjietishi == false do
               acc
             else
-              [acc, <<168, 2>>, Protox.Encode.encode_bool(msg.bianjietishi)]
+              [acc, "\xA8\x02", Protox.Encode.encode_bool(msg.bianjietishi)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:bianjietishi, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:bianjietishi, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_ai_level(acc, msg)) do
+        defp encode_ai_level(acc, msg) do
           try do
-            if(msg.ai_level == 0) do
+            if msg.ai_level == 0 do
               acc
             else
-              [acc, <<176, 2>>, Protox.Encode.encode_uint32(msg.ai_level)]
+              [acc, "\xB0\x02", Protox.Encode.encode_uint32(msg.ai_level)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:ai_level, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:ai_level, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_have_zimosun(acc, msg)) do
+        defp encode_have_zimosun(acc, msg) do
           try do
-            if(msg.have_zimosun == false) do
+            if msg.have_zimosun == false do
               acc
             else
-              [acc, <<184, 2>>, Protox.Encode.encode_bool(msg.have_zimosun)]
+              [acc, "\xB8\x02", Protox.Encode.encode_bool(msg.have_zimosun)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:have_zimosun, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:have_zimosun, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_disable_multi_yukaman(acc, msg)) do
+        defp encode_disable_multi_yukaman(acc, msg) do
           try do
-            if(msg.disable_multi_yukaman == false) do
+            if msg.disable_multi_yukaman == false do
               acc
             else
-              [acc, <<192, 2>>, Protox.Encode.encode_bool(msg.disable_multi_yukaman)]
+              [acc, "\xC0\x02", Protox.Encode.encode_bool(msg.disable_multi_yukaman)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:disable_multi_yukaman, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:disable_multi_yukaman, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_fanfu(acc, msg)) do
+        defp encode_fanfu(acc, msg) do
           try do
-            if(msg.fanfu == 0) do
+            if msg.fanfu == 0 do
               acc
             else
-              [acc, <<200, 2>>, Protox.Encode.encode_uint32(msg.fanfu)]
+              [acc, "\xC8\x02", Protox.Encode.encode_uint32(msg.fanfu)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:fanfu, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:fanfu, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_guyi_mode(acc, msg)) do
+        defp encode_guyi_mode(acc, msg) do
           try do
-            if(msg.guyi_mode == 0) do
+            if msg.guyi_mode == 0 do
               acc
             else
-              [acc, <<208, 2>>, Protox.Encode.encode_uint32(msg.guyi_mode)]
+              [acc, "\xD0\x02", Protox.Encode.encode_uint32(msg.guyi_mode)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:guyi_mode, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:guyi_mode, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_dora3_mode(acc, msg)) do
+        defp encode_dora3_mode(acc, msg) do
           try do
-            if(msg.dora3_mode == 0) do
+            if msg.dora3_mode == 0 do
               acc
             else
-              [acc, <<216, 2>>, Protox.Encode.encode_uint32(msg.dora3_mode)]
+              [acc, "\xD8\x02", Protox.Encode.encode_uint32(msg.dora3_mode)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:dora3_mode, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:dora3_mode, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_begin_open_mode(acc, msg)) do
+        defp encode_begin_open_mode(acc, msg) do
           try do
-            if(msg.begin_open_mode == 0) do
+            if msg.begin_open_mode == 0 do
               acc
             else
-              [acc, <<224, 2>>, Protox.Encode.encode_uint32(msg.begin_open_mode)]
+              [acc, "\xE0\x02", Protox.Encode.encode_uint32(msg.begin_open_mode)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:begin_open_mode, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:begin_open_mode, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_jiuchao_mode(acc, msg)) do
+        defp encode_jiuchao_mode(acc, msg) do
           try do
-            if(msg.jiuchao_mode == 0) do
+            if msg.jiuchao_mode == 0 do
               acc
             else
-              [acc, <<232, 2>>, Protox.Encode.encode_uint32(msg.jiuchao_mode)]
+              [acc, "\xE8\x02", Protox.Encode.encode_uint32(msg.jiuchao_mode)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:jiuchao_mode, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:jiuchao_mode, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_muyu_mode(acc, msg)) do
+        defp encode_muyu_mode(acc, msg) do
           try do
-            if(msg.muyu_mode == 0) do
+            if msg.muyu_mode == 0 do
               acc
             else
-              [acc, <<240, 2>>, Protox.Encode.encode_uint32(msg.muyu_mode)]
+              [acc, "\xF0\x02", Protox.Encode.encode_uint32(msg.muyu_mode)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:muyu_mode, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:muyu_mode, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_open_hand(acc, msg)) do
+        defp encode_open_hand(acc, msg) do
           try do
-            if(msg.open_hand == 0) do
+            if msg.open_hand == 0 do
               acc
             else
-              [acc, <<248, 2>>, Protox.Encode.encode_uint32(msg.open_hand)]
+              [acc, "\xF8\x02", Protox.Encode.encode_uint32(msg.open_hand)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:open_hand, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:open_hand, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_disable_leijiyiman(acc, msg)) do
+        defp encode_disable_leijiyiman(acc, msg) do
           try do
-            if(msg.disable_leijiyiman == false) do
+            if msg.disable_leijiyiman == false do
               acc
             else
-              [acc, <<224, 3>>, Protox.Encode.encode_bool(msg.disable_leijiyiman)]
+              [acc, "\xE0\x03", Protox.Encode.encode_bool(msg.disable_leijiyiman)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:disable_leijiyiman, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:disable_leijiyiman, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -839,7 +759,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -850,7 +770,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Tourney.Lq.GameDetailRule))
           end
         )
@@ -858,15 +778,15 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -1079,17 +999,16 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -1100,17 +1019,16 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -1120,7 +1038,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         33 => {:jingsuanyuandian, {:scalar, 0}, :uint32},
         12 => {:noting_fafu_2, {:scalar, 0}, :uint32},
@@ -1177,61 +1095,61 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
-        have_helezhongju: {28, {:scalar, false}, :bool},
-        shiduan: {4, {:scalar, 0}, :uint32},
-        dora_count: {3, {:scalar, 0}, :uint32},
-        ai_level: {38, {:scalar, 0}, :uint32},
-        dora3_mode: {43, {:scalar, 0}, :uint32},
-        have_sijializhi: {23, {:scalar, false}, :bool},
-        tianbian_value: {8, {:scalar, 0}, :uint32},
-        disable_leijiyiman: {60, {:scalar, false}, :bool},
-        have_liujumanguan: {14, {:scalar, false}, :bool},
-        liqibang_value: {9, {:scalar, 0}, :uint32},
-        have_nanruxiru: {32, {:scalar, false}, :bool},
         changbang_value: {10, {:scalar, 0}, :uint32},
-        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
-        open_hand: {47, {:scalar, 0}, :uint32},
-        begin_open_mode: {44, {:scalar, 0}, :uint32},
-        have_yifa: {31, {:scalar, false}, :bool},
-        have_gang_biao_dora: {17, {:scalar, false}, :bool},
-        muyu_mode: {46, {:scalar, 0}, :uint32},
-        time_fixed: {1, {:scalar, 0}, :uint32},
-        noting_fafu_3: {13, {:scalar, 0}, :uint32},
-        shunweima_2: {34, {:scalar, 0}, :int32},
-        have_tingpaizhongju: {30, {:scalar, false}, :bool},
-        init_point: {5, {:scalar, 0}, :uint32},
-        have_toutiao: {26, {:scalar, false}, :bool},
-        have_zimosun: {39, {:scalar, false}, :bool},
-        fandian: {6, {:scalar, 0}, :uint32},
-        have_sifenglianda: {21, {:scalar, false}, :bool},
-        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
-        have_qieshangmanguan: {15, {:scalar, false}, :bool},
-        disable_multi_yukaman: {40, {:scalar, false}, :bool},
-        have_sanjiahele: {25, {:scalar, false}, :bool},
-        have_sigangsanle: {22, {:scalar, false}, :bool},
-        have_gang_li_dora: {20, {:scalar, false}, :bool},
-        jiuchao_mode: {45, {:scalar, 0}, :uint32},
-        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
-        have_biao_dora: {16, {:scalar, false}, :bool},
-        shunweima_4: {36, {:scalar, 0}, :int32},
-        noting_fafu_1: {11, {:scalar, 0}, :uint32},
-        bianjietishi: {37, {:scalar, false}, :bool},
         ming_dora_immediately_open: {18, {:scalar, false}, :bool},
-        guyi_mode: {42, {:scalar, 0}, :uint32},
-        can_jifei: {7, {:scalar, false}, :bool},
-        noting_fafu_2: {12, {:scalar, 0}, :uint32},
+        disable_multi_yukaman: {40, {:scalar, false}, :bool},
+        have_gang_biao_dora: {17, {:scalar, false}, :bool},
+        jiuchao_mode: {45, {:scalar, 0}, :uint32},
         have_helelianzhuang: {27, {:scalar, false}, :bool},
+        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
+        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
         shunweima_3: {35, {:scalar, 0}, :int32},
-        fanfu: {41, {:scalar, 0}, :uint32},
+        time_fixed: {1, {:scalar, 0}, :uint32},
+        have_gang_li_dora: {20, {:scalar, false}, :bool},
+        have_sifenglianda: {21, {:scalar, false}, :bool},
+        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
+        have_sigangsanle: {22, {:scalar, false}, :bool},
+        have_zimosun: {39, {:scalar, false}, :bool},
+        have_toutiao: {26, {:scalar, false}, :bool},
+        guyi_mode: {42, {:scalar, 0}, :uint32},
+        have_liujumanguan: {14, {:scalar, false}, :bool},
+        have_sijializhi: {23, {:scalar, false}, :bool},
         time_add: {2, {:scalar, 0}, :uint32},
-        have_li_dora: {19, {:scalar, false}, :bool}
+        init_point: {5, {:scalar, 0}, :uint32},
+        have_sanjiahele: {25, {:scalar, false}, :bool},
+        noting_fafu_2: {12, {:scalar, 0}, :uint32},
+        dora3_mode: {43, {:scalar, 0}, :uint32},
+        have_helezhongju: {28, {:scalar, false}, :bool},
+        have_nanruxiru: {32, {:scalar, false}, :bool},
+        can_jifei: {7, {:scalar, false}, :bool},
+        begin_open_mode: {44, {:scalar, 0}, :uint32},
+        have_qieshangmanguan: {15, {:scalar, false}, :bool},
+        bianjietishi: {37, {:scalar, false}, :bool},
+        noting_fafu_1: {11, {:scalar, 0}, :uint32},
+        fanfu: {41, {:scalar, 0}, :uint32},
+        dora_count: {3, {:scalar, 0}, :uint32},
+        disable_leijiyiman: {60, {:scalar, false}, :bool},
+        muyu_mode: {46, {:scalar, 0}, :uint32},
+        shiduan: {4, {:scalar, 0}, :uint32},
+        fandian: {6, {:scalar, 0}, :uint32},
+        tianbian_value: {8, {:scalar, 0}, :uint32},
+        open_hand: {47, {:scalar, 0}, :uint32},
+        shunweima_4: {36, {:scalar, 0}, :int32},
+        liqibang_value: {9, {:scalar, 0}, :uint32},
+        have_biao_dora: {16, {:scalar, false}, :bool},
+        have_tingpaizhongju: {30, {:scalar, false}, :bool},
+        have_li_dora: {19, {:scalar, false}, :bool},
+        have_yifa: {31, {:scalar, false}, :bool},
+        ai_level: {38, {:scalar, 0}, :uint32},
+        noting_fafu_3: {13, {:scalar, 0}, :uint32},
+        shunweima_2: {34, {:scalar, 0}, :int32}
       }
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -1671,7 +1589,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:time_fixed)) do
+        def field_def(:time_fixed) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1684,7 +1602,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("timeFixed")) do
+        def field_def("timeFixed") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1697,7 +1615,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("time_fixed")) do
+        def field_def("time_fixed") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1711,7 +1629,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:time_add)) do
+        def field_def(:time_add) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1724,7 +1642,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("timeAdd")) do
+        def field_def("timeAdd") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1737,7 +1655,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("time_add")) do
+        def field_def("time_add") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1751,7 +1669,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:dora_count)) do
+        def field_def(:dora_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1764,7 +1682,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("doraCount")) do
+        def field_def("doraCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1777,7 +1695,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("dora_count")) do
+        def field_def("dora_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1791,7 +1709,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:shiduan)) do
+        def field_def(:shiduan) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1804,7 +1722,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("shiduan")) do
+        def field_def("shiduan") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1820,7 +1738,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         []
       ),
       (
-        def(field_def(:init_point)) do
+        def field_def(:init_point) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1833,7 +1751,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("initPoint")) do
+        def field_def("initPoint") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1846,7 +1764,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("init_point")) do
+        def field_def("init_point") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1860,7 +1778,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:fandian)) do
+        def field_def(:fandian) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1873,7 +1791,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("fandian")) do
+        def field_def("fandian") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1889,7 +1807,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         []
       ),
       (
-        def(field_def(:can_jifei)) do
+        def field_def(:can_jifei) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1902,7 +1820,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("canJifei")) do
+        def field_def("canJifei") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1915,7 +1833,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("can_jifei")) do
+        def field_def("can_jifei") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1929,7 +1847,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:tianbian_value)) do
+        def field_def(:tianbian_value) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1942,7 +1860,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("tianbianValue")) do
+        def field_def("tianbianValue") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1955,7 +1873,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("tianbian_value")) do
+        def field_def("tianbian_value") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1969,7 +1887,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:liqibang_value)) do
+        def field_def(:liqibang_value) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1982,7 +1900,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("liqibangValue")) do
+        def field_def("liqibangValue") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -1995,7 +1913,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("liqibang_value")) do
+        def field_def("liqibang_value") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2009,7 +1927,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:changbang_value)) do
+        def field_def(:changbang_value) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2022,7 +1940,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("changbangValue")) do
+        def field_def("changbangValue") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2035,7 +1953,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("changbang_value")) do
+        def field_def("changbang_value") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2049,7 +1967,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:noting_fafu_1)) do
+        def field_def(:noting_fafu_1) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2062,7 +1980,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("notingFafu1")) do
+        def field_def("notingFafu1") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2075,7 +1993,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("noting_fafu_1")) do
+        def field_def("noting_fafu_1") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2089,7 +2007,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:noting_fafu_2)) do
+        def field_def(:noting_fafu_2) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2102,7 +2020,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("notingFafu2")) do
+        def field_def("notingFafu2") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2115,7 +2033,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("noting_fafu_2")) do
+        def field_def("noting_fafu_2") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2129,7 +2047,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:noting_fafu_3)) do
+        def field_def(:noting_fafu_3) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2142,7 +2060,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("notingFafu3")) do
+        def field_def("notingFafu3") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2155,7 +2073,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("noting_fafu_3")) do
+        def field_def("noting_fafu_3") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2169,7 +2087,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_liujumanguan)) do
+        def field_def(:have_liujumanguan) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2182,7 +2100,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveLiujumanguan")) do
+        def field_def("haveLiujumanguan") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2195,7 +2113,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_liujumanguan")) do
+        def field_def("have_liujumanguan") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2209,7 +2127,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_qieshangmanguan)) do
+        def field_def(:have_qieshangmanguan) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2222,7 +2140,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveQieshangmanguan")) do
+        def field_def("haveQieshangmanguan") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2235,7 +2153,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_qieshangmanguan")) do
+        def field_def("have_qieshangmanguan") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2249,7 +2167,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_biao_dora)) do
+        def field_def(:have_biao_dora) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2262,7 +2180,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveBiaoDora")) do
+        def field_def("haveBiaoDora") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2275,7 +2193,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_biao_dora")) do
+        def field_def("have_biao_dora") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2289,7 +2207,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_gang_biao_dora)) do
+        def field_def(:have_gang_biao_dora) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2302,7 +2220,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveGangBiaoDora")) do
+        def field_def("haveGangBiaoDora") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2315,7 +2233,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_gang_biao_dora")) do
+        def field_def("have_gang_biao_dora") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2329,7 +2247,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:ming_dora_immediately_open)) do
+        def field_def(:ming_dora_immediately_open) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2342,7 +2260,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("mingDoraImmediatelyOpen")) do
+        def field_def("mingDoraImmediatelyOpen") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2355,7 +2273,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("ming_dora_immediately_open")) do
+        def field_def("ming_dora_immediately_open") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2369,7 +2287,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_li_dora)) do
+        def field_def(:have_li_dora) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2382,7 +2300,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveLiDora")) do
+        def field_def("haveLiDora") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2395,7 +2313,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_li_dora")) do
+        def field_def("have_li_dora") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2409,7 +2327,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_gang_li_dora)) do
+        def field_def(:have_gang_li_dora) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2422,7 +2340,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveGangLiDora")) do
+        def field_def("haveGangLiDora") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2435,7 +2353,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_gang_li_dora")) do
+        def field_def("have_gang_li_dora") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2449,7 +2367,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_sifenglianda)) do
+        def field_def(:have_sifenglianda) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2462,7 +2380,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveSifenglianda")) do
+        def field_def("haveSifenglianda") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2475,7 +2393,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_sifenglianda")) do
+        def field_def("have_sifenglianda") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2489,7 +2407,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_sigangsanle)) do
+        def field_def(:have_sigangsanle) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2502,7 +2420,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveSigangsanle")) do
+        def field_def("haveSigangsanle") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2515,7 +2433,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_sigangsanle")) do
+        def field_def("have_sigangsanle") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2529,7 +2447,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_sijializhi)) do
+        def field_def(:have_sijializhi) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2542,7 +2460,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveSijializhi")) do
+        def field_def("haveSijializhi") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2555,7 +2473,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_sijializhi")) do
+        def field_def("have_sijializhi") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2569,7 +2487,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_jiuzhongjiupai)) do
+        def field_def(:have_jiuzhongjiupai) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2582,7 +2500,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveJiuzhongjiupai")) do
+        def field_def("haveJiuzhongjiupai") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2595,7 +2513,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_jiuzhongjiupai")) do
+        def field_def("have_jiuzhongjiupai") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2609,7 +2527,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_sanjiahele)) do
+        def field_def(:have_sanjiahele) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2622,7 +2540,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveSanjiahele")) do
+        def field_def("haveSanjiahele") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2635,7 +2553,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_sanjiahele")) do
+        def field_def("have_sanjiahele") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2649,7 +2567,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_toutiao)) do
+        def field_def(:have_toutiao) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2662,7 +2580,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveToutiao")) do
+        def field_def("haveToutiao") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2675,7 +2593,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_toutiao")) do
+        def field_def("have_toutiao") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2689,7 +2607,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_helelianzhuang)) do
+        def field_def(:have_helelianzhuang) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2702,7 +2620,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveHelelianzhuang")) do
+        def field_def("haveHelelianzhuang") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2715,7 +2633,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_helelianzhuang")) do
+        def field_def("have_helelianzhuang") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2729,7 +2647,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_helezhongju)) do
+        def field_def(:have_helezhongju) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2742,7 +2660,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveHelezhongju")) do
+        def field_def("haveHelezhongju") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2755,7 +2673,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_helezhongju")) do
+        def field_def("have_helezhongju") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2769,7 +2687,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_tingpailianzhuang)) do
+        def field_def(:have_tingpailianzhuang) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2782,7 +2700,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveTingpailianzhuang")) do
+        def field_def("haveTingpailianzhuang") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2795,7 +2713,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_tingpailianzhuang")) do
+        def field_def("have_tingpailianzhuang") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2809,7 +2727,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_tingpaizhongju)) do
+        def field_def(:have_tingpaizhongju) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2822,7 +2740,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveTingpaizhongju")) do
+        def field_def("haveTingpaizhongju") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2835,7 +2753,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_tingpaizhongju")) do
+        def field_def("have_tingpaizhongju") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2849,7 +2767,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_yifa)) do
+        def field_def(:have_yifa) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2862,7 +2780,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveYifa")) do
+        def field_def("haveYifa") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2875,7 +2793,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_yifa")) do
+        def field_def("have_yifa") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2889,7 +2807,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_nanruxiru)) do
+        def field_def(:have_nanruxiru) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2902,7 +2820,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveNanruxiru")) do
+        def field_def("haveNanruxiru") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2915,7 +2833,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_nanruxiru")) do
+        def field_def("have_nanruxiru") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2929,7 +2847,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:jingsuanyuandian)) do
+        def field_def(:jingsuanyuandian) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2942,7 +2860,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("jingsuanyuandian")) do
+        def field_def("jingsuanyuandian") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2958,7 +2876,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         []
       ),
       (
-        def(field_def(:shunweima_2)) do
+        def field_def(:shunweima_2) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2971,7 +2889,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("shunweima2")) do
+        def field_def("shunweima2") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2984,7 +2902,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("shunweima_2")) do
+        def field_def("shunweima_2") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -2998,7 +2916,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:shunweima_3)) do
+        def field_def(:shunweima_3) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3011,7 +2929,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("shunweima3")) do
+        def field_def("shunweima3") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3024,7 +2942,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("shunweima_3")) do
+        def field_def("shunweima_3") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3038,7 +2956,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:shunweima_4)) do
+        def field_def(:shunweima_4) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3051,7 +2969,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("shunweima4")) do
+        def field_def("shunweima4") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3064,7 +2982,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("shunweima_4")) do
+        def field_def("shunweima_4") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3078,7 +2996,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:bianjietishi)) do
+        def field_def(:bianjietishi) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3091,7 +3009,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("bianjietishi")) do
+        def field_def("bianjietishi") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3107,7 +3025,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         []
       ),
       (
-        def(field_def(:ai_level)) do
+        def field_def(:ai_level) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3120,7 +3038,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("aiLevel")) do
+        def field_def("aiLevel") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3133,7 +3051,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("ai_level")) do
+        def field_def("ai_level") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3147,7 +3065,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:have_zimosun)) do
+        def field_def(:have_zimosun) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3160,7 +3078,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("haveZimosun")) do
+        def field_def("haveZimosun") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3173,7 +3091,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("have_zimosun")) do
+        def field_def("have_zimosun") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3187,7 +3105,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:disable_multi_yukaman)) do
+        def field_def(:disable_multi_yukaman) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3200,7 +3118,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("disableMultiYukaman")) do
+        def field_def("disableMultiYukaman") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3213,7 +3131,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("disable_multi_yukaman")) do
+        def field_def("disable_multi_yukaman") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3227,7 +3145,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:fanfu)) do
+        def field_def(:fanfu) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3240,7 +3158,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("fanfu")) do
+        def field_def("fanfu") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3256,7 +3174,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         []
       ),
       (
-        def(field_def(:guyi_mode)) do
+        def field_def(:guyi_mode) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3269,7 +3187,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("guyiMode")) do
+        def field_def("guyiMode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3282,7 +3200,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("guyi_mode")) do
+        def field_def("guyi_mode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3296,7 +3214,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:dora3_mode)) do
+        def field_def(:dora3_mode) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3309,7 +3227,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("dora3Mode")) do
+        def field_def("dora3Mode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3322,7 +3240,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("dora3_mode")) do
+        def field_def("dora3_mode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3336,7 +3254,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:begin_open_mode)) do
+        def field_def(:begin_open_mode) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3349,7 +3267,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("beginOpenMode")) do
+        def field_def("beginOpenMode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3362,7 +3280,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("begin_open_mode")) do
+        def field_def("begin_open_mode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3376,7 +3294,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:jiuchao_mode)) do
+        def field_def(:jiuchao_mode) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3389,7 +3307,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("jiuchaoMode")) do
+        def field_def("jiuchaoMode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3402,7 +3320,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("jiuchao_mode")) do
+        def field_def("jiuchao_mode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3416,7 +3334,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:muyu_mode)) do
+        def field_def(:muyu_mode) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3429,7 +3347,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("muyuMode")) do
+        def field_def("muyuMode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3442,7 +3360,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("muyu_mode")) do
+        def field_def("muyu_mode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3456,7 +3374,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:open_hand)) do
+        def field_def(:open_hand) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3469,7 +3387,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("openHand")) do
+        def field_def("openHand") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3482,7 +3400,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("open_hand")) do
+        def field_def("open_hand") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3496,7 +3414,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
         end
       ),
       (
-        def(field_def(:disable_leijiyiman)) do
+        def field_def(:disable_leijiyiman) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3509,7 +3427,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("disableLeijiyiman")) do
+        def field_def("disableLeijiyiman") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3522,7 +3440,7 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
 
-        def(field_def("disable_leijiyiman")) do
+        def field_def("disable_leijiyiman") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -3535,185 +3453,185 @@ defmodule(Soulless.Tourney.Lq.GameDetailRule) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:time_fixed)) do
+      def default(:time_fixed) do
         {:ok, 0}
       end,
-      def(default(:time_add)) do
+      def default(:time_add) do
         {:ok, 0}
       end,
-      def(default(:dora_count)) do
+      def default(:dora_count) do
         {:ok, 0}
       end,
-      def(default(:shiduan)) do
+      def default(:shiduan) do
         {:ok, 0}
       end,
-      def(default(:init_point)) do
+      def default(:init_point) do
         {:ok, 0}
       end,
-      def(default(:fandian)) do
+      def default(:fandian) do
         {:ok, 0}
       end,
-      def(default(:can_jifei)) do
+      def default(:can_jifei) do
         {:ok, false}
       end,
-      def(default(:tianbian_value)) do
+      def default(:tianbian_value) do
         {:ok, 0}
       end,
-      def(default(:liqibang_value)) do
+      def default(:liqibang_value) do
         {:ok, 0}
       end,
-      def(default(:changbang_value)) do
+      def default(:changbang_value) do
         {:ok, 0}
       end,
-      def(default(:noting_fafu_1)) do
+      def default(:noting_fafu_1) do
         {:ok, 0}
       end,
-      def(default(:noting_fafu_2)) do
+      def default(:noting_fafu_2) do
         {:ok, 0}
       end,
-      def(default(:noting_fafu_3)) do
+      def default(:noting_fafu_3) do
         {:ok, 0}
       end,
-      def(default(:have_liujumanguan)) do
+      def default(:have_liujumanguan) do
         {:ok, false}
       end,
-      def(default(:have_qieshangmanguan)) do
+      def default(:have_qieshangmanguan) do
         {:ok, false}
       end,
-      def(default(:have_biao_dora)) do
+      def default(:have_biao_dora) do
         {:ok, false}
       end,
-      def(default(:have_gang_biao_dora)) do
+      def default(:have_gang_biao_dora) do
         {:ok, false}
       end,
-      def(default(:ming_dora_immediately_open)) do
+      def default(:ming_dora_immediately_open) do
         {:ok, false}
       end,
-      def(default(:have_li_dora)) do
+      def default(:have_li_dora) do
         {:ok, false}
       end,
-      def(default(:have_gang_li_dora)) do
+      def default(:have_gang_li_dora) do
         {:ok, false}
       end,
-      def(default(:have_sifenglianda)) do
+      def default(:have_sifenglianda) do
         {:ok, false}
       end,
-      def(default(:have_sigangsanle)) do
+      def default(:have_sigangsanle) do
         {:ok, false}
       end,
-      def(default(:have_sijializhi)) do
+      def default(:have_sijializhi) do
         {:ok, false}
       end,
-      def(default(:have_jiuzhongjiupai)) do
+      def default(:have_jiuzhongjiupai) do
         {:ok, false}
       end,
-      def(default(:have_sanjiahele)) do
+      def default(:have_sanjiahele) do
         {:ok, false}
       end,
-      def(default(:have_toutiao)) do
+      def default(:have_toutiao) do
         {:ok, false}
       end,
-      def(default(:have_helelianzhuang)) do
+      def default(:have_helelianzhuang) do
         {:ok, false}
       end,
-      def(default(:have_helezhongju)) do
+      def default(:have_helezhongju) do
         {:ok, false}
       end,
-      def(default(:have_tingpailianzhuang)) do
+      def default(:have_tingpailianzhuang) do
         {:ok, false}
       end,
-      def(default(:have_tingpaizhongju)) do
+      def default(:have_tingpaizhongju) do
         {:ok, false}
       end,
-      def(default(:have_yifa)) do
+      def default(:have_yifa) do
         {:ok, false}
       end,
-      def(default(:have_nanruxiru)) do
+      def default(:have_nanruxiru) do
         {:ok, false}
       end,
-      def(default(:jingsuanyuandian)) do
+      def default(:jingsuanyuandian) do
         {:ok, 0}
       end,
-      def(default(:shunweima_2)) do
+      def default(:shunweima_2) do
         {:ok, 0}
       end,
-      def(default(:shunweima_3)) do
+      def default(:shunweima_3) do
         {:ok, 0}
       end,
-      def(default(:shunweima_4)) do
+      def default(:shunweima_4) do
         {:ok, 0}
       end,
-      def(default(:bianjietishi)) do
+      def default(:bianjietishi) do
         {:ok, false}
       end,
-      def(default(:ai_level)) do
+      def default(:ai_level) do
         {:ok, 0}
       end,
-      def(default(:have_zimosun)) do
+      def default(:have_zimosun) do
         {:ok, false}
       end,
-      def(default(:disable_multi_yukaman)) do
+      def default(:disable_multi_yukaman) do
         {:ok, false}
       end,
-      def(default(:fanfu)) do
+      def default(:fanfu) do
         {:ok, 0}
       end,
-      def(default(:guyi_mode)) do
+      def default(:guyi_mode) do
         {:ok, 0}
       end,
-      def(default(:dora3_mode)) do
+      def default(:dora3_mode) do
         {:ok, 0}
       end,
-      def(default(:begin_open_mode)) do
+      def default(:begin_open_mode) do
         {:ok, 0}
       end,
-      def(default(:jiuchao_mode)) do
+      def default(:jiuchao_mode) do
         {:ok, 0}
       end,
-      def(default(:muyu_mode)) do
+      def default(:muyu_mode) do
         {:ok, 0}
       end,
-      def(default(:open_hand)) do
+      def default(:open_hand) do
         {:ok, 0}
       end,
-      def(default(:disable_leijiyiman)) do
+      def default(:disable_leijiyiman) do
         {:ok, false}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

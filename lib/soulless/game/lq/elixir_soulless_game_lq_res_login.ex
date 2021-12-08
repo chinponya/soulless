@@ -1,36 +1,33 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.ResLogin) do
+defmodule Soulless.Game.Lq.ResLogin do
   @moduledoc false
   (
-    defstruct(
-      error: nil,
-      account_id: 0,
-      account: nil,
-      game_info: nil,
-      has_unread_announcement: false,
-      access_token: "",
-      signup_time: 0,
-      is_id_card_authed: false,
-      country: "",
-      logined_version: [],
-      rewarded_version: [],
-      __uf__: []
-    )
+    defstruct error: nil,
+              account_id: 0,
+              account: nil,
+              game_info: nil,
+              has_unread_announcement: false,
+              access_token: "",
+              signup_time: 0,
+              is_id_card_authed: false,
+              country: "",
+              logined_version: [],
+              rewarded_version: [],
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_error(msg)
           |> encode_account_id(msg)
@@ -50,132 +47,121 @@ defmodule(Soulless.Game.Lq.ResLogin) do
       []
 
       [
-        defp(encode_error(acc, msg)) do
+        defp encode_error(acc, msg) do
           try do
-            if(msg.error == nil) do
+            if msg.error == nil do
               acc
             else
               [acc, "\n", Protox.Encode.encode_message(msg.error)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_account_id(acc, msg)) do
+        defp encode_account_id(acc, msg) do
           try do
-            if(msg.account_id == 0) do
+            if msg.account_id == 0 do
               acc
             else
-              [acc, <<16>>, Protox.Encode.encode_uint32(msg.account_id)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.account_id)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:account_id, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:account_id, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_account(acc, msg)) do
+        defp encode_account(acc, msg) do
           try do
-            if(msg.account == nil) do
+            if msg.account == nil do
               acc
             else
-              [acc, <<26>>, Protox.Encode.encode_message(msg.account)]
+              [acc, "\x1A", Protox.Encode.encode_message(msg.account)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:account, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:account, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_game_info(acc, msg)) do
+        defp encode_game_info(acc, msg) do
           try do
-            if(msg.game_info == nil) do
+            if msg.game_info == nil do
               acc
             else
               [acc, "\"", Protox.Encode.encode_message(msg.game_info)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:game_info, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:game_info, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_has_unread_announcement(acc, msg)) do
+        defp encode_has_unread_announcement(acc, msg) do
           try do
-            if(msg.has_unread_announcement == false) do
+            if msg.has_unread_announcement == false do
               acc
             else
               [acc, "(", Protox.Encode.encode_bool(msg.has_unread_announcement)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:has_unread_announcement, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:has_unread_announcement, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_access_token(acc, msg)) do
+        defp encode_access_token(acc, msg) do
           try do
-            if(msg.access_token == "") do
+            if msg.access_token == "" do
               acc
             else
               [acc, "2", Protox.Encode.encode_string(msg.access_token)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:access_token, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:access_token, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_signup_time(acc, msg)) do
+        defp encode_signup_time(acc, msg) do
           try do
-            if(msg.signup_time == 0) do
+            if msg.signup_time == 0 do
               acc
             else
               [acc, "8", Protox.Encode.encode_uint32(msg.signup_time)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:signup_time, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:signup_time, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_is_id_card_authed(acc, msg)) do
+        defp encode_is_id_card_authed(acc, msg) do
           try do
-            if(msg.is_id_card_authed == false) do
+            if msg.is_id_card_authed == false do
               acc
             else
               [acc, "@", Protox.Encode.encode_bool(msg.is_id_card_authed)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:is_id_card_authed, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:is_id_card_authed, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_country(acc, msg)) do
+        defp encode_country(acc, msg) do
           try do
-            if(msg.country == "") do
+            if msg.country == "" do
               acc
             else
               [acc, "J", Protox.Encode.encode_string(msg.country)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:country, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:country, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_logined_version(acc, msg)) do
+        defp encode_logined_version(acc, msg) do
           try do
-            case(msg.logined_version) do
+            case msg.logined_version do
               [] ->
                 acc
 
@@ -196,15 +182,13 @@ defmodule(Soulless.Game.Lq.ResLogin) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:logined_version, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:logined_version, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_rewarded_version(acc, msg)) do
+        defp encode_rewarded_version(acc, msg) do
           try do
-            case(msg.rewarded_version) do
+            case msg.rewarded_version do
               [] ->
                 acc
 
@@ -225,17 +209,15 @@ defmodule(Soulless.Game.Lq.ResLogin) do
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:rewarded_version, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:rewarded_version, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -256,7 +238,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -267,7 +249,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.ResLogin))
           end
         )
@@ -275,15 +257,15 @@ defmodule(Soulless.Game.Lq.ResLogin) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
@@ -291,7 +273,10 @@ defmodule(Soulless.Game.Lq.ResLogin) do
 
                 {[
                    error:
-                     Protox.Message.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
+                     Protox.MergeMessage.merge(
+                       msg.error,
+                       Soulless.Game.Lq.Error.decode!(delimited)
+                     )
                  ], rest}
 
               {2, _, bytes} ->
@@ -304,7 +289,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
 
                 {[
                    account:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.account,
                        Soulless.Game.Lq.Account.decode!(delimited)
                      )
@@ -316,7 +301,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
 
                 {[
                    game_info:
-                     Protox.Message.merge(
+                     Protox.MergeMessage.merge(
                        msg.game_info,
                        Soulless.Game.Lq.GameConnectInfo.decode!(delimited)
                      )
@@ -389,17 +374,16 @@ defmodule(Soulless.Game.Lq.ResLogin) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -410,17 +394,16 @@ defmodule(Soulless.Game.Lq.ResLogin) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -430,7 +413,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
         2 => {:account_id, {:scalar, 0}, :uint32},
@@ -450,7 +433,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         access_token: {6, {:scalar, ""}, :string},
         account: {3, {:scalar, nil}, {:message, Soulless.Game.Lq.Account}},
@@ -467,7 +450,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -574,7 +557,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:error)) do
+        def field_def(:error) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -587,7 +570,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("error")) do
+        def field_def("error") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -603,7 +586,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         []
       ),
       (
-        def(field_def(:account_id)) do
+        def field_def(:account_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -616,7 +599,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("accountId")) do
+        def field_def("accountId") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -629,7 +612,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("account_id")) do
+        def field_def("account_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -643,7 +626,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         end
       ),
       (
-        def(field_def(:account)) do
+        def field_def(:account) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -656,7 +639,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("account")) do
+        def field_def("account") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -672,7 +655,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         []
       ),
       (
-        def(field_def(:game_info)) do
+        def field_def(:game_info) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -685,7 +668,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("gameInfo")) do
+        def field_def("gameInfo") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -698,7 +681,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("game_info")) do
+        def field_def("game_info") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -712,7 +695,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         end
       ),
       (
-        def(field_def(:has_unread_announcement)) do
+        def field_def(:has_unread_announcement) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -725,7 +708,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("hasUnreadAnnouncement")) do
+        def field_def("hasUnreadAnnouncement") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -738,7 +721,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("has_unread_announcement")) do
+        def field_def("has_unread_announcement") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -752,7 +735,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         end
       ),
       (
-        def(field_def(:access_token)) do
+        def field_def(:access_token) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -765,7 +748,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("accessToken")) do
+        def field_def("accessToken") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -778,7 +761,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("access_token")) do
+        def field_def("access_token") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -792,7 +775,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         end
       ),
       (
-        def(field_def(:signup_time)) do
+        def field_def(:signup_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -805,7 +788,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("signupTime")) do
+        def field_def("signupTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -818,7 +801,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("signup_time")) do
+        def field_def("signup_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -832,7 +815,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         end
       ),
       (
-        def(field_def(:is_id_card_authed)) do
+        def field_def(:is_id_card_authed) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -845,7 +828,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("isIdCardAuthed")) do
+        def field_def("isIdCardAuthed") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -858,7 +841,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("is_id_card_authed")) do
+        def field_def("is_id_card_authed") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -872,7 +855,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         end
       ),
       (
-        def(field_def(:country)) do
+        def field_def(:country) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -885,7 +868,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("country")) do
+        def field_def("country") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -901,7 +884,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         []
       ),
       (
-        def(field_def(:logined_version)) do
+        def field_def(:logined_version) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -914,7 +897,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("loginedVersion")) do
+        def field_def("loginedVersion") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -927,7 +910,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("logined_version")) do
+        def field_def("logined_version") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -941,7 +924,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
         end
       ),
       (
-        def(field_def(:rewarded_version)) do
+        def field_def(:rewarded_version) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -954,7 +937,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("rewardedVersion")) do
+        def field_def("rewardedVersion") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -967,7 +950,7 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
 
-        def(field_def("rewarded_version")) do
+        def field_def("rewarded_version") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -980,74 +963,74 @@ defmodule(Soulless.Game.Lq.ResLogin) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:error)) do
+      def default(:error) do
         {:ok, nil}
       end,
-      def(default(:account_id)) do
+      def default(:account_id) do
         {:ok, 0}
       end,
-      def(default(:account)) do
+      def default(:account) do
         {:ok, nil}
       end,
-      def(default(:game_info)) do
+      def default(:game_info) do
         {:ok, nil}
       end,
-      def(default(:has_unread_announcement)) do
+      def default(:has_unread_announcement) do
         {:ok, false}
       end,
-      def(default(:access_token)) do
+      def default(:access_token) do
         {:ok, ""}
       end,
-      def(default(:signup_time)) do
+      def default(:signup_time) do
         {:ok, 0}
       end,
-      def(default(:is_id_card_authed)) do
+      def default(:is_id_card_authed) do
         {:ok, false}
       end,
-      def(default(:country)) do
+      def default(:country) do
         {:ok, ""}
       end,
-      def(default(:logined_version)) do
+      def default(:logined_version) do
         {:error, :no_default_value}
       end,
-      def(default(:rewarded_version)) do
+      def default(:rewarded_version) do
         {:error, :no_default_value}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]

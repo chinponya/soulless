@@ -1,12 +1,12 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Tourney.Lq.ErrorCode) do
+defmodule Soulless.Tourney.Lq.ErrorCode do
   @moduledoc false
   (
-    defstruct([])
+    defstruct []
 
     (
       @spec default() :: :OK
-      def(default()) do
+      def default() do
         :OK
       end
     )
@@ -14,1785 +14,1785 @@ defmodule(Soulless.Tourney.Lq.ErrorCode) do
     @spec encode(atom()) :: integer() | atom()
     [
       (
-        def(encode(:OK)) do
+        def encode(:OK) do
           0
         end
 
-        def(encode("OK")) do
+        def encode("OK") do
           0
         end
       ),
       (
-        def(encode(:UNKNOWN)) do
+        def encode(:UNKNOWN) do
           1
         end
 
-        def(encode("UNKNOWN")) do
+        def encode("UNKNOWN") do
           1
         end
       ),
       (
-        def(encode(:SYSTEM_ERROR)) do
+        def encode(:SYSTEM_ERROR) do
           2
         end
 
-        def(encode("SYSTEM_ERROR")) do
+        def encode("SYSTEM_ERROR") do
           2
         end
       ),
       (
-        def(encode(:CLIENT_PACKET_PARAM)) do
+        def encode(:CLIENT_PACKET_PARAM) do
           3
         end
 
-        def(encode("CLIENT_PACKET_PARAM")) do
+        def encode("CLIENT_PACKET_PARAM") do
           3
         end
       ),
       (
-        def(encode(:NOT_DEVELOPMENT_MODE)) do
+        def encode(:NOT_DEVELOPMENT_MODE) do
           4
         end
 
-        def(encode("NOT_DEVELOPMENT_MODE")) do
+        def encode("NOT_DEVELOPMENT_MODE") do
           4
         end
       ),
       (
-        def(encode(:SYSTEM_COMMUNICATION)) do
+        def encode(:SYSTEM_COMMUNICATION) do
           5
         end
 
-        def(encode("SYSTEM_COMMUNICATION")) do
+        def encode("SYSTEM_COMMUNICATION") do
           5
         end
       ),
       (
-        def(encode(:METHOD_NOT_FOUND)) do
+        def encode(:METHOD_NOT_FOUND) do
           6
         end
 
-        def(encode("METHOD_NOT_FOUND")) do
+        def encode("METHOD_NOT_FOUND") do
           6
         end
       ),
       (
-        def(encode(:EMPTY_INPUT)) do
+        def encode(:EMPTY_INPUT) do
           101
         end
 
-        def(encode("EMPTY_INPUT")) do
+        def encode("EMPTY_INPUT") do
           101
         end
       ),
       (
-        def(encode(:INVALID_INPUT)) do
+        def encode(:INVALID_INPUT) do
           102
         end
 
-        def(encode("INVALID_INPUT")) do
+        def encode("INVALID_INPUT") do
           102
         end
       ),
       (
-        def(encode(:CONFIG_NOT_FOUND)) do
+        def encode(:CONFIG_NOT_FOUND) do
           104
         end
 
-        def(encode("CONFIG_NOT_FOUND")) do
+        def encode("CONFIG_NOT_FOUND") do
           104
         end
       ),
       (
-        def(encode(:GIFT_CODE_NOT_VALID)) do
+        def encode(:GIFT_CODE_NOT_VALID) do
           105
         end
 
-        def(encode("GIFT_CODE_NOT_VALID")) do
+        def encode("GIFT_CODE_NOT_VALID") do
           105
         end
       ),
       (
-        def(encode(:GIFT_CODE_ALREADY_USED)) do
+        def encode(:GIFT_CODE_ALREADY_USED) do
           106
         end
 
-        def(encode("GIFT_CODE_ALREADY_USED")) do
+        def encode("GIFT_CODE_ALREADY_USED") do
           106
         end
       ),
       (
-        def(encode(:GIFT_CODE_GAIN_USAGEID)) do
+        def encode(:GIFT_CODE_GAIN_USAGEID) do
           107
         end
 
-        def(encode("GIFT_CODE_GAIN_USAGEID")) do
+        def encode("GIFT_CODE_GAIN_USAGEID") do
           107
         end
       ),
       (
-        def(encode(:UNSUPPORT_OAUTH2)) do
+        def encode(:UNSUPPORT_OAUTH2) do
           108
         end
 
-        def(encode("UNSUPPORT_OAUTH2")) do
+        def encode("UNSUPPORT_OAUTH2") do
           108
         end
       ),
       (
-        def(encode(:OAUTH2_EXPIRED)) do
+        def encode(:OAUTH2_EXPIRED) do
           109
         end
 
-        def(encode("OAUTH2_EXPIRED")) do
+        def encode("OAUTH2_EXPIRED") do
           109
         end
       ),
       (
-        def(encode(:OAUTH2_FAILED)) do
+        def encode(:OAUTH2_FAILED) do
           110
         end
 
-        def(encode("OAUTH2_FAILED")) do
+        def encode("OAUTH2_FAILED") do
           110
         end
       ),
       (
-        def(encode(:GIFT_CODE_PROCESSING)) do
+        def encode(:GIFT_CODE_PROCESSING) do
           112
         end
 
-        def(encode("GIFT_CODE_PROCESSING")) do
+        def encode("GIFT_CODE_PROCESSING") do
           112
         end
       ),
       (
-        def(encode(:GIFT_CODE_DURATION)) do
+        def encode(:GIFT_CODE_DURATION) do
           113
         end
 
-        def(encode("GIFT_CODE_DURATION")) do
+        def encode("GIFT_CODE_DURATION") do
           113
         end
       ),
       (
-        def(encode(:GIFT_CODE_DISCARDED)) do
+        def encode(:GIFT_CODE_DISCARDED) do
           114
         end
 
-        def(encode("GIFT_CODE_DISCARDED")) do
+        def encode("GIFT_CODE_DISCARDED") do
           114
         end
       ),
       (
-        def(encode(:FREQUENT_PHONE_CODE)) do
+        def encode(:FREQUENT_PHONE_CODE) do
           115
         end
 
-        def(encode("FREQUENT_PHONE_CODE")) do
+        def encode("FREQUENT_PHONE_CODE") do
           115
         end
       ),
       (
-        def(encode(:PHONE_CODE_EXPIRED)) do
+        def encode(:PHONE_CODE_EXPIRED) do
           116
         end
 
-        def(encode("PHONE_CODE_EXPIRED")) do
+        def encode("PHONE_CODE_EXPIRED") do
           116
         end
       ),
       (
-        def(encode(:SECURE_OPERATION_EXPIRED)) do
+        def encode(:SECURE_OPERATION_EXPIRED) do
           117
         end
 
-        def(encode("SECURE_OPERATION_EXPIRED")) do
+        def encode("SECURE_OPERATION_EXPIRED") do
           117
         end
       ),
       (
-        def(encode(:BIND_SAME_PHONE)) do
+        def encode(:BIND_SAME_PHONE) do
           118
         end
 
-        def(encode("BIND_SAME_PHONE")) do
+        def encode("BIND_SAME_PHONE") do
           118
         end
       ),
       (
-        def(encode(:PHONE_SEND_FAILED)) do
+        def encode(:PHONE_SEND_FAILED) do
           119
         end
 
-        def(encode("PHONE_SEND_FAILED")) do
+        def encode("PHONE_SEND_FAILED") do
           119
         end
       ),
       (
-        def(encode(:CLIENT_OUTDATED)) do
+        def encode(:CLIENT_OUTDATED) do
           151
         end
 
-        def(encode("CLIENT_OUTDATED")) do
+        def encode("CLIENT_OUTDATED") do
           151
         end
       ),
       (
-        def(encode(:RESOURCE_NOT_ENOUGH)) do
+        def encode(:RESOURCE_NOT_ENOUGH) do
           501
         end
 
-        def(encode("RESOURCE_NOT_ENOUGH")) do
+        def encode("RESOURCE_NOT_ENOUGH") do
           501
         end
       ),
       (
-        def(encode(:TEXT_FORBIDDEN_WORD)) do
+        def encode(:TEXT_FORBIDDEN_WORD) do
           502
         end
 
-        def(encode("TEXT_FORBIDDEN_WORD")) do
+        def encode("TEXT_FORBIDDEN_WORD") do
           502
         end
       ),
       (
-        def(encode(:ACCOUNT_BANNED)) do
+        def encode(:ACCOUNT_BANNED) do
           503
         end
 
-        def(encode("ACCOUNT_BANNED")) do
+        def encode("ACCOUNT_BANNED") do
           503
         end
       ),
       (
-        def(encode(:RESOURCE_UNIQUE)) do
+        def encode(:RESOURCE_UNIQUE) do
           504
         end
 
-        def(encode("RESOURCE_UNIQUE")) do
+        def encode("RESOURCE_UNIQUE") do
           504
         end
       ),
       (
-        def(encode(:ACC_DUPLICATE_SIGN_UP)) do
+        def encode(:ACC_DUPLICATE_SIGN_UP) do
           1001
         end
 
-        def(encode("ACC_DUPLICATE_SIGN_UP")) do
+        def encode("ACC_DUPLICATE_SIGN_UP") do
           1001
         end
       ),
       (
-        def(encode(:ACC_NOT_SIGN_UP)) do
+        def encode(:ACC_NOT_SIGN_UP) do
           1002
         end
 
-        def(encode("ACC_NOT_SIGN_UP")) do
+        def encode("ACC_NOT_SIGN_UP") do
           1002
         end
       ),
       (
-        def(encode(:ACC_PASSWORD)) do
+        def encode(:ACC_PASSWORD) do
           1003
         end
 
-        def(encode("ACC_PASSWORD")) do
+        def encode("ACC_PASSWORD") do
           1003
         end
       ),
       (
-        def(encode(:ACC_NOT_LOGIN)) do
+        def encode(:ACC_NOT_LOGIN) do
           1004
         end
 
-        def(encode("ACC_NOT_LOGIN")) do
+        def encode("ACC_NOT_LOGIN") do
           1004
         end
       ),
       (
-        def(encode(:ACC_ALREADY_LOGIN)) do
+        def encode(:ACC_ALREADY_LOGIN) do
           1005
         end
 
-        def(encode("ACC_ALREADY_LOGIN")) do
+        def encode("ACC_ALREADY_LOGIN") do
           1005
         end
       ),
       (
-        def(encode(:ACC_NOT_EXIST)) do
+        def encode(:ACC_NOT_EXIST) do
           1006
         end
 
-        def(encode("ACC_NOT_EXIST")) do
+        def encode("ACC_NOT_EXIST") do
           1006
         end
       ),
       (
-        def(encode(:ACC_CHAR_NOT_LOCK)) do
+        def encode(:ACC_CHAR_NOT_LOCK) do
           1007
         end
 
-        def(encode("ACC_CHAR_NOT_LOCK")) do
+        def encode("ACC_CHAR_NOT_LOCK") do
           1007
         end
       ),
       (
-        def(encode(:ACC_CHAR_ALREADY_LOCK)) do
+        def encode(:ACC_CHAR_ALREADY_LOCK) do
           1008
         end
 
-        def(encode("ACC_CHAR_ALREADY_LOCK")) do
+        def encode("ACC_CHAR_ALREADY_LOCK") do
           1008
         end
       ),
       (
-        def(encode(:ACC_TICK_BY_SAME)) do
+        def encode(:ACC_TICK_BY_SAME) do
           1009
         end
 
-        def(encode("ACC_TICK_BY_SAME")) do
+        def encode("ACC_TICK_BY_SAME") do
           1009
         end
       ),
       (
-        def(encode(:ACC_NICKNAME_USED)) do
+        def encode(:ACC_NICKNAME_USED) do
           1010
         end
 
-        def(encode("ACC_NICKNAME_USED")) do
+        def encode("ACC_NICKNAME_USED") do
           1010
         end
       ),
       (
-        def(encode(:ACC_NO_NICKNAME)) do
+        def encode(:ACC_NO_NICKNAME) do
           1011
         end
 
-        def(encode("ACC_NO_NICKNAME")) do
+        def encode("ACC_NO_NICKNAME") do
           1011
         end
       ),
       (
-        def(encode(:ACC_HAS_NICKNAME)) do
+        def encode(:ACC_HAS_NICKNAME) do
           1012
         end
 
-        def(encode("ACC_HAS_NICKNAME")) do
+        def encode("ACC_HAS_NICKNAME") do
           1012
         end
       ),
       (
-        def(encode(:ACC_HAS_BIND_ACCOUNT)) do
+        def encode(:ACC_HAS_BIND_ACCOUNT) do
           1013
         end
 
-        def(encode("ACC_HAS_BIND_ACCOUNT")) do
+        def encode("ACC_HAS_BIND_ACCOUNT") do
           1013
         end
       ),
       (
-        def(encode(:ACC_TARGET_ACCOUNT_USED)) do
+        def encode(:ACC_TARGET_ACCOUNT_USED) do
           1014
         end
 
-        def(encode("ACC_TARGET_ACCOUNT_USED")) do
+        def encode("ACC_TARGET_ACCOUNT_USED") do
           1014
         end
       ),
       (
-        def(encode(:ACC_NEED_NICKNAME_ITEM)) do
+        def encode(:ACC_NEED_NICKNAME_ITEM) do
           1015
         end
 
-        def(encode("ACC_NEED_NICKNAME_ITEM")) do
+        def encode("ACC_NEED_NICKNAME_ITEM") do
           1015
         end
       ),
       (
-        def(encode(:ACC_MOD_NICKNAME_CD)) do
+        def encode(:ACC_MOD_NICKNAME_CD) do
           1016
         end
 
-        def(encode("ACC_MOD_NICKNAME_CD")) do
+        def encode("ACC_MOD_NICKNAME_CD") do
           1016
         end
       ),
       (
-        def(encode(:ACC_ALREADY_REG_REALNAME)) do
+        def encode(:ACC_ALREADY_REG_REALNAME) do
           1017
         end
 
-        def(encode("ACC_ALREADY_REG_REALNAME")) do
+        def encode("ACC_ALREADY_REG_REALNAME") do
           1017
         end
       ),
       (
-        def(encode(:ROOM_NOT_EXIST)) do
+        def encode(:ROOM_NOT_EXIST) do
           1100
         end
 
-        def(encode("ROOM_NOT_EXIST")) do
+        def encode("ROOM_NOT_EXIST") do
           1100
         end
       ),
       (
-        def(encode(:ROOM_IS_FULL)) do
+        def encode(:ROOM_IS_FULL) do
           1101
         end
 
-        def(encode("ROOM_IS_FULL")) do
+        def encode("ROOM_IS_FULL") do
           1101
         end
       ),
       (
-        def(encode(:ROOM_ALREADY_LEAVE)) do
+        def encode(:ROOM_ALREADY_LEAVE) do
           1102
         end
 
-        def(encode("ROOM_ALREADY_LEAVE")) do
+        def encode("ROOM_ALREADY_LEAVE") do
           1102
         end
       ),
       (
-        def(encode(:ROOM_NOT_OWNER)) do
+        def encode(:ROOM_NOT_OWNER) do
           1103
         end
 
-        def(encode("ROOM_NOT_OWNER")) do
+        def encode("ROOM_NOT_OWNER") do
           1103
         end
       ),
       (
-        def(encode(:ROOM_NOT_ALL_READY)) do
+        def encode(:ROOM_NOT_ALL_READY) do
           1104
         end
 
-        def(encode("ROOM_NOT_ALL_READY")) do
+        def encode("ROOM_NOT_ALL_READY") do
           1104
         end
       ),
       (
-        def(encode(:ROOM_ALREADY_JOIN)) do
+        def encode(:ROOM_ALREADY_JOIN) do
           1105
         end
 
-        def(encode("ROOM_ALREADY_JOIN")) do
+        def encode("ROOM_ALREADY_JOIN") do
           1105
         end
       ),
       (
-        def(encode(:ROOM_NOT_JOIN)) do
+        def encode(:ROOM_NOT_JOIN) do
           1106
         end
 
-        def(encode("ROOM_NOT_JOIN")) do
+        def encode("ROOM_NOT_JOIN") do
           1106
         end
       ),
       (
-        def(encode(:ROOM_TARGET_NOT_JOIN)) do
+        def encode(:ROOM_TARGET_NOT_JOIN) do
           1107
         end
 
-        def(encode("ROOM_TARGET_NOT_JOIN")) do
+        def encode("ROOM_TARGET_NOT_JOIN") do
           1107
         end
       ),
       (
-        def(encode(:ROOM_KICK_SELF)) do
+        def encode(:ROOM_KICK_SELF) do
           1108
         end
 
-        def(encode("ROOM_KICK_SELF")) do
+        def encode("ROOM_KICK_SELF") do
           1108
         end
       ),
       (
-        def(encode(:ACC_IS_PLAYING)) do
+        def encode(:ACC_IS_PLAYING) do
           1109
         end
 
-        def(encode("ACC_IS_PLAYING")) do
+        def encode("ACC_IS_PLAYING") do
           1109
         end
       ),
       (
-        def(encode(:ROOM_NO_AVAILABLE_ID)) do
+        def encode(:ROOM_NO_AVAILABLE_ID) do
           1110
         end
 
-        def(encode("ROOM_NO_AVAILABLE_ID")) do
+        def encode("ROOM_NO_AVAILABLE_ID") do
           1110
         end
       ),
       (
-        def(encode(:ROOM_NO_ENOUGH_SLOT)) do
+        def encode(:ROOM_NO_ENOUGH_SLOT) do
           1111
         end
 
-        def(encode("ROOM_NO_ENOUGH_SLOT")) do
+        def encode("ROOM_NO_ENOUGH_SLOT") do
           1111
         end
       ),
       (
-        def(encode(:ROOM_MODE_INVALID)) do
+        def encode(:ROOM_MODE_INVALID) do
           1112
         end
 
-        def(encode("ROOM_MODE_INVALID")) do
+        def encode("ROOM_MODE_INVALID") do
           1112
         end
       ),
       (
-        def(encode(:TOKEN_NOT_EXIST)) do
+        def encode(:TOKEN_NOT_EXIST) do
           1201
         end
 
-        def(encode("TOKEN_NOT_EXIST")) do
+        def encode("TOKEN_NOT_EXIST") do
           1201
         end
       ),
       (
-        def(encode(:TOKEN_INVALID)) do
+        def encode(:TOKEN_INVALID) do
           1202
         end
 
-        def(encode("TOKEN_INVALID")) do
+        def encode("TOKEN_INVALID") do
           1202
         end
       ),
       (
-        def(encode(:GAME_NOT_EXIST)) do
+        def encode(:GAME_NOT_EXIST) do
           1203
         end
 
-        def(encode("GAME_NOT_EXIST")) do
+        def encode("GAME_NOT_EXIST") do
           1203
         end
       ),
       (
-        def(encode(:GAME_REFUSED)) do
+        def encode(:GAME_REFUSED) do
           1204
         end
 
-        def(encode("GAME_REFUSED")) do
+        def encode("GAME_REFUSED") do
           1204
         end
       ),
       (
-        def(encode(:GAME_NOT_PLAYING)) do
+        def encode(:GAME_NOT_PLAYING) do
           1205
         end
 
-        def(encode("GAME_NOT_PLAYING")) do
+        def encode("GAME_NOT_PLAYING") do
           1205
         end
       ),
       (
-        def(encode(:GAME_ALREADY_FINISH)) do
+        def encode(:GAME_ALREADY_FINISH) do
           1206
         end
 
-        def(encode("GAME_ALREADY_FINISH")) do
+        def encode("GAME_ALREADY_FINISH") do
           1206
         end
       ),
       (
-        def(encode(:GAME_CAN_NOT_MANUAL_TER)) do
+        def encode(:GAME_CAN_NOT_MANUAL_TER) do
           1207
         end
 
-        def(encode("GAME_CAN_NOT_MANUAL_TER")) do
+        def encode("GAME_CAN_NOT_MANUAL_TER") do
           1207
         end
       ),
       (
-        def(encode(:GAME_CREATE_FAILED)) do
+        def encode(:GAME_CREATE_FAILED) do
           1208
         end
 
-        def(encode("GAME_CREATE_FAILED")) do
+        def encode("GAME_CREATE_FAILED") do
           1208
         end
       ),
       (
-        def(encode(:MATCH_IN_MATCHING)) do
+        def encode(:MATCH_IN_MATCHING) do
           1301
         end
 
-        def(encode("MATCH_IN_MATCHING")) do
+        def encode("MATCH_IN_MATCHING") do
           1301
         end
       ),
       (
-        def(encode(:MATCH_NOT_IN_MATCHING)) do
+        def encode(:MATCH_NOT_IN_MATCHING) do
           1302
         end
 
-        def(encode("MATCH_NOT_IN_MATCHING")) do
+        def encode("MATCH_NOT_IN_MATCHING") do
           1302
         end
       ),
       (
-        def(encode(:UNSUPPORT_MATCH_MODE)) do
+        def encode(:UNSUPPORT_MATCH_MODE) do
           1303
         end
 
-        def(encode("UNSUPPORT_MATCH_MODE")) do
+        def encode("UNSUPPORT_MATCH_MODE") do
           1303
         end
       ),
       (
-        def(encode(:MATCH_GOLD_LIMIT)) do
+        def encode(:MATCH_GOLD_LIMIT) do
           1304
         end
 
-        def(encode("MATCH_GOLD_LIMIT")) do
+        def encode("MATCH_GOLD_LIMIT") do
           1304
         end
       ),
       (
-        def(encode(:MATCH_LEVEL_LIMIT)) do
+        def encode(:MATCH_LEVEL_LIMIT) do
           1305
         end
 
-        def(encode("MATCH_LEVEL_LIMIT")) do
+        def encode("MATCH_LEVEL_LIMIT") do
           1305
         end
       ),
       (
-        def(encode(:MATCH_MODE_NOT_OPEN)) do
+        def encode(:MATCH_MODE_NOT_OPEN) do
           1306
         end
 
-        def(encode("MATCH_MODE_NOT_OPEN")) do
+        def encode("MATCH_MODE_NOT_OPEN") do
           1306
         end
       ),
       (
-        def(encode(:FRIEND_NOT_FRIEND)) do
+        def encode(:FRIEND_NOT_FRIEND) do
           1401
         end
 
-        def(encode("FRIEND_NOT_FRIEND")) do
+        def encode("FRIEND_NOT_FRIEND") do
           1401
         end
       ),
       (
-        def(encode(:FRIEND_IS_FRIEND)) do
+        def encode(:FRIEND_IS_FRIEND) do
           1402
         end
 
-        def(encode("FRIEND_IS_FRIEND")) do
+        def encode("FRIEND_IS_FRIEND") do
           1402
         end
       ),
       (
-        def(encode(:SEARCH_TIMEOUT)) do
+        def encode(:SEARCH_TIMEOUT) do
           1403
         end
 
-        def(encode("SEARCH_TIMEOUT")) do
+        def encode("SEARCH_TIMEOUT") do
           1403
         end
       ),
       (
-        def(encode(:SEARCH_INVALID)) do
+        def encode(:SEARCH_INVALID) do
           1404
         end
 
-        def(encode("SEARCH_INVALID")) do
+        def encode("SEARCH_INVALID") do
           1404
         end
       ),
       (
-        def(encode(:FRIEND_APPLY_METHOD)) do
+        def encode(:FRIEND_APPLY_METHOD) do
           1405
         end
 
-        def(encode("FRIEND_APPLY_METHOD")) do
+        def encode("FRIEND_APPLY_METHOD") do
           1405
         end
       ),
       (
-        def(encode(:FRIEND_MAX_APPLY)) do
+        def encode(:FRIEND_MAX_APPLY) do
           1406
         end
 
-        def(encode("FRIEND_MAX_APPLY")) do
+        def encode("FRIEND_MAX_APPLY") do
           1406
         end
       ),
       (
-        def(encode(:FRIEND_MAX)) do
+        def encode(:FRIEND_MAX) do
           1407
         end
 
-        def(encode("FRIEND_MAX")) do
+        def encode("FRIEND_MAX") do
           1407
         end
       ),
       (
-        def(encode(:FRIEND_ADD_SELF)) do
+        def encode(:FRIEND_ADD_SELF) do
           1408
         end
 
-        def(encode("FRIEND_ADD_SELF")) do
+        def encode("FRIEND_ADD_SELF") do
           1408
         end
       ),
       (
-        def(encode(:FRIEND_MAX_TARGET)) do
+        def encode(:FRIEND_MAX_TARGET) do
           1409
         end
 
-        def(encode("FRIEND_MAX_TARGET")) do
+        def encode("FRIEND_MAX_TARGET") do
           1409
         end
       ),
       (
-        def(encode(:BAG_NO_ITEM)) do
+        def encode(:BAG_NO_ITEM) do
           1501
         end
 
-        def(encode("BAG_NO_ITEM")) do
+        def encode("BAG_NO_ITEM") do
           1501
         end
       ),
       (
-        def(encode(:BAG_NOT_ENOUGH_ITEM)) do
+        def encode(:BAG_NOT_ENOUGH_ITEM) do
           1502
         end
 
-        def(encode("BAG_NOT_ENOUGH_ITEM")) do
+        def encode("BAG_NOT_ENOUGH_ITEM") do
           1502
         end
       ),
       (
-        def(encode(:BAG_ITEM_NOT_USABLE)) do
+        def encode(:BAG_ITEM_NOT_USABLE) do
           1503
         end
 
-        def(encode("BAG_ITEM_NOT_USABLE")) do
+        def encode("BAG_ITEM_NOT_USABLE") do
           1503
         end
       ),
       (
-        def(encode(:BAG_ITEM_NOT_COMPOSE)) do
+        def encode(:BAG_ITEM_NOT_COMPOSE) do
           1504
         end
 
-        def(encode("BAG_ITEM_NOT_COMPOSE")) do
+        def encode("BAG_ITEM_NOT_COMPOSE") do
           1504
         end
       ),
       (
-        def(encode(:ACHIEVEMENT_NOT_ACHIEVED)) do
+        def encode(:ACHIEVEMENT_NOT_ACHIEVED) do
           1601
         end
 
-        def(encode("ACHIEVEMENT_NOT_ACHIEVED")) do
+        def encode("ACHIEVEMENT_NOT_ACHIEVED") do
           1601
         end
       ),
       (
-        def(encode(:TASK_DAILY_NOT_FOUND)) do
+        def encode(:TASK_DAILY_NOT_FOUND) do
           1611
         end
 
-        def(encode("TASK_DAILY_NOT_FOUND")) do
+        def encode("TASK_DAILY_NOT_FOUND") do
           1611
         end
       ),
       (
-        def(encode(:TASK_DAILY_NO_REFRESH)) do
+        def encode(:TASK_DAILY_NO_REFRESH) do
           1612
         end
 
-        def(encode("TASK_DAILY_NO_REFRESH")) do
+        def encode("TASK_DAILY_NO_REFRESH") do
           1612
         end
       ),
       (
-        def(encode(:MAIL_NOT_FOUND)) do
+        def encode(:MAIL_NOT_FOUND) do
           1701
         end
 
-        def(encode("MAIL_NOT_FOUND")) do
+        def encode("MAIL_NOT_FOUND") do
           1701
         end
       ),
       (
-        def(encode(:MAIL_NO_ATTACHMENT)) do
+        def encode(:MAIL_NO_ATTACHMENT) do
           1702
         end
 
-        def(encode("MAIL_NO_ATTACHMENT")) do
+        def encode("MAIL_NO_ATTACHMENT") do
           1702
         end
       ),
       (
-        def(encode(:MAIL_ALREADY_TAKE)) do
+        def encode(:MAIL_ALREADY_TAKE) do
           1703
         end
 
-        def(encode("MAIL_ALREADY_TAKE")) do
+        def encode("MAIL_ALREADY_TAKE") do
           1703
         end
       ),
       (
-        def(encode(:LIVE_GAME_NOT_FOUND)) do
+        def encode(:LIVE_GAME_NOT_FOUND) do
           1801
         end
 
-        def(encode("LIVE_GAME_NOT_FOUND")) do
+        def encode("LIVE_GAME_NOT_FOUND") do
           1801
         end
       ),
       (
-        def(encode(:PAYMENT_CLOSED)) do
+        def encode(:PAYMENT_CLOSED) do
           1900
         end
 
-        def(encode("PAYMENT_CLOSED")) do
+        def encode("PAYMENT_CLOSED") do
           1900
         end
       ),
       (
-        def(encode(:PAYMENT_ORDER_NOT_FOUND)) do
+        def encode(:PAYMENT_ORDER_NOT_FOUND) do
           1901
         end
 
-        def(encode("PAYMENT_ORDER_NOT_FOUND")) do
+        def encode("PAYMENT_ORDER_NOT_FOUND") do
           1901
         end
       ),
       (
-        def(encode(:PAYMENT_ORDER_HANDLED)) do
+        def encode(:PAYMENT_ORDER_HANDLED) do
           1902
         end
 
-        def(encode("PAYMENT_ORDER_HANDLED")) do
+        def encode("PAYMENT_ORDER_HANDLED") do
           1902
         end
       ),
       (
-        def(encode(:PAYMENT_PLATFORM)) do
+        def encode(:PAYMENT_PLATFORM) do
           1903
         end
 
-        def(encode("PAYMENT_PLATFORM")) do
+        def encode("PAYMENT_PLATFORM") do
           1903
         end
       ),
       (
-        def(encode(:PAYMENT_GOODS_NOT_FOUND)) do
+        def encode(:PAYMENT_GOODS_NOT_FOUND) do
           1904
         end
 
-        def(encode("PAYMENT_GOODS_NOT_FOUND")) do
+        def encode("PAYMENT_GOODS_NOT_FOUND") do
           1904
         end
       ),
       (
-        def(encode(:PAYMENT_GP_VERIFY)) do
+        def encode(:PAYMENT_GP_VERIFY) do
           1951
         end
 
-        def(encode("PAYMENT_GP_VERIFY")) do
+        def encode("PAYMENT_GP_VERIFY") do
           1951
         end
       ),
       (
-        def(encode(:PAYMENT_WECHAT_DISABLE)) do
+        def encode(:PAYMENT_WECHAT_DISABLE) do
           1960
         end
 
-        def(encode("PAYMENT_WECHAT_DISABLE")) do
+        def encode("PAYMENT_WECHAT_DISABLE") do
           1960
         end
       ),
       (
-        def(encode(:PAYMENT_WECHAT_POST_FAILED)) do
+        def encode(:PAYMENT_WECHAT_POST_FAILED) do
           1961
         end
 
-        def(encode("PAYMENT_WECHAT_POST_FAILED")) do
+        def encode("PAYMENT_WECHAT_POST_FAILED") do
           1961
         end
       ),
       (
-        def(encode(:PAYMENT_ALI_DISABLE)) do
+        def encode(:PAYMENT_ALI_DISABLE) do
           1970
         end
 
-        def(encode("PAYMENT_ALI_DISABLE")) do
+        def encode("PAYMENT_ALI_DISABLE") do
           1970
         end
       ),
       (
-        def(encode(:PAYMENT_ALI_TYPE_UNSUP)) do
+        def encode(:PAYMENT_ALI_TYPE_UNSUP) do
           1971
         end
 
-        def(encode("PAYMENT_ALI_TYPE_UNSUP")) do
+        def encode("PAYMENT_ALI_TYPE_UNSUP") do
           1971
         end
       ),
       (
-        def(encode(:REVIVE_COIN_TIME)) do
+        def encode(:REVIVE_COIN_TIME) do
           2001
         end
 
-        def(encode("REVIVE_COIN_TIME")) do
+        def encode("REVIVE_COIN_TIME") do
           2001
         end
       ),
       (
-        def(encode(:REVIVE_COIN_LIMIT)) do
+        def encode(:REVIVE_COIN_LIMIT) do
           2002
         end
 
-        def(encode("REVIVE_COIN_LIMIT")) do
+        def encode("REVIVE_COIN_LIMIT") do
           2002
         end
       ),
       (
-        def(encode(:TITLE_NOT_UNLOCK)) do
+        def encode(:TITLE_NOT_UNLOCK) do
           2003
         end
 
-        def(encode("TITLE_NOT_UNLOCK")) do
+        def encode("TITLE_NOT_UNLOCK") do
           2003
         end
       ),
       (
-        def(encode(:COMMENT_ONLY_FRIEND)) do
+        def encode(:COMMENT_ONLY_FRIEND) do
           2004
         end
 
-        def(encode("COMMENT_ONLY_FRIEND")) do
+        def encode("COMMENT_ONLY_FRIEND") do
           2004
         end
       ),
       (
-        def(encode(:COMMENT_FORBID)) do
+        def encode(:COMMENT_FORBID) do
           2005
         end
 
-        def(encode("COMMENT_FORBID")) do
+        def encode("COMMENT_FORBID") do
           2005
         end
       ),
       (
-        def(encode(:COMMENT_SELF)) do
+        def encode(:COMMENT_SELF) do
           2006
         end
 
-        def(encode("COMMENT_SELF")) do
+        def encode("COMMENT_SELF") do
           2006
         end
       ),
       (
-        def(encode(:COMMENT_WHEN_GAMING)) do
+        def encode(:COMMENT_WHEN_GAMING) do
           2007
         end
 
-        def(encode("COMMENT_WHEN_GAMING")) do
+        def encode("COMMENT_WHEN_GAMING") do
           2007
         end
       ),
       (
-        def(encode(:COMMENT_NO_PRIV_DELETE)) do
+        def encode(:COMMENT_NO_PRIV_DELETE) do
           2008
         end
 
-        def(encode("COMMENT_NO_PRIV_DELETE")) do
+        def encode("COMMENT_NO_PRIV_DELETE") do
           2008
         end
       ),
       (
-        def(encode(:COMMENT_CD)) do
+        def encode(:COMMENT_CD) do
           2009
         end
 
-        def(encode("COMMENT_CD")) do
+        def encode("COMMENT_CD") do
           2009
         end
       ),
       (
-        def(encode(:CHEST_NOT_FOUND)) do
+        def encode(:CHEST_NOT_FOUND) do
           2010
         end
 
-        def(encode("CHEST_NOT_FOUND")) do
+        def encode("CHEST_NOT_FOUND") do
           2010
         end
       ),
       (
-        def(encode(:CHEST_INVALID_COUNT)) do
+        def encode(:CHEST_INVALID_COUNT) do
           2011
         end
 
-        def(encode("CHEST_INVALID_COUNT")) do
+        def encode("CHEST_INVALID_COUNT") do
           2011
         end
       ),
       (
-        def(encode(:CHARACTER_UNLOCK)) do
+        def encode(:CHARACTER_UNLOCK) do
           2201
         end
 
-        def(encode("CHARACTER_UNLOCK")) do
+        def encode("CHARACTER_UNLOCK") do
           2201
         end
       ),
       (
-        def(encode(:CHARACTER_GIFT_TYPE)) do
+        def encode(:CHARACTER_GIFT_TYPE) do
           2202
         end
 
-        def(encode("CHARACTER_GIFT_TYPE")) do
+        def encode("CHARACTER_GIFT_TYPE") do
           2202
         end
       ),
       (
-        def(encode(:CHARACTER_GIFT_COUNT_MAX)) do
+        def encode(:CHARACTER_GIFT_COUNT_MAX) do
           2203
         end
 
-        def(encode("CHARACTER_GIFT_COUNT_MAX")) do
+        def encode("CHARACTER_GIFT_COUNT_MAX") do
           2203
         end
       ),
       (
-        def(encode(:CHARACTER_SKIN_UNLOCK)) do
+        def encode(:CHARACTER_SKIN_UNLOCK) do
           2204
         end
 
-        def(encode("CHARACTER_SKIN_UNLOCK")) do
+        def encode("CHARACTER_SKIN_UNLOCK") do
           2204
         end
       ),
       (
-        def(encode(:CHARACTER_IS_UPGRADE)) do
+        def encode(:CHARACTER_IS_UPGRADE) do
           2205
         end
 
-        def(encode("CHARACTER_IS_UPGRADE")) do
+        def encode("CHARACTER_IS_UPGRADE") do
           2205
         end
       ),
       (
-        def(encode(:CHARACTER_LEVEL)) do
+        def encode(:CHARACTER_LEVEL) do
           2206
         end
 
-        def(encode("CHARACTER_LEVEL")) do
+        def encode("CHARACTER_LEVEL") do
           2206
         end
       ),
       (
-        def(encode(:CHARACTER_CANNOT_MARRY)) do
+        def encode(:CHARACTER_CANNOT_MARRY) do
           2207
         end
 
-        def(encode("CHARACTER_CANNOT_MARRY")) do
+        def encode("CHARACTER_CANNOT_MARRY") do
           2207
         end
       ),
       (
-        def(encode(:ITEM_CANNOT_SELL)) do
+        def encode(:ITEM_CANNOT_SELL) do
           2301
         end
 
-        def(encode("ITEM_CANNOT_SELL")) do
+        def encode("ITEM_CANNOT_SELL") do
           2301
         end
       ),
       (
-        def(encode(:SHOP_GOODS_NOT_FOUND)) do
+        def encode(:SHOP_GOODS_NOT_FOUND) do
           2401
         end
 
-        def(encode("SHOP_GOODS_NOT_FOUND")) do
+        def encode("SHOP_GOODS_NOT_FOUND") do
           2401
         end
       ),
       (
-        def(encode(:SHOP_GOODS_BUY_LIMIT)) do
+        def encode(:SHOP_GOODS_BUY_LIMIT) do
           2402
         end
 
-        def(encode("SHOP_GOODS_BUY_LIMIT")) do
+        def encode("SHOP_GOODS_BUY_LIMIT") do
           2402
         end
       ),
       (
-        def(encode(:SHOP_ZHP_UNAVAILABLE)) do
+        def encode(:SHOP_ZHP_UNAVAILABLE) do
           2431
         end
 
-        def(encode("SHOP_ZHP_UNAVAILABLE")) do
+        def encode("SHOP_ZHP_UNAVAILABLE") do
           2431
         end
       ),
       (
-        def(encode(:SHOP_ZHP_REFRESH_LIMIT)) do
+        def encode(:SHOP_ZHP_REFRESH_LIMIT) do
           2432
         end
 
-        def(encode("SHOP_ZHP_REFRESH_LIMIT")) do
+        def encode("SHOP_ZHP_REFRESH_LIMIT") do
           2432
         end
       ),
       (
-        def(encode(:CONTEST_NOT_FOUND)) do
+        def encode(:CONTEST_NOT_FOUND) do
           2501
         end
 
-        def(encode("CONTEST_NOT_FOUND")) do
+        def encode("CONTEST_NOT_FOUND") do
           2501
         end
       ),
       (
-        def(encode(:CONTEST_MAX_ACTIVE)) do
+        def encode(:CONTEST_MAX_ACTIVE) do
           2502
         end
 
-        def(encode("CONTEST_MAX_ACTIVE")) do
+        def encode("CONTEST_MAX_ACTIVE") do
           2502
         end
       ),
       (
-        def(encode(:CONTEST_RANDOM_CID)) do
+        def encode(:CONTEST_RANDOM_CID) do
           2503
         end
 
-        def(encode("CONTEST_RANDOM_CID")) do
+        def encode("CONTEST_RANDOM_CID") do
           2503
         end
       ),
       (
-        def(encode(:CONTEST_MGR_HAS_LOGINED)) do
+        def encode(:CONTEST_MGR_HAS_LOGINED) do
           2504
         end
 
-        def(encode("CONTEST_MGR_HAS_LOGINED")) do
+        def encode("CONTEST_MGR_HAS_LOGINED") do
           2504
         end
       ),
       (
-        def(encode(:CONTEST_MGR_NOT_LOGIN)) do
+        def encode(:CONTEST_MGR_NOT_LOGIN) do
           2505
         end
 
-        def(encode("CONTEST_MGR_NOT_LOGIN")) do
+        def encode("CONTEST_MGR_NOT_LOGIN") do
           2505
         end
       ),
       (
-        def(encode(:CONTEST_MGR_NO_PRIVILEGE)) do
+        def encode(:CONTEST_MGR_NO_PRIVILEGE) do
           2506
         end
 
-        def(encode("CONTEST_MGR_NO_PRIVILEGE")) do
+        def encode("CONTEST_MGR_NO_PRIVILEGE") do
           2506
         end
       ),
       (
-        def(encode(:CONTEST_NOT_START)) do
+        def encode(:CONTEST_NOT_START) do
           2507
         end
 
-        def(encode("CONTEST_NOT_START")) do
+        def encode("CONTEST_NOT_START") do
           2507
         end
       ),
       (
-        def(encode(:CONTEST_ALREADY_END)) do
+        def encode(:CONTEST_ALREADY_END) do
           2508
         end
 
-        def(encode("CONTEST_ALREADY_END")) do
+        def encode("CONTEST_ALREADY_END") do
           2508
         end
       ),
       (
-        def(encode(:CONTEST_PLAYER_NOT_MATCHING)) do
+        def encode(:CONTEST_PLAYER_NOT_MATCHING) do
           2509
         end
 
-        def(encode("CONTEST_PLAYER_NOT_MATCHING")) do
+        def encode("CONTEST_PLAYER_NOT_MATCHING") do
           2509
         end
       ),
       (
-        def(encode(:CONTEST_LOCK_BY_OTHER)) do
+        def encode(:CONTEST_LOCK_BY_OTHER) do
           2510
         end
 
-        def(encode("CONTEST_LOCK_BY_OTHER")) do
+        def encode("CONTEST_LOCK_BY_OTHER") do
           2510
         end
       ),
       (
-        def(encode(:CONTEST_NO_ACCESS_MATCH)) do
+        def encode(:CONTEST_NO_ACCESS_MATCH) do
           2511
         end
 
-        def(encode("CONTEST_NO_ACCESS_MATCH")) do
+        def encode("CONTEST_NO_ACCESS_MATCH") do
           2511
         end
       ),
       (
-        def(encode(:CONTEST_NO_PRIV_CHAT)) do
+        def encode(:CONTEST_NO_PRIV_CHAT) do
           2512
         end
 
-        def(encode("CONTEST_NO_PRIV_CHAT")) do
+        def encode("CONTEST_NO_PRIV_CHAT") do
           2512
         end
       ),
       (
-        def(encode(:CONTEST_NOT_CREATOR)) do
+        def encode(:CONTEST_NOT_CREATOR) do
           2513
         end
 
-        def(encode("CONTEST_NOT_CREATOR")) do
+        def encode("CONTEST_NOT_CREATOR") do
           2513
         end
       ),
       (
-        def(encode(:CONTEST_MANAGER_COUNT_LIMIT)) do
+        def encode(:CONTEST_MANAGER_COUNT_LIMIT) do
           2514
         end
 
-        def(encode("CONTEST_MANAGER_COUNT_LIMIT")) do
+        def encode("CONTEST_MANAGER_COUNT_LIMIT") do
           2514
         end
       ),
       (
-        def(encode(:CONTEST_CREATE_TIME_LIMIT)) do
+        def encode(:CONTEST_CREATE_TIME_LIMIT) do
           2515
         end
 
-        def(encode("CONTEST_CREATE_TIME_LIMIT")) do
+        def encode("CONTEST_CREATE_TIME_LIMIT") do
           2515
         end
       ),
       (
-        def(encode(:CONTEST_BAN_CREATE)) do
+        def encode(:CONTEST_BAN_CREATE) do
           2516
         end
 
-        def(encode("CONTEST_BAN_CREATE")) do
+        def encode("CONTEST_BAN_CREATE") do
           2516
         end
       ),
       (
-        def(encode(:CONTEST_SETTING_PARAM)) do
+        def encode(:CONTEST_SETTING_PARAM) do
           2517
         end
 
-        def(encode("CONTEST_SETTING_PARAM")) do
+        def encode("CONTEST_SETTING_PARAM") do
           2517
         end
       ),
       (
-        def(encode(:CONTEST_LEVEL_LIMIT)) do
+        def encode(:CONTEST_LEVEL_LIMIT) do
           2518
         end
 
-        def(encode("CONTEST_LEVEL_LIMIT")) do
+        def encode("CONTEST_LEVEL_LIMIT") do
           2518
         end
       ),
       (
-        def(encode(:CONTEST_GAME_COUNT_LIMIT)) do
+        def encode(:CONTEST_GAME_COUNT_LIMIT) do
           2519
         end
 
-        def(encode("CONTEST_GAME_COUNT_LIMIT")) do
+        def encode("CONTEST_GAME_COUNT_LIMIT") do
           2519
         end
       ),
       (
-        def(encode(:CONTEST_PROLONG_LIMIT)) do
+        def encode(:CONTEST_PROLONG_LIMIT) do
           2520
         end
 
-        def(encode("CONTEST_PROLONG_LIMIT")) do
+        def encode("CONTEST_PROLONG_LIMIT") do
           2520
         end
       ),
       (
-        def(encode(:CONTEST_AUTO_MATCHING)) do
+        def encode(:CONTEST_AUTO_MATCHING) do
           2521
         end
 
-        def(encode("CONTEST_AUTO_MATCHING")) do
+        def encode("CONTEST_AUTO_MATCHING") do
           2521
         end
       )
     ]
 
-    def(encode(x)) do
+    def encode(x) do
       x
     end
 
     @spec decode(integer()) :: atom() | integer()
     [
-      def(decode(2501)) do
+      def decode(2501) do
         :CONTEST_NOT_FOUND
       end,
-      def(decode(1303)) do
+      def decode(1303) do
         :UNSUPPORT_MATCH_MODE
       end,
-      def(decode(107)) do
+      def decode(107) do
         :GIFT_CODE_GAIN_USAGEID
       end,
-      def(decode(115)) do
+      def decode(115) do
         :FREQUENT_PHONE_CODE
       end,
-      def(decode(501)) do
+      def decode(501) do
         :RESOURCE_NOT_ENOUGH
       end,
-      def(decode(1302)) do
+      def decode(1302) do
         :MATCH_NOT_IN_MATCHING
       end,
-      def(decode(5)) do
+      def decode(5) do
         :SYSTEM_COMMUNICATION
       end,
-      def(decode(1206)) do
+      def decode(1206) do
         :GAME_ALREADY_FINISH
       end,
-      def(decode(118)) do
+      def decode(118) do
         :BIND_SAME_PHONE
       end,
-      def(decode(114)) do
+      def decode(114) do
         :GIFT_CODE_DISCARDED
       end,
-      def(decode(2007)) do
+      def decode(2007) do
         :COMMENT_WHEN_GAMING
       end,
-      def(decode(101)) do
+      def decode(101) do
         :EMPTY_INPUT
       end,
-      def(decode(1004)) do
+      def decode(1004) do
         :ACC_NOT_LOGIN
       end,
-      def(decode(106)) do
+      def decode(106) do
         :GIFT_CODE_ALREADY_USED
       end,
-      def(decode(1107)) do
+      def decode(1107) do
         :ROOM_TARGET_NOT_JOIN
       end,
-      def(decode(1502)) do
+      def decode(1502) do
         :BAG_NOT_ENOUGH_ITEM
       end,
-      def(decode(2517)) do
+      def decode(2517) do
         :CONTEST_SETTING_PARAM
       end,
-      def(decode(1904)) do
+      def decode(1904) do
         :PAYMENT_GOODS_NOT_FOUND
       end,
-      def(decode(1611)) do
+      def decode(1611) do
         :TASK_DAILY_NOT_FOUND
       end,
-      def(decode(2301)) do
+      def decode(2301) do
         :ITEM_CANNOT_SELL
       end,
-      def(decode(1408)) do
+      def decode(1408) do
         :FRIEND_ADD_SELF
       end,
-      def(decode(2507)) do
+      def decode(2507) do
         :CONTEST_NOT_START
       end,
-      def(decode(2003)) do
+      def decode(2003) do
         :TITLE_NOT_UNLOCK
       end,
-      def(decode(105)) do
+      def decode(105) do
         :GIFT_CODE_NOT_VALID
       end,
-      def(decode(2401)) do
+      def decode(2401) do
         :SHOP_GOODS_NOT_FOUND
       end,
-      def(decode(1100)) do
+      def decode(1100) do
         :ROOM_NOT_EXIST
       end,
-      def(decode(1901)) do
+      def decode(1901) do
         :PAYMENT_ORDER_NOT_FOUND
       end,
-      def(decode(1204)) do
+      def decode(1204) do
         :GAME_REFUSED
       end,
-      def(decode(2510)) do
+      def decode(2510) do
         :CONTEST_LOCK_BY_OTHER
       end,
-      def(decode(102)) do
+      def decode(102) do
         :INVALID_INPUT
       end,
-      def(decode(2519)) do
+      def decode(2519) do
         :CONTEST_GAME_COUNT_LIMIT
       end,
-      def(decode(1971)) do
+      def decode(1971) do
         :PAYMENT_ALI_TYPE_UNSUP
       end,
-      def(decode(2506)) do
+      def decode(2506) do
         :CONTEST_MGR_NO_PRIVILEGE
       end,
-      def(decode(1008)) do
+      def decode(1008) do
         :ACC_CHAR_ALREADY_LOCK
       end,
-      def(decode(2513)) do
+      def decode(2513) do
         :CONTEST_NOT_CREATOR
       end,
-      def(decode(2505)) do
+      def decode(2505) do
         :CONTEST_MGR_NOT_LOGIN
       end,
-      def(decode(1016)) do
+      def decode(1016) do
         :ACC_MOD_NICKNAME_CD
       end,
-      def(decode(1902)) do
+      def decode(1902) do
         :PAYMENT_ORDER_HANDLED
       end,
-      def(decode(119)) do
+      def decode(119) do
         :PHONE_SEND_FAILED
       end,
-      def(decode(4)) do
+      def decode(4) do
         :NOT_DEVELOPMENT_MODE
       end,
-      def(decode(1010)) do
+      def decode(1010) do
         :ACC_NICKNAME_USED
       end,
-      def(decode(2512)) do
+      def decode(2512) do
         :CONTEST_NO_PRIV_CHAT
       end,
-      def(decode(1503)) do
+      def decode(1503) do
         :BAG_ITEM_NOT_USABLE
       end,
-      def(decode(1017)) do
+      def decode(1017) do
         :ACC_ALREADY_REG_REALNAME
       end,
-      def(decode(1702)) do
+      def decode(1702) do
         :MAIL_NO_ATTACHMENT
       end,
-      def(decode(1403)) do
+      def decode(1403) do
         :SEARCH_TIMEOUT
       end,
-      def(decode(2008)) do
+      def decode(2008) do
         :COMMENT_NO_PRIV_DELETE
       end,
-      def(decode(1005)) do
+      def decode(1005) do
         :ACC_ALREADY_LOGIN
       end,
-      def(decode(1006)) do
+      def decode(1006) do
         :ACC_NOT_EXIST
       end,
-      def(decode(1207)) do
+      def decode(1207) do
         :GAME_CAN_NOT_MANUAL_TER
       end,
-      def(decode(1208)) do
+      def decode(1208) do
         :GAME_CREATE_FAILED
       end,
-      def(decode(2002)) do
+      def decode(2002) do
         :REVIVE_COIN_LIMIT
       end,
-      def(decode(1002)) do
+      def decode(1002) do
         :ACC_NOT_SIGN_UP
       end,
-      def(decode(1401)) do
+      def decode(1401) do
         :FRIEND_NOT_FRIEND
       end,
-      def(decode(2502)) do
+      def decode(2502) do
         :CONTEST_MAX_ACTIVE
       end,
-      def(decode(151)) do
+      def decode(151) do
         :CLIENT_OUTDATED
       end,
-      def(decode(3)) do
+      def decode(3) do
         :CLIENT_PACKET_PARAM
       end,
-      def(decode(1112)) do
+      def decode(1112) do
         :ROOM_MODE_INVALID
       end,
-      def(decode(104)) do
+      def decode(104) do
         :CONFIG_NOT_FOUND
       end,
-      def(decode(1601)) do
+      def decode(1601) do
         :ACHIEVEMENT_NOT_ACHIEVED
       end,
-      def(decode(1)) do
+      def decode(1) do
         :UNKNOWN
       end,
-      def(decode(1406)) do
+      def decode(1406) do
         :FRIEND_MAX_APPLY
       end,
-      def(decode(2432)) do
+      def decode(2432) do
         :SHOP_ZHP_REFRESH_LIMIT
       end,
-      def(decode(112)) do
+      def decode(112) do
         :GIFT_CODE_PROCESSING
       end,
-      def(decode(1961)) do
+      def decode(1961) do
         :PAYMENT_WECHAT_POST_FAILED
       end,
-      def(decode(2503)) do
+      def decode(2503) do
         :CONTEST_RANDOM_CID
       end,
-      def(decode(2201)) do
+      def decode(2201) do
         :CHARACTER_UNLOCK
       end,
-      def(decode(1801)) do
+      def decode(1801) do
         :LIVE_GAME_NOT_FOUND
       end,
-      def(decode(1003)) do
+      def decode(1003) do
         :ACC_PASSWORD
       end,
-      def(decode(2010)) do
+      def decode(2010) do
         :CHEST_NOT_FOUND
       end,
-      def(decode(2203)) do
+      def decode(2203) do
         :CHARACTER_GIFT_COUNT_MAX
       end,
-      def(decode(2508)) do
+      def decode(2508) do
         :CONTEST_ALREADY_END
       end,
-      def(decode(1201)) do
+      def decode(1201) do
         :TOKEN_NOT_EXIST
       end,
-      def(decode(1109)) do
+      def decode(1109) do
         :ACC_IS_PLAYING
       end,
-      def(decode(2)) do
+      def decode(2) do
         :SYSTEM_ERROR
       end,
-      def(decode(108)) do
+      def decode(108) do
         :UNSUPPORT_OAUTH2
       end,
-      def(decode(2520)) do
+      def decode(2520) do
         :CONTEST_PROLONG_LIMIT
       end,
-      def(decode(1703)) do
+      def decode(1703) do
         :MAIL_ALREADY_TAKE
       end,
-      def(decode(2204)) do
+      def decode(2204) do
         :CHARACTER_SKIN_UNLOCK
       end,
-      def(decode(2514)) do
+      def decode(2514) do
         :CONTEST_MANAGER_COUNT_LIMIT
       end,
-      def(decode(2518)) do
+      def decode(2518) do
         :CONTEST_LEVEL_LIMIT
       end,
-      def(decode(502)) do
+      def decode(502) do
         :TEXT_FORBIDDEN_WORD
       end,
-      def(decode(1110)) do
+      def decode(1110) do
         :ROOM_NO_AVAILABLE_ID
       end,
-      def(decode(1007)) do
+      def decode(1007) do
         :ACC_CHAR_NOT_LOCK
       end,
-      def(decode(116)) do
+      def decode(116) do
         :PHONE_CODE_EXPIRED
       end,
-      def(decode(1900)) do
+      def decode(1900) do
         :PAYMENT_CLOSED
       end,
-      def(decode(0)) do
+      def decode(0) do
         :OK
       end,
-      def(decode(110)) do
+      def decode(110) do
         :OAUTH2_FAILED
       end,
-      def(decode(1103)) do
+      def decode(1103) do
         :ROOM_NOT_OWNER
       end,
-      def(decode(2004)) do
+      def decode(2004) do
         :COMMENT_ONLY_FRIEND
       end,
-      def(decode(1101)) do
+      def decode(1101) do
         :ROOM_IS_FULL
       end,
-      def(decode(2005)) do
+      def decode(2005) do
         :COMMENT_FORBID
       end,
-      def(decode(109)) do
+      def decode(109) do
         :OAUTH2_EXPIRED
       end,
-      def(decode(2431)) do
+      def decode(2431) do
         :SHOP_ZHP_UNAVAILABLE
       end,
-      def(decode(2206)) do
+      def decode(2206) do
         :CHARACTER_LEVEL
       end,
-      def(decode(1202)) do
+      def decode(1202) do
         :TOKEN_INVALID
       end,
-      def(decode(1106)) do
+      def decode(1106) do
         :ROOM_NOT_JOIN
       end,
-      def(decode(6)) do
+      def decode(6) do
         :METHOD_NOT_FOUND
       end,
-      def(decode(2515)) do
+      def decode(2515) do
         :CONTEST_CREATE_TIME_LIMIT
       end,
-      def(decode(1111)) do
+      def decode(1111) do
         :ROOM_NO_ENOUGH_SLOT
       end,
-      def(decode(2521)) do
+      def decode(2521) do
         :CONTEST_AUTO_MATCHING
       end,
-      def(decode(1011)) do
+      def decode(1011) do
         :ACC_NO_NICKNAME
       end,
-      def(decode(504)) do
+      def decode(504) do
         :RESOURCE_UNIQUE
       end,
-      def(decode(1105)) do
+      def decode(1105) do
         :ROOM_ALREADY_JOIN
       end,
-      def(decode(1014)) do
+      def decode(1014) do
         :ACC_TARGET_ACCOUNT_USED
       end,
-      def(decode(2207)) do
+      def decode(2207) do
         :CHARACTER_CANNOT_MARRY
       end,
-      def(decode(503)) do
+      def decode(503) do
         :ACCOUNT_BANNED
       end,
-      def(decode(2205)) do
+      def decode(2205) do
         :CHARACTER_IS_UPGRADE
       end,
-      def(decode(1012)) do
+      def decode(1012) do
         :ACC_HAS_NICKNAME
       end,
-      def(decode(2509)) do
+      def decode(2509) do
         :CONTEST_PLAYER_NOT_MATCHING
       end,
-      def(decode(1405)) do
+      def decode(1405) do
         :FRIEND_APPLY_METHOD
       end,
-      def(decode(1009)) do
+      def decode(1009) do
         :ACC_TICK_BY_SAME
       end,
-      def(decode(2006)) do
+      def decode(2006) do
         :COMMENT_SELF
       end,
-      def(decode(2011)) do
+      def decode(2011) do
         :CHEST_INVALID_COUNT
       end,
-      def(decode(1102)) do
+      def decode(1102) do
         :ROOM_ALREADY_LEAVE
       end,
-      def(decode(1013)) do
+      def decode(1013) do
         :ACC_HAS_BIND_ACCOUNT
       end,
-      def(decode(1504)) do
+      def decode(1504) do
         :BAG_ITEM_NOT_COMPOSE
       end,
-      def(decode(1701)) do
+      def decode(1701) do
         :MAIL_NOT_FOUND
       end,
-      def(decode(1612)) do
+      def decode(1612) do
         :TASK_DAILY_NO_REFRESH
       end,
-      def(decode(1015)) do
+      def decode(1015) do
         :ACC_NEED_NICKNAME_ITEM
       end,
-      def(decode(1970)) do
+      def decode(1970) do
         :PAYMENT_ALI_DISABLE
       end,
-      def(decode(1409)) do
+      def decode(1409) do
         :FRIEND_MAX_TARGET
       end,
-      def(decode(2001)) do
+      def decode(2001) do
         :REVIVE_COIN_TIME
       end,
-      def(decode(1903)) do
+      def decode(1903) do
         :PAYMENT_PLATFORM
       end,
-      def(decode(1404)) do
+      def decode(1404) do
         :SEARCH_INVALID
       end,
-      def(decode(2504)) do
+      def decode(2504) do
         :CONTEST_MGR_HAS_LOGINED
       end,
-      def(decode(1305)) do
+      def decode(1305) do
         :MATCH_LEVEL_LIMIT
       end,
-      def(decode(2009)) do
+      def decode(2009) do
         :COMMENT_CD
       end,
-      def(decode(113)) do
+      def decode(113) do
         :GIFT_CODE_DURATION
       end,
-      def(decode(2202)) do
+      def decode(2202) do
         :CHARACTER_GIFT_TYPE
       end,
-      def(decode(1304)) do
+      def decode(1304) do
         :MATCH_GOLD_LIMIT
       end,
-      def(decode(2402)) do
+      def decode(2402) do
         :SHOP_GOODS_BUY_LIMIT
       end,
-      def(decode(1104)) do
+      def decode(1104) do
         :ROOM_NOT_ALL_READY
       end,
-      def(decode(1501)) do
+      def decode(1501) do
         :BAG_NO_ITEM
       end,
-      def(decode(1306)) do
+      def decode(1306) do
         :MATCH_MODE_NOT_OPEN
       end,
-      def(decode(1203)) do
+      def decode(1203) do
         :GAME_NOT_EXIST
       end,
-      def(decode(1301)) do
+      def decode(1301) do
         :MATCH_IN_MATCHING
       end,
-      def(decode(1001)) do
+      def decode(1001) do
         :ACC_DUPLICATE_SIGN_UP
       end,
-      def(decode(2516)) do
+      def decode(2516) do
         :CONTEST_BAN_CREATE
       end,
-      def(decode(1108)) do
+      def decode(1108) do
         :ROOM_KICK_SELF
       end,
-      def(decode(1960)) do
+      def decode(1960) do
         :PAYMENT_WECHAT_DISABLE
       end,
-      def(decode(1951)) do
+      def decode(1951) do
         :PAYMENT_GP_VERIFY
       end,
-      def(decode(2511)) do
+      def decode(2511) do
         :CONTEST_NO_ACCESS_MATCH
       end,
-      def(decode(1205)) do
+      def decode(1205) do
         :GAME_NOT_PLAYING
       end,
-      def(decode(1402)) do
+      def decode(1402) do
         :FRIEND_IS_FRIEND
       end,
-      def(decode(1407)) do
+      def decode(1407) do
         :FRIEND_MAX
       end,
-      def(decode(117)) do
+      def decode(117) do
         :SECURE_OPERATION_EXPIRED
       end
     ]
 
-    def(decode(x)) do
+    def decode(x) do
       x
     end
 
     @spec constants() :: [{integer(), atom()}]
-    def(constants()) do
+    def constants() do
       [
         {0, :OK},
         {1, :UNKNOWN},
@@ -1943,5 +1943,456 @@ defmodule(Soulless.Tourney.Lq.ErrorCode) do
         {2521, :CONTEST_AUTO_MATCHING}
       ]
     end
+
+    @spec has_constant?(any()) :: boolean()
+    (
+      [
+        def has_constant?(:OK) do
+          true
+        end,
+        def has_constant?(:UNKNOWN) do
+          true
+        end,
+        def has_constant?(:SYSTEM_ERROR) do
+          true
+        end,
+        def has_constant?(:CLIENT_PACKET_PARAM) do
+          true
+        end,
+        def has_constant?(:NOT_DEVELOPMENT_MODE) do
+          true
+        end,
+        def has_constant?(:SYSTEM_COMMUNICATION) do
+          true
+        end,
+        def has_constant?(:METHOD_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:EMPTY_INPUT) do
+          true
+        end,
+        def has_constant?(:INVALID_INPUT) do
+          true
+        end,
+        def has_constant?(:CONFIG_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:GIFT_CODE_NOT_VALID) do
+          true
+        end,
+        def has_constant?(:GIFT_CODE_ALREADY_USED) do
+          true
+        end,
+        def has_constant?(:GIFT_CODE_GAIN_USAGEID) do
+          true
+        end,
+        def has_constant?(:UNSUPPORT_OAUTH2) do
+          true
+        end,
+        def has_constant?(:OAUTH2_EXPIRED) do
+          true
+        end,
+        def has_constant?(:OAUTH2_FAILED) do
+          true
+        end,
+        def has_constant?(:GIFT_CODE_PROCESSING) do
+          true
+        end,
+        def has_constant?(:GIFT_CODE_DURATION) do
+          true
+        end,
+        def has_constant?(:GIFT_CODE_DISCARDED) do
+          true
+        end,
+        def has_constant?(:FREQUENT_PHONE_CODE) do
+          true
+        end,
+        def has_constant?(:PHONE_CODE_EXPIRED) do
+          true
+        end,
+        def has_constant?(:SECURE_OPERATION_EXPIRED) do
+          true
+        end,
+        def has_constant?(:BIND_SAME_PHONE) do
+          true
+        end,
+        def has_constant?(:PHONE_SEND_FAILED) do
+          true
+        end,
+        def has_constant?(:CLIENT_OUTDATED) do
+          true
+        end,
+        def has_constant?(:RESOURCE_NOT_ENOUGH) do
+          true
+        end,
+        def has_constant?(:TEXT_FORBIDDEN_WORD) do
+          true
+        end,
+        def has_constant?(:ACCOUNT_BANNED) do
+          true
+        end,
+        def has_constant?(:RESOURCE_UNIQUE) do
+          true
+        end,
+        def has_constant?(:ACC_DUPLICATE_SIGN_UP) do
+          true
+        end,
+        def has_constant?(:ACC_NOT_SIGN_UP) do
+          true
+        end,
+        def has_constant?(:ACC_PASSWORD) do
+          true
+        end,
+        def has_constant?(:ACC_NOT_LOGIN) do
+          true
+        end,
+        def has_constant?(:ACC_ALREADY_LOGIN) do
+          true
+        end,
+        def has_constant?(:ACC_NOT_EXIST) do
+          true
+        end,
+        def has_constant?(:ACC_CHAR_NOT_LOCK) do
+          true
+        end,
+        def has_constant?(:ACC_CHAR_ALREADY_LOCK) do
+          true
+        end,
+        def has_constant?(:ACC_TICK_BY_SAME) do
+          true
+        end,
+        def has_constant?(:ACC_NICKNAME_USED) do
+          true
+        end,
+        def has_constant?(:ACC_NO_NICKNAME) do
+          true
+        end,
+        def has_constant?(:ACC_HAS_NICKNAME) do
+          true
+        end,
+        def has_constant?(:ACC_HAS_BIND_ACCOUNT) do
+          true
+        end,
+        def has_constant?(:ACC_TARGET_ACCOUNT_USED) do
+          true
+        end,
+        def has_constant?(:ACC_NEED_NICKNAME_ITEM) do
+          true
+        end,
+        def has_constant?(:ACC_MOD_NICKNAME_CD) do
+          true
+        end,
+        def has_constant?(:ACC_ALREADY_REG_REALNAME) do
+          true
+        end,
+        def has_constant?(:ROOM_NOT_EXIST) do
+          true
+        end,
+        def has_constant?(:ROOM_IS_FULL) do
+          true
+        end,
+        def has_constant?(:ROOM_ALREADY_LEAVE) do
+          true
+        end,
+        def has_constant?(:ROOM_NOT_OWNER) do
+          true
+        end,
+        def has_constant?(:ROOM_NOT_ALL_READY) do
+          true
+        end,
+        def has_constant?(:ROOM_ALREADY_JOIN) do
+          true
+        end,
+        def has_constant?(:ROOM_NOT_JOIN) do
+          true
+        end,
+        def has_constant?(:ROOM_TARGET_NOT_JOIN) do
+          true
+        end,
+        def has_constant?(:ROOM_KICK_SELF) do
+          true
+        end,
+        def has_constant?(:ACC_IS_PLAYING) do
+          true
+        end,
+        def has_constant?(:ROOM_NO_AVAILABLE_ID) do
+          true
+        end,
+        def has_constant?(:ROOM_NO_ENOUGH_SLOT) do
+          true
+        end,
+        def has_constant?(:ROOM_MODE_INVALID) do
+          true
+        end,
+        def has_constant?(:TOKEN_NOT_EXIST) do
+          true
+        end,
+        def has_constant?(:TOKEN_INVALID) do
+          true
+        end,
+        def has_constant?(:GAME_NOT_EXIST) do
+          true
+        end,
+        def has_constant?(:GAME_REFUSED) do
+          true
+        end,
+        def has_constant?(:GAME_NOT_PLAYING) do
+          true
+        end,
+        def has_constant?(:GAME_ALREADY_FINISH) do
+          true
+        end,
+        def has_constant?(:GAME_CAN_NOT_MANUAL_TER) do
+          true
+        end,
+        def has_constant?(:GAME_CREATE_FAILED) do
+          true
+        end,
+        def has_constant?(:MATCH_IN_MATCHING) do
+          true
+        end,
+        def has_constant?(:MATCH_NOT_IN_MATCHING) do
+          true
+        end,
+        def has_constant?(:UNSUPPORT_MATCH_MODE) do
+          true
+        end,
+        def has_constant?(:MATCH_GOLD_LIMIT) do
+          true
+        end,
+        def has_constant?(:MATCH_LEVEL_LIMIT) do
+          true
+        end,
+        def has_constant?(:MATCH_MODE_NOT_OPEN) do
+          true
+        end,
+        def has_constant?(:FRIEND_NOT_FRIEND) do
+          true
+        end,
+        def has_constant?(:FRIEND_IS_FRIEND) do
+          true
+        end,
+        def has_constant?(:SEARCH_TIMEOUT) do
+          true
+        end,
+        def has_constant?(:SEARCH_INVALID) do
+          true
+        end,
+        def has_constant?(:FRIEND_APPLY_METHOD) do
+          true
+        end,
+        def has_constant?(:FRIEND_MAX_APPLY) do
+          true
+        end,
+        def has_constant?(:FRIEND_MAX) do
+          true
+        end,
+        def has_constant?(:FRIEND_ADD_SELF) do
+          true
+        end,
+        def has_constant?(:FRIEND_MAX_TARGET) do
+          true
+        end,
+        def has_constant?(:BAG_NO_ITEM) do
+          true
+        end,
+        def has_constant?(:BAG_NOT_ENOUGH_ITEM) do
+          true
+        end,
+        def has_constant?(:BAG_ITEM_NOT_USABLE) do
+          true
+        end,
+        def has_constant?(:BAG_ITEM_NOT_COMPOSE) do
+          true
+        end,
+        def has_constant?(:ACHIEVEMENT_NOT_ACHIEVED) do
+          true
+        end,
+        def has_constant?(:TASK_DAILY_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:TASK_DAILY_NO_REFRESH) do
+          true
+        end,
+        def has_constant?(:MAIL_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:MAIL_NO_ATTACHMENT) do
+          true
+        end,
+        def has_constant?(:MAIL_ALREADY_TAKE) do
+          true
+        end,
+        def has_constant?(:LIVE_GAME_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:PAYMENT_CLOSED) do
+          true
+        end,
+        def has_constant?(:PAYMENT_ORDER_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:PAYMENT_ORDER_HANDLED) do
+          true
+        end,
+        def has_constant?(:PAYMENT_PLATFORM) do
+          true
+        end,
+        def has_constant?(:PAYMENT_GOODS_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:PAYMENT_GP_VERIFY) do
+          true
+        end,
+        def has_constant?(:PAYMENT_WECHAT_DISABLE) do
+          true
+        end,
+        def has_constant?(:PAYMENT_WECHAT_POST_FAILED) do
+          true
+        end,
+        def has_constant?(:PAYMENT_ALI_DISABLE) do
+          true
+        end,
+        def has_constant?(:PAYMENT_ALI_TYPE_UNSUP) do
+          true
+        end,
+        def has_constant?(:REVIVE_COIN_TIME) do
+          true
+        end,
+        def has_constant?(:REVIVE_COIN_LIMIT) do
+          true
+        end,
+        def has_constant?(:TITLE_NOT_UNLOCK) do
+          true
+        end,
+        def has_constant?(:COMMENT_ONLY_FRIEND) do
+          true
+        end,
+        def has_constant?(:COMMENT_FORBID) do
+          true
+        end,
+        def has_constant?(:COMMENT_SELF) do
+          true
+        end,
+        def has_constant?(:COMMENT_WHEN_GAMING) do
+          true
+        end,
+        def has_constant?(:COMMENT_NO_PRIV_DELETE) do
+          true
+        end,
+        def has_constant?(:COMMENT_CD) do
+          true
+        end,
+        def has_constant?(:CHEST_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:CHEST_INVALID_COUNT) do
+          true
+        end,
+        def has_constant?(:CHARACTER_UNLOCK) do
+          true
+        end,
+        def has_constant?(:CHARACTER_GIFT_TYPE) do
+          true
+        end,
+        def has_constant?(:CHARACTER_GIFT_COUNT_MAX) do
+          true
+        end,
+        def has_constant?(:CHARACTER_SKIN_UNLOCK) do
+          true
+        end,
+        def has_constant?(:CHARACTER_IS_UPGRADE) do
+          true
+        end,
+        def has_constant?(:CHARACTER_LEVEL) do
+          true
+        end,
+        def has_constant?(:CHARACTER_CANNOT_MARRY) do
+          true
+        end,
+        def has_constant?(:ITEM_CANNOT_SELL) do
+          true
+        end,
+        def has_constant?(:SHOP_GOODS_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:SHOP_GOODS_BUY_LIMIT) do
+          true
+        end,
+        def has_constant?(:SHOP_ZHP_UNAVAILABLE) do
+          true
+        end,
+        def has_constant?(:SHOP_ZHP_REFRESH_LIMIT) do
+          true
+        end,
+        def has_constant?(:CONTEST_NOT_FOUND) do
+          true
+        end,
+        def has_constant?(:CONTEST_MAX_ACTIVE) do
+          true
+        end,
+        def has_constant?(:CONTEST_RANDOM_CID) do
+          true
+        end,
+        def has_constant?(:CONTEST_MGR_HAS_LOGINED) do
+          true
+        end,
+        def has_constant?(:CONTEST_MGR_NOT_LOGIN) do
+          true
+        end,
+        def has_constant?(:CONTEST_MGR_NO_PRIVILEGE) do
+          true
+        end,
+        def has_constant?(:CONTEST_NOT_START) do
+          true
+        end,
+        def has_constant?(:CONTEST_ALREADY_END) do
+          true
+        end,
+        def has_constant?(:CONTEST_PLAYER_NOT_MATCHING) do
+          true
+        end,
+        def has_constant?(:CONTEST_LOCK_BY_OTHER) do
+          true
+        end,
+        def has_constant?(:CONTEST_NO_ACCESS_MATCH) do
+          true
+        end,
+        def has_constant?(:CONTEST_NO_PRIV_CHAT) do
+          true
+        end,
+        def has_constant?(:CONTEST_NOT_CREATOR) do
+          true
+        end,
+        def has_constant?(:CONTEST_MANAGER_COUNT_LIMIT) do
+          true
+        end,
+        def has_constant?(:CONTEST_CREATE_TIME_LIMIT) do
+          true
+        end,
+        def has_constant?(:CONTEST_BAN_CREATE) do
+          true
+        end,
+        def has_constant?(:CONTEST_SETTING_PARAM) do
+          true
+        end,
+        def has_constant?(:CONTEST_LEVEL_LIMIT) do
+          true
+        end,
+        def has_constant?(:CONTEST_GAME_COUNT_LIMIT) do
+          true
+        end,
+        def has_constant?(:CONTEST_PROLONG_LIMIT) do
+          true
+        end,
+        def has_constant?(:CONTEST_AUTO_MATCHING) do
+          true
+        end
+      ]
+
+      def has_constant?(_) do
+        false
+      end
+    )
   )
 end

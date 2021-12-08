@@ -1,29 +1,26 @@
 # credo:disable-for-this-file
-defmodule(Soulless.Game.Lq.ReqCreateRoom) do
+defmodule Soulless.Game.Lq.ReqCreateRoom do
   @moduledoc false
   (
-    defstruct(
-      player_count: 0,
-      mode: nil,
-      public_live: false,
-      client_version_string: "",
-      __uf__: []
-    )
+    defstruct player_count: 0,
+              mode: nil,
+              public_live: false,
+              client_version_string: "",
+              __uf__: []
 
     (
       (
         @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def(encode(msg)) do
+        def encode(msg) do
           try do
             {:ok, encode!(msg)}
           rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] ->
-              {:error, e}
+            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
           end
         end
 
         @spec encode!(struct) :: iodata | no_return
-        def(encode!(msg)) do
+        def encode!(msg) do
           []
           |> encode_player_count(msg)
           |> encode_mode(msg)
@@ -36,68 +33,62 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
       []
 
       [
-        defp(encode_player_count(acc, msg)) do
+        defp encode_player_count(acc, msg) do
           try do
-            if(msg.player_count == 0) do
+            if msg.player_count == 0 do
               acc
             else
               [acc, "\b", Protox.Encode.encode_uint32(msg.player_count)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:player_count, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:player_count, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_mode(acc, msg)) do
+        defp encode_mode(acc, msg) do
           try do
-            if(msg.mode == nil) do
+            if msg.mode == nil do
               acc
             else
-              [acc, <<18>>, Protox.Encode.encode_message(msg.mode)]
+              [acc, "\x12", Protox.Encode.encode_message(msg.mode)]
             end
           rescue
             ArgumentError ->
-              reraise(Protox.EncodingError.new(:mode, "invalid field value"), __STACKTRACE__)
+              reraise Protox.EncodingError.new(:mode, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp(encode_public_live(acc, msg)) do
+        defp encode_public_live(acc, msg) do
           try do
-            if(msg.public_live == false) do
+            if msg.public_live == false do
               acc
             else
-              [acc, <<24>>, Protox.Encode.encode_bool(msg.public_live)]
+              [acc, "\x18", Protox.Encode.encode_bool(msg.public_live)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:public_live, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:public_live, "invalid field value"),
+                      __STACKTRACE__
           end
         end,
-        defp(encode_client_version_string(acc, msg)) do
+        defp encode_client_version_string(acc, msg) do
           try do
-            if(msg.client_version_string == "") do
+            if msg.client_version_string == "" do
               acc
             else
               [acc, "\"", Protox.Encode.encode_string(msg.client_version_string)]
             end
           rescue
             ArgumentError ->
-              reraise(
-                Protox.EncodingError.new(:client_version_string, "invalid field value"),
-                __STACKTRACE__
-              )
+              reraise Protox.EncodingError.new(:client_version_string, "invalid field value"),
+                      __STACKTRACE__
           end
         end
       ]
 
-      defp(encode_unknown_fields(acc, msg)) do
+      defp encode_unknown_fields(acc, msg) do
         Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case(wire_type) do
+          case wire_type do
             0 ->
               [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
 
@@ -118,7 +109,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
     (
       (
         @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def(decode(bytes)) do
+        def decode(bytes) do
           try do
             {:ok, decode!(bytes)}
           rescue
@@ -129,7 +120,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
 
         (
           @spec decode!(binary) :: struct | no_return
-          def(decode!(bytes)) do
+          def decode!(bytes) do
             parse_key_value(bytes, struct(Soulless.Game.Lq.ReqCreateRoom))
           end
         )
@@ -137,15 +128,15 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
 
       (
         @spec parse_key_value(binary, struct) :: struct
-        defp(parse_key_value(<<>>, msg)) do
+        defp parse_key_value(<<>>, msg) do
           msg
         end
 
-        defp(parse_key_value(bytes, msg)) do
+        defp parse_key_value(bytes, msg) do
           {field, rest} =
-            case(Protox.Decode.parse_key(bytes)) do
+            case Protox.Decode.parse_key(bytes) do
               {0, _, _} ->
-                raise(%Protox.IllegalTagError{})
+                raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -157,7 +148,10 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
 
                 {[
                    mode:
-                     Protox.Message.merge(msg.mode, Soulless.Game.Lq.GameMode.decode!(delimited))
+                     Protox.MergeMessage.merge(
+                       msg.mode,
+                       Soulless.Game.Lq.GameMode.decode!(delimited)
+                     )
                  ], rest}
 
               {3, _, bytes} ->
@@ -188,17 +182,16 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
 
     (
       @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def(json_decode(input, opts \\ [])) do
+      def json_decode(input, opts \\ []) do
         try do
           {:ok, json_decode!(input, opts)}
         rescue
-          e in Protox.JsonDecodingError ->
-            {:error, e}
+          e in Protox.JsonDecodingError -> {:error, e}
         end
       end
 
       @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def(json_decode!(input, opts \\ [])) do
+      def json_decode!(input, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
 
         Protox.JsonDecode.decode!(
@@ -209,17 +202,16 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
       end
 
       @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def(json_encode(msg, opts \\ [])) do
+      def json_encode(msg, opts \\ []) do
         try do
           {:ok, json_encode!(msg, opts)}
         rescue
-          e in Protox.JsonEncodingError ->
-            {:error, e}
+          e in Protox.JsonEncodingError -> {:error, e}
         end
       end
 
       @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def(json_encode!(msg, opts \\ [])) do
+      def json_encode!(msg, opts \\ []) do
         {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
         Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
       end
@@ -229,7 +221,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs()) do
+    def defs() do
       %{
         1 => {:player_count, {:scalar, 0}, :uint32},
         2 => {:mode, {:scalar, nil}, {:message, Soulless.Game.Lq.GameMode}},
@@ -242,7 +234,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
     @spec defs_by_name() :: %{
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
-    def(defs_by_name()) do
+    def defs_by_name() do
       %{
         client_version_string: {4, {:scalar, ""}, :string},
         mode: {2, {:scalar, nil}, {:message, Soulless.Game.Lq.GameMode}},
@@ -252,7 +244,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
-    def(fields_defs()) do
+    def fields_defs() do
       [
         %{
           __struct__: Protox.Field,
@@ -296,7 +288,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def(field_def(:player_count)) do
+        def field_def(:player_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -309,7 +301,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
            }}
         end
 
-        def(field_def("playerCount")) do
+        def field_def("playerCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -322,7 +314,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
            }}
         end
 
-        def(field_def("player_count")) do
+        def field_def("player_count") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -336,7 +328,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
         end
       ),
       (
-        def(field_def(:mode)) do
+        def field_def(:mode) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -349,7 +341,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
            }}
         end
 
-        def(field_def("mode")) do
+        def field_def("mode") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -365,7 +357,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
         []
       ),
       (
-        def(field_def(:public_live)) do
+        def field_def(:public_live) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -378,7 +370,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
            }}
         end
 
-        def(field_def("publicLive")) do
+        def field_def("publicLive") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -391,7 +383,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
            }}
         end
 
-        def(field_def("public_live")) do
+        def field_def("public_live") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -405,7 +397,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
         end
       ),
       (
-        def(field_def(:client_version_string)) do
+        def field_def(:client_version_string) do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -418,7 +410,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
            }}
         end
 
-        def(field_def("clientVersionString")) do
+        def field_def("clientVersionString") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -431,7 +423,7 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
            }}
         end
 
-        def(field_def("client_version_string")) do
+        def field_def("client_version_string") do
           {:ok,
            %{
              __struct__: Protox.Field,
@@ -444,53 +436,53 @@ defmodule(Soulless.Game.Lq.ReqCreateRoom) do
            }}
         end
       ),
-      def(field_def(_)) do
+      def field_def(_) do
         {:error, :no_such_field}
       end
     ]
 
     (
       @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def(unknown_fields(msg)) do
+      def unknown_fields(msg) do
         msg.__uf__
       end
 
       @spec unknown_fields_name() :: :__uf__
-      def(unknown_fields_name()) do
+      def unknown_fields_name() do
         :__uf__
       end
 
       @spec clear_unknown_fields(struct) :: struct
-      def(clear_unknown_fields(msg)) do
+      def clear_unknown_fields(msg) do
         struct!(msg, [{unknown_fields_name(), []}])
       end
     )
 
     @spec required_fields() :: []
-    def(required_fields()) do
+    def required_fields() do
       []
     end
 
     @spec syntax() :: atom
-    def(syntax()) do
+    def syntax() do
       :proto3
     end
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def(default(:player_count)) do
+      def default(:player_count) do
         {:ok, 0}
       end,
-      def(default(:mode)) do
+      def default(:mode) do
         {:ok, nil}
       end,
-      def(default(:public_live)) do
+      def default(:public_live) do
         {:ok, false}
       end,
-      def(default(:client_version_string)) do
+      def default(:client_version_string) do
         {:ok, ""}
       end,
-      def(default(_)) do
+      def default(_) do
         {:error, :no_such_field}
       end
     ]
