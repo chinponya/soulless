@@ -28,7 +28,14 @@ defmodule Soulless.MixProject do
   defp package do
     [
       licenses: ["AGPL-3.0-only"],
-      links: %{"GitHub" => @source_url}
+      links: %{"GitHub" => @source_url},
+      exclude_patterns: [
+        "flake.nix",
+        "flake.lock",
+        "lib/example.ex",
+        ~r/config\/.*/,
+        ~r/priv\/scripts\/.*/
+      ]
     ]
   end
 
