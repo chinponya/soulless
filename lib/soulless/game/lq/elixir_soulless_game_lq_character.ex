@@ -9,6 +9,7 @@ defmodule Soulless.Game.Lq.Character do
               skin: 0,
               is_upgraded: false,
               extra_emoji: [],
+              rewarded_level: [],
               __uf__: []
 
     (
@@ -32,6 +33,7 @@ defmodule Soulless.Game.Lq.Character do
           |> encode_skin(msg)
           |> encode_is_upgraded(msg)
           |> encode_extra_emoji(msg)
+          |> encode_rewarded_level(msg)
           |> encode_unknown_fields(msg)
         end
       )
@@ -145,6 +147,33 @@ defmodule Soulless.Game.Lq.Character do
               reraise Protox.EncodingError.new(:extra_emoji, "invalid field value"),
                       __STACKTRACE__
           end
+        end,
+        defp encode_rewarded_level(acc, msg) do
+          try do
+            case msg.rewarded_level do
+              [] ->
+                acc
+
+              values ->
+                [
+                  acc,
+                  "B",
+                  (
+                    {bytes, len} =
+                      Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                        value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                        {[acc, value_bytes], len + byte_size(value_bytes)}
+                      end)
+
+                    [Protox.Varint.encode(len), bytes]
+                  )
+                ]
+            end
+          rescue
+            ArgumentError ->
+              reraise Protox.EncodingError.new(:rewarded_level, "invalid field value"),
+                      __STACKTRACE__
+          end
         end
       ]
 
@@ -238,6 +267,19 @@ defmodule Soulless.Game.Lq.Character do
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
                 {[extra_emoji: msg.extra_emoji ++ [value]], rest}
 
+              {8, 2, bytes} ->
+                {len, bytes} = Protox.Varint.decode(bytes)
+                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+                {[
+                   rewarded_level:
+                     msg.rewarded_level ++ Protox.Decode.parse_repeated_uint32([], delimited)
+                 ], rest}
+
+              {8, _, bytes} ->
+                {value, rest} = Protox.Decode.parse_uint32(bytes)
+                {[rewarded_level: msg.rewarded_level ++ [value]], rest}
+
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -304,7 +346,8 @@ defmodule Soulless.Game.Lq.Character do
         4 => {:views, :unpacked, {:message, Soulless.Game.Lq.ViewSlot}},
         5 => {:skin, {:scalar, 0}, :uint32},
         6 => {:is_upgraded, {:scalar, false}, :bool},
-        7 => {:extra_emoji, :packed, :uint32}
+        7 => {:extra_emoji, :packed, :uint32},
+        8 => {:rewarded_level, :packed, :uint32}
       }
     end
 
@@ -319,6 +362,7 @@ defmodule Soulless.Game.Lq.Character do
         extra_emoji: {7, :packed, :uint32},
         is_upgraded: {6, {:scalar, false}, :bool},
         level: {2, {:scalar, 0}, :uint32},
+        rewarded_level: {8, :packed, :uint32},
         skin: {5, {:scalar, 0}, :uint32},
         views: {4, :unpacked, {:message, Soulless.Game.Lq.ViewSlot}}
       }
@@ -388,6 +432,15 @@ defmodule Soulless.Game.Lq.Character do
           label: :repeated,
           name: :extra_emoji,
           tag: 7,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "rewardedLevel",
+          kind: :packed,
+          label: :repeated,
+          name: :rewarded_level,
+          tag: 8,
           type: :uint32
         }
       ]
@@ -620,6 +673,46 @@ defmodule Soulless.Game.Lq.Character do
            }}
         end
       ),
+      (
+        def field_def(:rewarded_level) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewardedLevel",
+             kind: :packed,
+             label: :repeated,
+             name: :rewarded_level,
+             tag: 8,
+             type: :uint32
+           }}
+        end
+
+        def field_def("rewardedLevel") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewardedLevel",
+             kind: :packed,
+             label: :repeated,
+             name: :rewarded_level,
+             tag: 8,
+             type: :uint32
+           }}
+        end
+
+        def field_def("rewarded_level") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewardedLevel",
+             kind: :packed,
+             label: :repeated,
+             name: :rewarded_level,
+             tag: 8,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -673,6 +766,9 @@ defmodule Soulless.Game.Lq.Character do
         {:ok, false}
       end,
       def default(:extra_emoji) do
+        {:error, :no_default_value}
+      end,
+      def default(:rewarded_level) do
         {:error, :no_default_value}
       end,
       def default(_) do

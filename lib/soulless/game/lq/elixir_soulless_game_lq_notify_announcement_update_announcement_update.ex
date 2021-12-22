@@ -1,5 +1,5 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
+defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate do
   @moduledoc false
   (
     defstruct lang: "", platform: "", __uf__: []
@@ -85,7 +85,10 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
         (
           @spec decode!(binary) :: struct | no_return
           def decode!(bytes) do
-            parse_key_value(bytes, struct(Soulless.Game.Lq.ReqFetchAnnouncement))
+            parse_key_value(
+              bytes,
+              struct(Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate)
+            )
           end
         )
       )
@@ -145,7 +148,7 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
 
         Protox.JsonDecode.decode!(
           input,
-          Soulless.Game.Lq.ReqFetchAnnouncement,
+          Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate,
           &json_library_wrapper.decode!(json_library, &1)
         )
       end

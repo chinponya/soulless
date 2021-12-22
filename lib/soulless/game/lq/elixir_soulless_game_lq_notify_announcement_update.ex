@@ -2,7 +2,7 @@
 defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
   @moduledoc false
   (
-    defstruct announcements: [], sort: [], lang: "", __uf__: []
+    defstruct update_list: [], __uf__: []
 
     (
       (
@@ -17,20 +17,16 @@ defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
 
         @spec encode!(struct) :: iodata | no_return
         def encode!(msg) do
-          []
-          |> encode_announcements(msg)
-          |> encode_sort(msg)
-          |> encode_lang(msg)
-          |> encode_unknown_fields(msg)
+          [] |> encode_update_list(msg) |> encode_unknown_fields(msg)
         end
       )
 
       []
 
       [
-        defp encode_announcements(acc, msg) do
+        defp encode_update_list(acc, msg) do
           try do
-            case msg.announcements do
+            case msg.update_list do
               [] ->
                 acc
 
@@ -44,46 +40,8 @@ defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
             end
           rescue
             ArgumentError ->
-              reraise Protox.EncodingError.new(:announcements, "invalid field value"),
+              reraise Protox.EncodingError.new(:update_list, "invalid field value"),
                       __STACKTRACE__
-          end
-        end,
-        defp encode_sort(acc, msg) do
-          try do
-            case msg.sort do
-              [] ->
-                acc
-
-              values ->
-                [
-                  acc,
-                  "\x12",
-                  (
-                    {bytes, len} =
-                      Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
-                        value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
-                        {[acc, value_bytes], len + byte_size(value_bytes)}
-                      end)
-
-                    [Protox.Varint.encode(len), bytes]
-                  )
-                ]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:sort, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_lang(acc, msg) do
-          try do
-            if msg.lang == "" do
-              acc
-            else
-              [acc, "\x1A", Protox.Encode.encode_string(msg.lang)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:lang, "invalid field value"), __STACKTRACE__
           end
         end
       ]
@@ -145,23 +103,14 @@ defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
                 {[
-                   announcements:
-                     msg.announcements ++ [Soulless.Game.Lq.Announcement.decode!(delimited)]
+                   update_list:
+                     msg.update_list ++
+                       [
+                         Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate.decode!(
+                           delimited
+                         )
+                       ]
                  ], rest}
-
-              {2, 2, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[sort: msg.sort ++ Protox.Decode.parse_repeated_uint32([], delimited)], rest}
-
-              {2, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[sort: msg.sort ++ [value]], rest}
-
-              {3, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[lang: delimited], rest}
 
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -223,9 +172,9 @@ defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
           }
     def defs() do
       %{
-        1 => {:announcements, :unpacked, {:message, Soulless.Game.Lq.Announcement}},
-        2 => {:sort, :packed, :uint32},
-        3 => {:lang, {:scalar, ""}, :string}
+        1 =>
+          {:update_list, :unpacked,
+           {:message, Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate}}
       }
     end
 
@@ -235,9 +184,8 @@ defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
           }
     def defs_by_name() do
       %{
-        announcements: {1, :unpacked, {:message, Soulless.Game.Lq.Announcement}},
-        lang: {3, {:scalar, ""}, :string},
-        sort: {2, :packed, :uint32}
+        update_list:
+          {1, :unpacked, {:message, Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate}}
       }
     end
 
@@ -246,30 +194,12 @@ defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "announcements",
+          json_name: "updateList",
           kind: :unpacked,
           label: :repeated,
-          name: :announcements,
+          name: :update_list,
           tag: 1,
-          type: {:message, Soulless.Game.Lq.Announcement}
-        },
-        %{
-          __struct__: Protox.Field,
-          json_name: "sort",
-          kind: :packed,
-          label: :repeated,
-          name: :sort,
-          tag: 2,
-          type: :uint32
-        },
-        %{
-          __struct__: Protox.Field,
-          json_name: "lang",
-          kind: {:scalar, ""},
-          label: :optional,
-          name: :lang,
-          tag: 3,
-          type: :string
+          type: {:message, Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate}
         }
       ]
     end
@@ -277,91 +207,44 @@ defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:announcements) do
+        def field_def(:update_list) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "announcements",
+             json_name: "updateList",
              kind: :unpacked,
              label: :repeated,
-             name: :announcements,
+             name: :update_list,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.Announcement}
+             type: {:message, Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate}
            }}
         end
 
-        def field_def("announcements") do
+        def field_def("updateList") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "announcements",
+             json_name: "updateList",
              kind: :unpacked,
              label: :repeated,
-             name: :announcements,
+             name: :update_list,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.Announcement}
+             type: {:message, Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate}
            }}
         end
 
-        []
-      ),
-      (
-        def field_def(:sort) do
+        def field_def("update_list") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "sort",
-             kind: :packed,
+             json_name: "updateList",
+             kind: :unpacked,
              label: :repeated,
-             name: :sort,
-             tag: 2,
-             type: :uint32
+             name: :update_list,
+             tag: 1,
+             type: {:message, Soulless.Game.Lq.NotifyAnnouncementUpdate.AnnouncementUpdate}
            }}
         end
-
-        def field_def("sort") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "sort",
-             kind: :packed,
-             label: :repeated,
-             name: :sort,
-             tag: 2,
-             type: :uint32
-           }}
-        end
-
-        []
-      ),
-      (
-        def field_def(:lang) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "lang",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :lang,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        def field_def("lang") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "lang",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :lang,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        []
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -397,14 +280,8 @@ defmodule Soulless.Game.Lq.NotifyAnnouncementUpdate do
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def default(:announcements) do
+      def default(:update_list) do
         {:error, :no_default_value}
-      end,
-      def default(:sort) do
-        {:error, :no_default_value}
-      end,
-      def default(:lang) do
-        {:ok, ""}
       end,
       def default(_) do
         {:error, :no_such_field}

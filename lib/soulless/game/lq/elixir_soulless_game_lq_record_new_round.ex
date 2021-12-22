@@ -22,7 +22,6 @@ defmodule Soulless.Game.Lq.RecordNewRound do
               muyu: nil,
               operations: [],
               ju_count: 0,
-              new_tile: "",
               __uf__: []
 
     (
@@ -59,7 +58,6 @@ defmodule Soulless.Game.Lq.RecordNewRound do
           |> encode_muyu(msg)
           |> encode_operations(msg)
           |> encode_ju_count(msg)
-          |> encode_new_tile(msg)
           |> encode_unknown_fields(msg)
         end
       )
@@ -377,18 +375,6 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             ArgumentError ->
               reraise Protox.EncodingError.new(:ju_count, "invalid field value"), __STACKTRACE__
           end
-        end,
-        defp encode_new_tile(acc, msg) do
-          try do
-            if msg.new_tile == "" do
-              acc
-            else
-              [acc, "\xAA\x01", Protox.Encode.encode_string(msg.new_tile)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:new_tile, "invalid field value"), __STACKTRACE__
-          end
         end
       ]
 
@@ -566,11 +552,6 @@ defmodule Soulless.Game.Lq.RecordNewRound do
                 {value, rest} = Protox.Decode.parse_uint32(bytes)
                 {[ju_count: value], rest}
 
-              {21, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[new_tile: delimited], rest}
-
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -650,8 +631,7 @@ defmodule Soulless.Game.Lq.RecordNewRound do
         17 => {:opens, :unpacked, {:message, Soulless.Game.Lq.NewRoundOpenedTiles}},
         18 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         19 => {:operations, :unpacked, {:message, Soulless.Game.Lq.OptionalOperationList}},
-        20 => {:ju_count, {:scalar, 0}, :uint32},
-        21 => {:new_tile, {:scalar, ""}, :string}
+        20 => {:ju_count, {:scalar, 0}, :uint32}
       }
     end
 
@@ -671,7 +651,6 @@ defmodule Soulless.Game.Lq.RecordNewRound do
         liqibang: {6, {:scalar, 0}, :uint32},
         md5: {13, {:scalar, ""}, :string},
         muyu: {18, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
-        new_tile: {21, {:scalar, ""}, :string},
         opens: {17, :unpacked, {:message, Soulless.Game.Lq.NewRoundOpenedTiles}},
         operation: {12, {:scalar, nil}, {:message, Soulless.Game.Lq.OptionalOperationList}},
         operations: {19, :unpacked, {:message, Soulless.Game.Lq.OptionalOperationList}},
@@ -867,15 +846,6 @@ defmodule Soulless.Game.Lq.RecordNewRound do
           name: :ju_count,
           tag: 20,
           type: :uint32
-        },
-        %{
-          __struct__: Protox.Field,
-          json_name: "newTile",
-          kind: {:scalar, ""},
-          label: :optional,
-          name: :new_tile,
-          tag: 21,
-          type: :string
         }
       ]
     end
@@ -1484,46 +1454,6 @@ defmodule Soulless.Game.Lq.RecordNewRound do
            }}
         end
       ),
-      (
-        def field_def(:new_tile) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "newTile",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :new_tile,
-             tag: 21,
-             type: :string
-           }}
-        end
-
-        def field_def("newTile") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "newTile",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :new_tile,
-             tag: 21,
-             type: :string
-           }}
-        end
-
-        def field_def("new_tile") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "newTile",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :new_tile,
-             tag: 21,
-             type: :string
-           }}
-        end
-      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1617,9 +1547,6 @@ defmodule Soulless.Game.Lq.RecordNewRound do
       end,
       def default(:ju_count) do
         {:ok, 0}
-      end,
-      def default(:new_tile) do
-        {:ok, ""}
       end,
       def default(_) do
         {:error, :no_such_field}

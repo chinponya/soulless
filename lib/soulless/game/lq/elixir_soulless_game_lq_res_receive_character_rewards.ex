@@ -1,8 +1,8 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
+defmodule Soulless.Game.Lq.ResReceiveCharacterRewards do
   @moduledoc false
   (
-    defstruct lang: "", platform: "", __uf__: []
+    defstruct error: nil, items: [], __uf__: []
 
     (
       (
@@ -17,35 +17,42 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
 
         @spec encode!(struct) :: iodata | no_return
         def encode!(msg) do
-          [] |> encode_lang(msg) |> encode_platform(msg) |> encode_unknown_fields(msg)
+          [] |> encode_error(msg) |> encode_items(msg) |> encode_unknown_fields(msg)
         end
       )
 
       []
 
       [
-        defp encode_lang(acc, msg) do
+        defp encode_error(acc, msg) do
           try do
-            if msg.lang == "" do
+            if msg.error == nil do
               acc
             else
-              [acc, "\n", Protox.Encode.encode_string(msg.lang)]
+              [acc, "\n", Protox.Encode.encode_message(msg.error)]
             end
           rescue
             ArgumentError ->
-              reraise Protox.EncodingError.new(:lang, "invalid field value"), __STACKTRACE__
+              reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp encode_platform(acc, msg) do
+        defp encode_items(acc, msg) do
           try do
-            if msg.platform == "" do
-              acc
-            else
-              [acc, "\x12", Protox.Encode.encode_string(msg.platform)]
+            case msg.items do
+              [] ->
+                acc
+
+              values ->
+                [
+                  acc,
+                  Enum.reduce(values, [], fn value, acc ->
+                    [acc, "\x12", Protox.Encode.encode_message(value)]
+                  end)
+                ]
             end
           rescue
             ArgumentError ->
-              reraise Protox.EncodingError.new(:platform, "invalid field value"), __STACKTRACE__
+              reraise Protox.EncodingError.new(:items, "invalid field value"), __STACKTRACE__
           end
         end
       ]
@@ -85,7 +92,7 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
         (
           @spec decode!(binary) :: struct | no_return
           def decode!(bytes) do
-            parse_key_value(bytes, struct(Soulless.Game.Lq.ReqFetchAnnouncement))
+            parse_key_value(bytes, struct(Soulless.Game.Lq.ResReceiveCharacterRewards))
           end
         )
       )
@@ -105,12 +112,24 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
               {1, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[lang: delimited], rest}
+
+                {[
+                   error:
+                     Protox.MergeMessage.merge(
+                       msg.error,
+                       Soulless.Game.Lq.Error.decode!(delimited)
+                     )
+                 ], rest}
 
               {2, _, bytes} ->
                 {len, bytes} = Protox.Varint.decode(bytes)
                 {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[platform: delimited], rest}
+
+                {[
+                   items:
+                     msg.items ++
+                       [Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem.decode!(delimited)]
+                 ], rest}
 
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -145,7 +164,7 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
 
         Protox.JsonDecode.decode!(
           input,
-          Soulless.Game.Lq.ReqFetchAnnouncement,
+          Soulless.Game.Lq.ResReceiveCharacterRewards,
           &json_library_wrapper.decode!(json_library, &1)
         )
       end
@@ -171,7 +190,11 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:lang, {:scalar, ""}, :string}, 2 => {:platform, {:scalar, ""}, :string}}
+      %{
+        1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        2 =>
+          {:items, :unpacked, {:message, Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem}}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -179,7 +202,10 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{lang: {1, {:scalar, ""}, :string}, platform: {2, {:scalar, ""}, :string}}
+      %{
+        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        items: {2, :unpacked, {:message, Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem}}
+      }
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
@@ -187,21 +213,21 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "lang",
-          kind: {:scalar, ""},
+          json_name: "error",
+          kind: {:scalar, nil},
           label: :optional,
-          name: :lang,
+          name: :error,
           tag: 1,
-          type: :string
+          type: {:message, Soulless.Game.Lq.Error}
         },
         %{
           __struct__: Protox.Field,
-          json_name: "platform",
-          kind: {:scalar, ""},
-          label: :optional,
-          name: :platform,
+          json_name: "items",
+          kind: :unpacked,
+          label: :repeated,
+          name: :items,
           tag: 2,
-          type: :string
+          type: {:message, Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem}
         }
       ]
     end
@@ -209,58 +235,58 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:lang) do
+        def field_def(:error) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "lang",
-             kind: {:scalar, ""},
+             json_name: "error",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :lang,
+             name: :error,
              tag: 1,
-             type: :string
+             type: {:message, Soulless.Game.Lq.Error}
            }}
         end
 
-        def field_def("lang") do
+        def field_def("error") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "lang",
-             kind: {:scalar, ""},
+             json_name: "error",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :lang,
+             name: :error,
              tag: 1,
-             type: :string
+             type: {:message, Soulless.Game.Lq.Error}
            }}
         end
 
         []
       ),
       (
-        def field_def(:platform) do
+        def field_def(:items) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "platform",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :platform,
+             json_name: "items",
+             kind: :unpacked,
+             label: :repeated,
+             name: :items,
              tag: 2,
-             type: :string
+             type: {:message, Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem}
            }}
         end
 
-        def field_def("platform") do
+        def field_def("items") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "platform",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :platform,
+             json_name: "items",
+             kind: :unpacked,
+             label: :repeated,
+             name: :items,
              tag: 2,
-             type: :string
+             type: {:message, Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem}
            }}
         end
 
@@ -300,11 +326,11 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def default(:lang) do
-        {:ok, ""}
+      def default(:error) do
+        {:ok, nil}
       end,
-      def default(:platform) do
-        {:ok, ""}
+      def default(:items) do
+        {:error, :no_default_value}
       end,
       def default(_) do
         {:error, :no_such_field}

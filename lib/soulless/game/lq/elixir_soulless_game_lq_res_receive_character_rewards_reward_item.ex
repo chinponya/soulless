@@ -1,8 +1,8 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
+defmodule Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem do
   @moduledoc false
   (
-    defstruct lang: "", platform: "", __uf__: []
+    defstruct id: 0, count: 0, __uf__: []
 
     (
       (
@@ -17,35 +17,35 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
 
         @spec encode!(struct) :: iodata | no_return
         def encode!(msg) do
-          [] |> encode_lang(msg) |> encode_platform(msg) |> encode_unknown_fields(msg)
+          [] |> encode_id(msg) |> encode_count(msg) |> encode_unknown_fields(msg)
         end
       )
 
       []
 
       [
-        defp encode_lang(acc, msg) do
+        defp encode_id(acc, msg) do
           try do
-            if msg.lang == "" do
+            if msg.id == 0 do
               acc
             else
-              [acc, "\n", Protox.Encode.encode_string(msg.lang)]
+              [acc, "\b", Protox.Encode.encode_uint32(msg.id)]
             end
           rescue
             ArgumentError ->
-              reraise Protox.EncodingError.new(:lang, "invalid field value"), __STACKTRACE__
+              reraise Protox.EncodingError.new(:id, "invalid field value"), __STACKTRACE__
           end
         end,
-        defp encode_platform(acc, msg) do
+        defp encode_count(acc, msg) do
           try do
-            if msg.platform == "" do
+            if msg.count == 0 do
               acc
             else
-              [acc, "\x12", Protox.Encode.encode_string(msg.platform)]
+              [acc, "\x10", Protox.Encode.encode_uint32(msg.count)]
             end
           rescue
             ArgumentError ->
-              reraise Protox.EncodingError.new(:platform, "invalid field value"), __STACKTRACE__
+              reraise Protox.EncodingError.new(:count, "invalid field value"), __STACKTRACE__
           end
         end
       ]
@@ -85,7 +85,7 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
         (
           @spec decode!(binary) :: struct | no_return
           def decode!(bytes) do
-            parse_key_value(bytes, struct(Soulless.Game.Lq.ReqFetchAnnouncement))
+            parse_key_value(bytes, struct(Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem))
           end
         )
       )
@@ -103,14 +103,12 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
                 raise %Protox.IllegalTagError{}
 
               {1, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[lang: delimited], rest}
+                {value, rest} = Protox.Decode.parse_uint32(bytes)
+                {[id: value], rest}
 
               {2, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[platform: delimited], rest}
+                {value, rest} = Protox.Decode.parse_uint32(bytes)
+                {[count: value], rest}
 
               {tag, wire_type, rest} ->
                 {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -145,7 +143,7 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
 
         Protox.JsonDecode.decode!(
           input,
-          Soulless.Game.Lq.ReqFetchAnnouncement,
+          Soulless.Game.Lq.ResReceiveCharacterRewards.RewardItem,
           &json_library_wrapper.decode!(json_library, &1)
         )
       end
@@ -171,7 +169,7 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:lang, {:scalar, ""}, :string}, 2 => {:platform, {:scalar, ""}, :string}}
+      %{1 => {:id, {:scalar, 0}, :uint32}, 2 => {:count, {:scalar, 0}, :uint32}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -179,7 +177,7 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{lang: {1, {:scalar, ""}, :string}, platform: {2, {:scalar, ""}, :string}}
+      %{count: {2, {:scalar, 0}, :uint32}, id: {1, {:scalar, 0}, :uint32}}
     end
 
     @spec fields_defs() :: list(Protox.Field.t())
@@ -187,21 +185,21 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "lang",
-          kind: {:scalar, ""},
+          json_name: "id",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :lang,
+          name: :id,
           tag: 1,
-          type: :string
+          type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "platform",
-          kind: {:scalar, ""},
+          json_name: "count",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :platform,
+          name: :count,
           tag: 2,
-          type: :string
+          type: :uint32
         }
       ]
     end
@@ -209,58 +207,58 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:lang) do
+        def field_def(:id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "lang",
-             kind: {:scalar, ""},
+             json_name: "id",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :lang,
+             name: :id,
              tag: 1,
-             type: :string
+             type: :uint32
            }}
         end
 
-        def field_def("lang") do
+        def field_def("id") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "lang",
-             kind: {:scalar, ""},
+             json_name: "id",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :lang,
+             name: :id,
              tag: 1,
-             type: :string
+             type: :uint32
            }}
         end
 
         []
       ),
       (
-        def field_def(:platform) do
+        def field_def(:count) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "platform",
-             kind: {:scalar, ""},
+             json_name: "count",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :platform,
+             name: :count,
              tag: 2,
-             type: :string
+             type: :uint32
            }}
         end
 
-        def field_def("platform") do
+        def field_def("count") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "platform",
-             kind: {:scalar, ""},
+             json_name: "count",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :platform,
+             name: :count,
              tag: 2,
-             type: :string
+             type: :uint32
            }}
         end
 
@@ -300,11 +298,11 @@ defmodule Soulless.Game.Lq.ReqFetchAnnouncement do
 
     [
       @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def default(:lang) do
-        {:ok, ""}
+      def default(:id) do
+        {:ok, 0}
       end,
-      def default(:platform) do
-        {:ok, ""}
+      def default(:count) do
+        {:ok, 0}
       end,
       def default(_) do
         {:error, :no_such_field}
