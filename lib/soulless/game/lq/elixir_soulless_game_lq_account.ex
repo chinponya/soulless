@@ -1,715 +1,709 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.Account do
   @moduledoc false
+  defstruct account_id: 0,
+            nickname: "",
+            login_time: 0,
+            logout_time: 0,
+            room_id: 0,
+            anti_addiction: nil,
+            title: 0,
+            signature: "",
+            email: "",
+            email_verify: 0,
+            gold: 0,
+            diamond: 0,
+            avatar_id: 0,
+            vip: 0,
+            birthday: 0,
+            phone: "",
+            phone_verify: 0,
+            platform_diamond: [],
+            level: nil,
+            level3: nil,
+            avatar_frame: 0,
+            skin_ticket: 0,
+            platform_skin_ticket: [],
+            verified: 0,
+            challenge_levels: [],
+            achievement_count: [],
+            frozen_state: 0,
+            __uf__: []
+
   (
-    defstruct account_id: 0,
-              nickname: "",
-              login_time: 0,
-              logout_time: 0,
-              room_id: 0,
-              anti_addiction: nil,
-              title: 0,
-              signature: "",
-              email: "",
-              email_verify: 0,
-              gold: 0,
-              diamond: 0,
-              avatar_id: 0,
-              vip: 0,
-              birthday: 0,
-              phone: "",
-              phone_verify: 0,
-              platform_diamond: [],
-              level: nil,
-              level3: nil,
-              avatar_frame: 0,
-              skin_ticket: 0,
-              platform_skin_ticket: [],
-              verified: 0,
-              challenge_levels: [],
-              achievement_count: [],
-              frozen_state: 0,
-              __uf__: []
-
     (
-      (
-        @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def encode(msg) do
-          try do
-            {:ok, encode!(msg)}
-          rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
-          end
-        end
-
-        @spec encode!(struct) :: iodata | no_return
-        def encode!(msg) do
-          []
-          |> encode_account_id(msg)
-          |> encode_nickname(msg)
-          |> encode_login_time(msg)
-          |> encode_logout_time(msg)
-          |> encode_room_id(msg)
-          |> encode_anti_addiction(msg)
-          |> encode_title(msg)
-          |> encode_signature(msg)
-          |> encode_email(msg)
-          |> encode_email_verify(msg)
-          |> encode_gold(msg)
-          |> encode_diamond(msg)
-          |> encode_avatar_id(msg)
-          |> encode_vip(msg)
-          |> encode_birthday(msg)
-          |> encode_phone(msg)
-          |> encode_phone_verify(msg)
-          |> encode_platform_diamond(msg)
-          |> encode_level(msg)
-          |> encode_level3(msg)
-          |> encode_avatar_frame(msg)
-          |> encode_skin_ticket(msg)
-          |> encode_platform_skin_ticket(msg)
-          |> encode_verified(msg)
-          |> encode_challenge_levels(msg)
-          |> encode_achievement_count(msg)
-          |> encode_frozen_state(msg)
-          |> encode_unknown_fields(msg)
-        end
-      )
-
-      []
-
-      [
-        defp encode_account_id(acc, msg) do
-          try do
-            if msg.account_id == 0 do
-              acc
-            else
-              [acc, "\b", Protox.Encode.encode_uint32(msg.account_id)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:account_id, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_nickname(acc, msg) do
-          try do
-            if msg.nickname == "" do
-              acc
-            else
-              [acc, "\x12", Protox.Encode.encode_string(msg.nickname)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:nickname, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_login_time(acc, msg) do
-          try do
-            if msg.login_time == 0 do
-              acc
-            else
-              [acc, "\x18", Protox.Encode.encode_uint32(msg.login_time)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:login_time, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_logout_time(acc, msg) do
-          try do
-            if msg.logout_time == 0 do
-              acc
-            else
-              [acc, " ", Protox.Encode.encode_uint32(msg.logout_time)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:logout_time, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_room_id(acc, msg) do
-          try do
-            if msg.room_id == 0 do
-              acc
-            else
-              [acc, "(", Protox.Encode.encode_uint32(msg.room_id)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:room_id, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_anti_addiction(acc, msg) do
-          try do
-            if msg.anti_addiction == nil do
-              acc
-            else
-              [acc, "2", Protox.Encode.encode_message(msg.anti_addiction)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:anti_addiction, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_title(acc, msg) do
-          try do
-            if msg.title == 0 do
-              acc
-            else
-              [acc, "8", Protox.Encode.encode_uint32(msg.title)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_signature(acc, msg) do
-          try do
-            if msg.signature == "" do
-              acc
-            else
-              [acc, "B", Protox.Encode.encode_string(msg.signature)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:signature, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_email(acc, msg) do
-          try do
-            if msg.email == "" do
-              acc
-            else
-              [acc, "J", Protox.Encode.encode_string(msg.email)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:email, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_email_verify(acc, msg) do
-          try do
-            if msg.email_verify == 0 do
-              acc
-            else
-              [acc, "P", Protox.Encode.encode_uint32(msg.email_verify)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:email_verify, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_gold(acc, msg) do
-          try do
-            if msg.gold == 0 do
-              acc
-            else
-              [acc, "X", Protox.Encode.encode_uint32(msg.gold)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:gold, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_diamond(acc, msg) do
-          try do
-            if msg.diamond == 0 do
-              acc
-            else
-              [acc, "`", Protox.Encode.encode_uint32(msg.diamond)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:diamond, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_avatar_id(acc, msg) do
-          try do
-            if msg.avatar_id == 0 do
-              acc
-            else
-              [acc, "h", Protox.Encode.encode_uint32(msg.avatar_id)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:avatar_id, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_vip(acc, msg) do
-          try do
-            if msg.vip == 0 do
-              acc
-            else
-              [acc, "p", Protox.Encode.encode_uint32(msg.vip)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:vip, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_birthday(acc, msg) do
-          try do
-            if msg.birthday == 0 do
-              acc
-            else
-              [acc, "x", Protox.Encode.encode_int32(msg.birthday)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:birthday, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_phone(acc, msg) do
-          try do
-            if msg.phone == "" do
-              acc
-            else
-              [acc, "\x82\x01", Protox.Encode.encode_string(msg.phone)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:phone, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_phone_verify(acc, msg) do
-          try do
-            if msg.phone_verify == 0 do
-              acc
-            else
-              [acc, "\x88\x01", Protox.Encode.encode_uint32(msg.phone_verify)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:phone_verify, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_platform_diamond(acc, msg) do
-          try do
-            case msg.platform_diamond do
-              [] ->
-                acc
-
-              values ->
-                [
-                  acc,
-                  Enum.reduce(values, [], fn value, acc ->
-                    [acc, "\x92\x01", Protox.Encode.encode_message(value)]
-                  end)
-                ]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:platform_diamond, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_level(acc, msg) do
-          try do
-            if msg.level == nil do
-              acc
-            else
-              [acc, "\xAA\x01", Protox.Encode.encode_message(msg.level)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_level3(acc, msg) do
-          try do
-            if msg.level3 == nil do
-              acc
-            else
-              [acc, "\xB2\x01", Protox.Encode.encode_message(msg.level3)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:level3, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_avatar_frame(acc, msg) do
-          try do
-            if msg.avatar_frame == 0 do
-              acc
-            else
-              [acc, "\xB8\x01", Protox.Encode.encode_uint32(msg.avatar_frame)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:avatar_frame, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_skin_ticket(acc, msg) do
-          try do
-            if msg.skin_ticket == 0 do
-              acc
-            else
-              [acc, "\xC0\x01", Protox.Encode.encode_uint32(msg.skin_ticket)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:skin_ticket, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_platform_skin_ticket(acc, msg) do
-          try do
-            case msg.platform_skin_ticket do
-              [] ->
-                acc
-
-              values ->
-                [
-                  acc,
-                  Enum.reduce(values, [], fn value, acc ->
-                    [acc, "\xCA\x01", Protox.Encode.encode_message(value)]
-                  end)
-                ]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:platform_skin_ticket, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_verified(acc, msg) do
-          try do
-            if msg.verified == 0 do
-              acc
-            else
-              [acc, "\xD0\x01", Protox.Encode.encode_uint32(msg.verified)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:verified, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_challenge_levels(acc, msg) do
-          try do
-            case msg.challenge_levels do
-              [] ->
-                acc
-
-              values ->
-                [
-                  acc,
-                  Enum.reduce(values, [], fn value, acc ->
-                    [acc, "\xDA\x01", Protox.Encode.encode_message(value)]
-                  end)
-                ]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:challenge_levels, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_achievement_count(acc, msg) do
-          try do
-            case msg.achievement_count do
-              [] ->
-                acc
-
-              values ->
-                [
-                  acc,
-                  Enum.reduce(values, [], fn value, acc ->
-                    [acc, "\xE2\x01", Protox.Encode.encode_message(value)]
-                  end)
-                ]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:achievement_count, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_frozen_state(acc, msg) do
-          try do
-            if msg.frozen_state == 0 do
-              acc
-            else
-              [acc, "\xE8\x01", Protox.Encode.encode_uint32(msg.frozen_state)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:frozen_state, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end
-      ]
-
-      defp encode_unknown_fields(acc, msg) do
-        Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case wire_type do
-            0 ->
-              [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
-
-            1 ->
-              [acc, Protox.Encode.make_key_bytes(tag, :double), bytes]
-
-            2 ->
-              len_bytes = bytes |> byte_size() |> Protox.Varint.encode()
-              [acc, Protox.Encode.make_key_bytes(tag, :packed), len_bytes, bytes]
-
-            5 ->
-              [acc, Protox.Encode.make_key_bytes(tag, :float), bytes]
-          end
-        end)
-      end
-    )
-
-    (
-      (
-        @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def decode(bytes) do
-          try do
-            {:ok, decode!(bytes)}
-          rescue
-            e in [Protox.DecodingError, Protox.IllegalTagError, Protox.RequiredFieldsError] ->
-              {:error, e}
-          end
-        end
-
-        (
-          @spec decode!(binary) :: struct | no_return
-          def decode!(bytes) do
-            parse_key_value(bytes, struct(Soulless.Game.Lq.Account))
-          end
-        )
-      )
-
-      (
-        @spec parse_key_value(binary, struct) :: struct
-        defp parse_key_value(<<>>, msg) do
-          msg
-        end
-
-        defp parse_key_value(bytes, msg) do
-          {field, rest} =
-            case Protox.Decode.parse_key(bytes) do
-              {0, _, _} ->
-                raise %Protox.IllegalTagError{}
-
-              {1, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[account_id: value], rest}
-
-              {2, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[nickname: delimited], rest}
-
-              {3, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[login_time: value], rest}
-
-              {4, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[logout_time: value], rest}
-
-              {5, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[room_id: value], rest}
-
-              {6, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-                {[
-                   anti_addiction:
-                     Protox.MergeMessage.merge(
-                       msg.anti_addiction,
-                       Soulless.Game.Lq.AntiAddiction.decode!(delimited)
-                     )
-                 ], rest}
-
-              {7, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[title: value], rest}
-
-              {8, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[signature: delimited], rest}
-
-              {9, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[email: delimited], rest}
-
-              {10, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[email_verify: value], rest}
-
-              {11, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[gold: value], rest}
-
-              {12, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[diamond: value], rest}
-
-              {13, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[avatar_id: value], rest}
-
-              {14, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[vip: value], rest}
-
-              {15, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_int32(bytes)
-                {[birthday: value], rest}
-
-              {16, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-                {[phone: delimited], rest}
-
-              {17, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[phone_verify: value], rest}
-
-              {18, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-                {[
-                   platform_diamond:
-                     msg.platform_diamond ++
-                       [Soulless.Game.Lq.Account.PlatformDiamond.decode!(delimited)]
-                 ], rest}
-
-              {21, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-                {[
-                   level:
-                     Protox.MergeMessage.merge(
-                       msg.level,
-                       Soulless.Game.Lq.AccountLevel.decode!(delimited)
-                     )
-                 ], rest}
-
-              {22, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-                {[
-                   level3:
-                     Protox.MergeMessage.merge(
-                       msg.level3,
-                       Soulless.Game.Lq.AccountLevel.decode!(delimited)
-                     )
-                 ], rest}
-
-              {23, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[avatar_frame: value], rest}
-
-              {24, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[skin_ticket: value], rest}
-
-              {25, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-                {[
-                   platform_skin_ticket:
-                     msg.platform_skin_ticket ++
-                       [Soulless.Game.Lq.Account.PlatformSkinTicket.decode!(delimited)]
-                 ], rest}
-
-              {26, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[verified: value], rest}
-
-              {27, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-                {[
-                   challenge_levels:
-                     msg.challenge_levels ++
-                       [Soulless.Game.Lq.Account.ChallengeLevel.decode!(delimited)]
-                 ], rest}
-
-              {28, _, bytes} ->
-                {len, bytes} = Protox.Varint.decode(bytes)
-                {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-                {[
-                   achievement_count:
-                     msg.achievement_count ++
-                       [Soulless.Game.Lq.Account.AchievementCount.decode!(delimited)]
-                 ], rest}
-
-              {29, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[frozen_state: value], rest}
-
-              {tag, wire_type, rest} ->
-                {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
-
-                {[
-                   {msg.__struct__.unknown_fields_name,
-                    [value | msg.__struct__.unknown_fields(msg)]}
-                 ], rest}
-            end
-
-          msg_updated = struct(msg, field)
-          parse_key_value(rest, msg_updated)
-        end
-      )
-
-      []
-    )
-
-    (
-      @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def json_decode(input, opts \\ []) do
+      @spec encode(struct) :: {:ok, iodata} | {:error, any}
+      def encode(msg) do
         try do
-          {:ok, json_decode!(input, opts)}
+          {:ok, encode!(msg)}
         rescue
-          e in Protox.JsonDecodingError -> {:error, e}
+          e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
         end
       end
 
-      @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def json_decode!(input, opts \\ []) do
-        {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
-
-        Protox.JsonDecode.decode!(
-          input,
-          Soulless.Game.Lq.Account,
-          &json_library_wrapper.decode!(json_library, &1)
-        )
-      end
-
-      @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def json_encode(msg, opts \\ []) do
-        try do
-          {:ok, json_encode!(msg, opts)}
-        rescue
-          e in Protox.JsonEncodingError -> {:error, e}
-        end
-      end
-
-      @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def json_encode!(msg, opts \\ []) do
-        {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
-        Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
+      @spec encode!(struct) :: iodata | no_return
+      def encode!(msg) do
+        []
+        |> encode_account_id(msg)
+        |> encode_nickname(msg)
+        |> encode_login_time(msg)
+        |> encode_logout_time(msg)
+        |> encode_room_id(msg)
+        |> encode_anti_addiction(msg)
+        |> encode_title(msg)
+        |> encode_signature(msg)
+        |> encode_email(msg)
+        |> encode_email_verify(msg)
+        |> encode_gold(msg)
+        |> encode_diamond(msg)
+        |> encode_avatar_id(msg)
+        |> encode_vip(msg)
+        |> encode_birthday(msg)
+        |> encode_phone(msg)
+        |> encode_phone_verify(msg)
+        |> encode_platform_diamond(msg)
+        |> encode_level(msg)
+        |> encode_level3(msg)
+        |> encode_avatar_frame(msg)
+        |> encode_skin_ticket(msg)
+        |> encode_platform_skin_ticket(msg)
+        |> encode_verified(msg)
+        |> encode_challenge_levels(msg)
+        |> encode_achievement_count(msg)
+        |> encode_frozen_state(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
+    []
+
+    [
+      defp encode_account_id(acc, msg) do
+        try do
+          if msg.account_id == 0 do
+            acc
+          else
+            [acc, "\b", Protox.Encode.encode_uint32(msg.account_id)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:account_id, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_nickname(acc, msg) do
+        try do
+          if msg.nickname == "" do
+            acc
+          else
+            [acc, "\x12", Protox.Encode.encode_string(msg.nickname)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:nickname, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_login_time(acc, msg) do
+        try do
+          if msg.login_time == 0 do
+            acc
+          else
+            [acc, "\x18", Protox.Encode.encode_uint32(msg.login_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:login_time, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_logout_time(acc, msg) do
+        try do
+          if msg.logout_time == 0 do
+            acc
+          else
+            [acc, " ", Protox.Encode.encode_uint32(msg.logout_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:logout_time, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_room_id(acc, msg) do
+        try do
+          if msg.room_id == 0 do
+            acc
+          else
+            [acc, "(", Protox.Encode.encode_uint32(msg.room_id)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:room_id, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_anti_addiction(acc, msg) do
+        try do
+          if msg.anti_addiction == nil do
+            acc
+          else
+            [acc, "2", Protox.Encode.encode_message(msg.anti_addiction)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:anti_addiction, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_title(acc, msg) do
+        try do
+          if msg.title == 0 do
+            acc
+          else
+            [acc, "8", Protox.Encode.encode_uint32(msg.title)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_signature(acc, msg) do
+        try do
+          if msg.signature == "" do
+            acc
+          else
+            [acc, "B", Protox.Encode.encode_string(msg.signature)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:signature, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_email(acc, msg) do
+        try do
+          if msg.email == "" do
+            acc
+          else
+            [acc, "J", Protox.Encode.encode_string(msg.email)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:email, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_email_verify(acc, msg) do
+        try do
+          if msg.email_verify == 0 do
+            acc
+          else
+            [acc, "P", Protox.Encode.encode_uint32(msg.email_verify)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:email_verify, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_gold(acc, msg) do
+        try do
+          if msg.gold == 0 do
+            acc
+          else
+            [acc, "X", Protox.Encode.encode_uint32(msg.gold)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:gold, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_diamond(acc, msg) do
+        try do
+          if msg.diamond == 0 do
+            acc
+          else
+            [acc, "`", Protox.Encode.encode_uint32(msg.diamond)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:diamond, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_avatar_id(acc, msg) do
+        try do
+          if msg.avatar_id == 0 do
+            acc
+          else
+            [acc, "h", Protox.Encode.encode_uint32(msg.avatar_id)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:avatar_id, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_vip(acc, msg) do
+        try do
+          if msg.vip == 0 do
+            acc
+          else
+            [acc, "p", Protox.Encode.encode_uint32(msg.vip)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:vip, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_birthday(acc, msg) do
+        try do
+          if msg.birthday == 0 do
+            acc
+          else
+            [acc, "x", Protox.Encode.encode_int32(msg.birthday)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:birthday, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_phone(acc, msg) do
+        try do
+          if msg.phone == "" do
+            acc
+          else
+            [acc, "\x82\x01", Protox.Encode.encode_string(msg.phone)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:phone, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_phone_verify(acc, msg) do
+        try do
+          if msg.phone_verify == 0 do
+            acc
+          else
+            [acc, "\x88\x01", Protox.Encode.encode_uint32(msg.phone_verify)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:phone_verify, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_platform_diamond(acc, msg) do
+        try do
+          case msg.platform_diamond do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\x92\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:platform_diamond, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_level(acc, msg) do
+        try do
+          if msg.level == nil do
+            acc
+          else
+            [acc, "\xAA\x01", Protox.Encode.encode_message(msg.level)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_level3(acc, msg) do
+        try do
+          if msg.level3 == nil do
+            acc
+          else
+            [acc, "\xB2\x01", Protox.Encode.encode_message(msg.level3)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:level3, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_avatar_frame(acc, msg) do
+        try do
+          if msg.avatar_frame == 0 do
+            acc
+          else
+            [acc, "\xB8\x01", Protox.Encode.encode_uint32(msg.avatar_frame)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:avatar_frame, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_skin_ticket(acc, msg) do
+        try do
+          if msg.skin_ticket == 0 do
+            acc
+          else
+            [acc, "\xC0\x01", Protox.Encode.encode_uint32(msg.skin_ticket)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:skin_ticket, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_platform_skin_ticket(acc, msg) do
+        try do
+          case msg.platform_skin_ticket do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xCA\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:platform_skin_ticket, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_verified(acc, msg) do
+        try do
+          if msg.verified == 0 do
+            acc
+          else
+            [acc, "\xD0\x01", Protox.Encode.encode_uint32(msg.verified)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:verified, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_challenge_levels(acc, msg) do
+        try do
+          case msg.challenge_levels do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xDA\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:challenge_levels, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_achievement_count(acc, msg) do
+        try do
+          case msg.achievement_count do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xE2\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:achievement_count, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_frozen_state(acc, msg) do
+        try do
+          if msg.frozen_state == 0 do
+            acc
+          else
+            [acc, "\xE8\x01", Protox.Encode.encode_uint32(msg.frozen_state)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:frozen_state, "invalid field value"), __STACKTRACE__
+        end
+      end
+    ]
+
+    defp encode_unknown_fields(acc, msg) do
+      Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
+        case wire_type do
+          0 ->
+            [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
+
+          1 ->
+            [acc, Protox.Encode.make_key_bytes(tag, :double), bytes]
+
+          2 ->
+            len_bytes = bytes |> byte_size() |> Protox.Varint.encode()
+            [acc, Protox.Encode.make_key_bytes(tag, :packed), len_bytes, bytes]
+
+          5 ->
+            [acc, Protox.Encode.make_key_bytes(tag, :float), bytes]
+        end
+      end)
+    end
+  )
+
+  (
+    (
+      @spec decode(binary) :: {:ok, struct} | {:error, any}
+      def decode(bytes) do
+        try do
+          {:ok, decode!(bytes)}
+        rescue
+          e in [Protox.DecodingError, Protox.IllegalTagError, Protox.RequiredFieldsError] ->
+            {:error, e}
+        end
+      end
+
+      (
+        @spec decode!(binary) :: struct | no_return
+        def decode!(bytes) do
+          parse_key_value(bytes, struct(Soulless.Game.Lq.Account))
+        end
+      )
+    )
+
+    (
+      @spec parse_key_value(binary, struct) :: struct
+      defp parse_key_value(<<>>, msg) do
+        msg
+      end
+
+      defp parse_key_value(bytes, msg) do
+        {field, rest} =
+          case Protox.Decode.parse_key(bytes) do
+            {0, _, _} ->
+              raise %Protox.IllegalTagError{}
+
+            {1, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[account_id: value], rest}
+
+            {2, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[nickname: delimited], rest}
+
+            {3, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[login_time: value], rest}
+
+            {4, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[logout_time: value], rest}
+
+            {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[room_id: value], rest}
+
+            {6, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 anti_addiction:
+                   Protox.MergeMessage.merge(
+                     msg.anti_addiction,
+                     Soulless.Game.Lq.AntiAddiction.decode!(delimited)
+                   )
+               ], rest}
+
+            {7, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[title: value], rest}
+
+            {8, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[signature: delimited], rest}
+
+            {9, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[email: delimited], rest}
+
+            {10, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[email_verify: value], rest}
+
+            {11, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[gold: value], rest}
+
+            {12, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[diamond: value], rest}
+
+            {13, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[avatar_id: value], rest}
+
+            {14, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[vip: value], rest}
+
+            {15, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_int32(bytes)
+              {[birthday: value], rest}
+
+            {16, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[phone: delimited], rest}
+
+            {17, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[phone_verify: value], rest}
+
+            {18, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 platform_diamond:
+                   msg.platform_diamond ++
+                     [Soulless.Game.Lq.Account.PlatformDiamond.decode!(delimited)]
+               ], rest}
+
+            {21, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 level:
+                   Protox.MergeMessage.merge(
+                     msg.level,
+                     Soulless.Game.Lq.AccountLevel.decode!(delimited)
+                   )
+               ], rest}
+
+            {22, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 level3:
+                   Protox.MergeMessage.merge(
+                     msg.level3,
+                     Soulless.Game.Lq.AccountLevel.decode!(delimited)
+                   )
+               ], rest}
+
+            {23, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[avatar_frame: value], rest}
+
+            {24, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[skin_ticket: value], rest}
+
+            {25, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 platform_skin_ticket:
+                   msg.platform_skin_ticket ++
+                     [Soulless.Game.Lq.Account.PlatformSkinTicket.decode!(delimited)]
+               ], rest}
+
+            {26, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[verified: value], rest}
+
+            {27, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 challenge_levels:
+                   msg.challenge_levels ++
+                     [Soulless.Game.Lq.Account.ChallengeLevel.decode!(delimited)]
+               ], rest}
+
+            {28, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 achievement_count:
+                   msg.achievement_count ++
+                     [Soulless.Game.Lq.Account.AchievementCount.decode!(delimited)]
+               ], rest}
+
+            {29, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[frozen_state: value], rest}
+
+            {tag, wire_type, rest} ->
+              {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
+
+              {[
+                 {msg.__struct__.unknown_fields_name,
+                  [value | msg.__struct__.unknown_fields(msg)]}
+               ], rest}
+          end
+
+        msg_updated = struct(msg, field)
+        parse_key_value(rest, msg_updated)
+      end
+    )
+
+    []
+  )
+
+  (
+    @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
+    def json_decode(input, opts \\ []) do
+      try do
+        {:ok, json_decode!(input, opts)}
+      rescue
+        e in Protox.JsonDecodingError -> {:error, e}
+      end
+    end
+
+    @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
+    def json_decode!(input, opts \\ []) do
+      {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
+
+      Protox.JsonDecode.decode!(
+        input,
+        Soulless.Game.Lq.Account,
+        &json_library_wrapper.decode!(json_library, &1)
+      )
+    end
+
+    @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
+    def json_encode(msg, opts \\ []) do
+      try do
+        {:ok, json_encode!(msg, opts)}
+      rescue
+        e in Protox.JsonEncodingError -> {:error, e}
+      end
+    end
+
+    @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
+    def json_encode!(msg, opts \\ []) do
+      {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
+      Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
+    end
+  )
+
+  (
     @deprecated "Use fields_defs()/0 instead"
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
@@ -786,7 +780,9 @@ defmodule Soulless.Game.Lq.Account do
         vip: {14, {:scalar, 0}, :uint32}
       }
     end
+  )
 
+  (
     @spec fields_defs() :: list(Protox.Field.t())
     def fields_defs() do
       [
@@ -1990,120 +1986,124 @@ defmodule Soulless.Game.Lq.Account do
         {:error, :no_such_field}
       end
     ]
+  )
 
-    (
-      @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def unknown_fields(msg) do
-        msg.__uf__
-      end
+  (
+    @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
+    def unknown_fields(msg) do
+      msg.__uf__
+    end
 
-      @spec unknown_fields_name() :: :__uf__
-      def unknown_fields_name() do
-        :__uf__
-      end
+    @spec unknown_fields_name() :: :__uf__
+    def unknown_fields_name() do
+      :__uf__
+    end
 
-      @spec clear_unknown_fields(struct) :: struct
-      def clear_unknown_fields(msg) do
-        struct!(msg, [{unknown_fields_name(), []}])
-      end
-    )
+    @spec clear_unknown_fields(struct) :: struct
+    def clear_unknown_fields(msg) do
+      struct!(msg, [{unknown_fields_name(), []}])
+    end
+  )
 
+  (
     @spec required_fields() :: []
     def required_fields() do
       []
     end
+  )
 
-    @spec syntax() :: atom
+  (
+    @spec syntax() :: atom()
     def syntax() do
       :proto3
     end
-
-    [
-      @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def default(:account_id) do
-        {:ok, 0}
-      end,
-      def default(:nickname) do
-        {:ok, ""}
-      end,
-      def default(:login_time) do
-        {:ok, 0}
-      end,
-      def default(:logout_time) do
-        {:ok, 0}
-      end,
-      def default(:room_id) do
-        {:ok, 0}
-      end,
-      def default(:anti_addiction) do
-        {:ok, nil}
-      end,
-      def default(:title) do
-        {:ok, 0}
-      end,
-      def default(:signature) do
-        {:ok, ""}
-      end,
-      def default(:email) do
-        {:ok, ""}
-      end,
-      def default(:email_verify) do
-        {:ok, 0}
-      end,
-      def default(:gold) do
-        {:ok, 0}
-      end,
-      def default(:diamond) do
-        {:ok, 0}
-      end,
-      def default(:avatar_id) do
-        {:ok, 0}
-      end,
-      def default(:vip) do
-        {:ok, 0}
-      end,
-      def default(:birthday) do
-        {:ok, 0}
-      end,
-      def default(:phone) do
-        {:ok, ""}
-      end,
-      def default(:phone_verify) do
-        {:ok, 0}
-      end,
-      def default(:platform_diamond) do
-        {:error, :no_default_value}
-      end,
-      def default(:level) do
-        {:ok, nil}
-      end,
-      def default(:level3) do
-        {:ok, nil}
-      end,
-      def default(:avatar_frame) do
-        {:ok, 0}
-      end,
-      def default(:skin_ticket) do
-        {:ok, 0}
-      end,
-      def default(:platform_skin_ticket) do
-        {:error, :no_default_value}
-      end,
-      def default(:verified) do
-        {:ok, 0}
-      end,
-      def default(:challenge_levels) do
-        {:error, :no_default_value}
-      end,
-      def default(:achievement_count) do
-        {:error, :no_default_value}
-      end,
-      def default(:frozen_state) do
-        {:ok, 0}
-      end,
-      def default(_) do
-        {:error, :no_such_field}
-      end
-    ]
   )
+
+  [
+    @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
+    def default(:account_id) do
+      {:ok, 0}
+    end,
+    def default(:nickname) do
+      {:ok, ""}
+    end,
+    def default(:login_time) do
+      {:ok, 0}
+    end,
+    def default(:logout_time) do
+      {:ok, 0}
+    end,
+    def default(:room_id) do
+      {:ok, 0}
+    end,
+    def default(:anti_addiction) do
+      {:ok, nil}
+    end,
+    def default(:title) do
+      {:ok, 0}
+    end,
+    def default(:signature) do
+      {:ok, ""}
+    end,
+    def default(:email) do
+      {:ok, ""}
+    end,
+    def default(:email_verify) do
+      {:ok, 0}
+    end,
+    def default(:gold) do
+      {:ok, 0}
+    end,
+    def default(:diamond) do
+      {:ok, 0}
+    end,
+    def default(:avatar_id) do
+      {:ok, 0}
+    end,
+    def default(:vip) do
+      {:ok, 0}
+    end,
+    def default(:birthday) do
+      {:ok, 0}
+    end,
+    def default(:phone) do
+      {:ok, ""}
+    end,
+    def default(:phone_verify) do
+      {:ok, 0}
+    end,
+    def default(:platform_diamond) do
+      {:error, :no_default_value}
+    end,
+    def default(:level) do
+      {:ok, nil}
+    end,
+    def default(:level3) do
+      {:ok, nil}
+    end,
+    def default(:avatar_frame) do
+      {:ok, 0}
+    end,
+    def default(:skin_ticket) do
+      {:ok, 0}
+    end,
+    def default(:platform_skin_ticket) do
+      {:error, :no_default_value}
+    end,
+    def default(:verified) do
+      {:ok, 0}
+    end,
+    def default(:challenge_levels) do
+      {:error, :no_default_value}
+    end,
+    def default(:achievement_count) do
+      {:error, :no_default_value}
+    end,
+    def default(:frozen_state) do
+      {:ok, 0}
+    end,
+    def default(_) do
+      {:error, :no_such_field}
+    end
+  ]
 end
