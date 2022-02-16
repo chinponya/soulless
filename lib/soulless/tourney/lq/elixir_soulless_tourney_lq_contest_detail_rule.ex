@@ -1,857 +1,847 @@
 # credo:disable-for-this-file
 defmodule Soulless.Tourney.Lq.ContestDetailRule do
   @moduledoc false
+  defstruct init_point: 0,
+            fandian: 0,
+            can_jifei: false,
+            tianbian_value: 0,
+            liqibang_value: 0,
+            changbang_value: 0,
+            noting_fafu_1: 0,
+            noting_fafu_2: 0,
+            noting_fafu_3: 0,
+            have_liujumanguan: false,
+            have_qieshangmanguan: false,
+            have_biao_dora: false,
+            have_gang_biao_dora: false,
+            ming_dora_immediately_open: false,
+            have_li_dora: false,
+            have_gang_li_dora: false,
+            have_sifenglianda: false,
+            have_sigangsanle: false,
+            have_sijializhi: false,
+            have_jiuzhongjiupai: false,
+            have_sanjiahele: false,
+            have_toutiao: false,
+            have_helelianzhuang: false,
+            have_helezhongju: false,
+            have_tingpailianzhuang: false,
+            have_tingpaizhongju: false,
+            have_yifa: false,
+            have_nanruxiru: false,
+            jingsuanyuandian: 0,
+            shunweima_2: 0,
+            shunweima_3: 0,
+            shunweima_4: 0,
+            bianjietishi: false,
+            ai_level: 0,
+            have_zimosun: false,
+            disable_multi_yukaman: false,
+            guyi_mode: 0,
+            disable_leijiyiman: false,
+            __uf__: []
+
   (
-    defstruct init_point: 0,
-              fandian: 0,
-              can_jifei: false,
-              tianbian_value: 0,
-              liqibang_value: 0,
-              changbang_value: 0,
-              noting_fafu_1: 0,
-              noting_fafu_2: 0,
-              noting_fafu_3: 0,
-              have_liujumanguan: false,
-              have_qieshangmanguan: false,
-              have_biao_dora: false,
-              have_gang_biao_dora: false,
-              ming_dora_immediately_open: false,
-              have_li_dora: false,
-              have_gang_li_dora: false,
-              have_sifenglianda: false,
-              have_sigangsanle: false,
-              have_sijializhi: false,
-              have_jiuzhongjiupai: false,
-              have_sanjiahele: false,
-              have_toutiao: false,
-              have_helelianzhuang: false,
-              have_helezhongju: false,
-              have_tingpailianzhuang: false,
-              have_tingpaizhongju: false,
-              have_yifa: false,
-              have_nanruxiru: false,
-              jingsuanyuandian: 0,
-              shunweima_2: 0,
-              shunweima_3: 0,
-              shunweima_4: 0,
-              bianjietishi: false,
-              ai_level: 0,
-              have_zimosun: false,
-              disable_multi_yukaman: false,
-              guyi_mode: 0,
-              disable_leijiyiman: false,
-              __uf__: []
-
     (
-      (
-        @spec encode(struct) :: {:ok, iodata} | {:error, any}
-        def encode(msg) do
-          try do
-            {:ok, encode!(msg)}
-          rescue
-            e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
-          end
-        end
-
-        @spec encode!(struct) :: iodata | no_return
-        def encode!(msg) do
-          []
-          |> encode_init_point(msg)
-          |> encode_fandian(msg)
-          |> encode_can_jifei(msg)
-          |> encode_tianbian_value(msg)
-          |> encode_liqibang_value(msg)
-          |> encode_changbang_value(msg)
-          |> encode_noting_fafu_1(msg)
-          |> encode_noting_fafu_2(msg)
-          |> encode_noting_fafu_3(msg)
-          |> encode_have_liujumanguan(msg)
-          |> encode_have_qieshangmanguan(msg)
-          |> encode_have_biao_dora(msg)
-          |> encode_have_gang_biao_dora(msg)
-          |> encode_ming_dora_immediately_open(msg)
-          |> encode_have_li_dora(msg)
-          |> encode_have_gang_li_dora(msg)
-          |> encode_have_sifenglianda(msg)
-          |> encode_have_sigangsanle(msg)
-          |> encode_have_sijializhi(msg)
-          |> encode_have_jiuzhongjiupai(msg)
-          |> encode_have_sanjiahele(msg)
-          |> encode_have_toutiao(msg)
-          |> encode_have_helelianzhuang(msg)
-          |> encode_have_helezhongju(msg)
-          |> encode_have_tingpailianzhuang(msg)
-          |> encode_have_tingpaizhongju(msg)
-          |> encode_have_yifa(msg)
-          |> encode_have_nanruxiru(msg)
-          |> encode_jingsuanyuandian(msg)
-          |> encode_shunweima_2(msg)
-          |> encode_shunweima_3(msg)
-          |> encode_shunweima_4(msg)
-          |> encode_bianjietishi(msg)
-          |> encode_ai_level(msg)
-          |> encode_have_zimosun(msg)
-          |> encode_disable_multi_yukaman(msg)
-          |> encode_guyi_mode(msg)
-          |> encode_disable_leijiyiman(msg)
-          |> encode_unknown_fields(msg)
-        end
-      )
-
-      []
-
-      [
-        defp encode_init_point(acc, msg) do
-          try do
-            if msg.init_point == 0 do
-              acc
-            else
-              [acc, "(", Protox.Encode.encode_uint32(msg.init_point)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:init_point, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_fandian(acc, msg) do
-          try do
-            if msg.fandian == 0 do
-              acc
-            else
-              [acc, "0", Protox.Encode.encode_uint32(msg.fandian)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:fandian, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_can_jifei(acc, msg) do
-          try do
-            if msg.can_jifei == false do
-              acc
-            else
-              [acc, "8", Protox.Encode.encode_bool(msg.can_jifei)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:can_jifei, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_tianbian_value(acc, msg) do
-          try do
-            if msg.tianbian_value == 0 do
-              acc
-            else
-              [acc, "@", Protox.Encode.encode_uint32(msg.tianbian_value)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:tianbian_value, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_liqibang_value(acc, msg) do
-          try do
-            if msg.liqibang_value == 0 do
-              acc
-            else
-              [acc, "H", Protox.Encode.encode_uint32(msg.liqibang_value)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:liqibang_value, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_changbang_value(acc, msg) do
-          try do
-            if msg.changbang_value == 0 do
-              acc
-            else
-              [acc, "P", Protox.Encode.encode_uint32(msg.changbang_value)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:changbang_value, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_noting_fafu_1(acc, msg) do
-          try do
-            if msg.noting_fafu_1 == 0 do
-              acc
-            else
-              [acc, "X", Protox.Encode.encode_uint32(msg.noting_fafu_1)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:noting_fafu_1, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_noting_fafu_2(acc, msg) do
-          try do
-            if msg.noting_fafu_2 == 0 do
-              acc
-            else
-              [acc, "`", Protox.Encode.encode_uint32(msg.noting_fafu_2)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:noting_fafu_2, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_noting_fafu_3(acc, msg) do
-          try do
-            if msg.noting_fafu_3 == 0 do
-              acc
-            else
-              [acc, "h", Protox.Encode.encode_uint32(msg.noting_fafu_3)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:noting_fafu_3, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_liujumanguan(acc, msg) do
-          try do
-            if msg.have_liujumanguan == false do
-              acc
-            else
-              [acc, "p", Protox.Encode.encode_bool(msg.have_liujumanguan)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_liujumanguan, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_qieshangmanguan(acc, msg) do
-          try do
-            if msg.have_qieshangmanguan == false do
-              acc
-            else
-              [acc, "x", Protox.Encode.encode_bool(msg.have_qieshangmanguan)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_qieshangmanguan, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_biao_dora(acc, msg) do
-          try do
-            if msg.have_biao_dora == false do
-              acc
-            else
-              [acc, "\x80\x01", Protox.Encode.encode_bool(msg.have_biao_dora)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_biao_dora, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_gang_biao_dora(acc, msg) do
-          try do
-            if msg.have_gang_biao_dora == false do
-              acc
-            else
-              [acc, "\x88\x01", Protox.Encode.encode_bool(msg.have_gang_biao_dora)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_gang_biao_dora, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_ming_dora_immediately_open(acc, msg) do
-          try do
-            if msg.ming_dora_immediately_open == false do
-              acc
-            else
-              [acc, "\x90\x01", Protox.Encode.encode_bool(msg.ming_dora_immediately_open)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(
-                        :ming_dora_immediately_open,
-                        "invalid field value"
-                      ),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_li_dora(acc, msg) do
-          try do
-            if msg.have_li_dora == false do
-              acc
-            else
-              [acc, "\x98\x01", Protox.Encode.encode_bool(msg.have_li_dora)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_li_dora, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_gang_li_dora(acc, msg) do
-          try do
-            if msg.have_gang_li_dora == false do
-              acc
-            else
-              [acc, "\xA0\x01", Protox.Encode.encode_bool(msg.have_gang_li_dora)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_gang_li_dora, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_sifenglianda(acc, msg) do
-          try do
-            if msg.have_sifenglianda == false do
-              acc
-            else
-              [acc, "\xA8\x01", Protox.Encode.encode_bool(msg.have_sifenglianda)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_sifenglianda, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_sigangsanle(acc, msg) do
-          try do
-            if msg.have_sigangsanle == false do
-              acc
-            else
-              [acc, "\xB0\x01", Protox.Encode.encode_bool(msg.have_sigangsanle)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_sigangsanle, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_sijializhi(acc, msg) do
-          try do
-            if msg.have_sijializhi == false do
-              acc
-            else
-              [acc, "\xB8\x01", Protox.Encode.encode_bool(msg.have_sijializhi)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_sijializhi, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_jiuzhongjiupai(acc, msg) do
-          try do
-            if msg.have_jiuzhongjiupai == false do
-              acc
-            else
-              [acc, "\xC0\x01", Protox.Encode.encode_bool(msg.have_jiuzhongjiupai)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_jiuzhongjiupai, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_sanjiahele(acc, msg) do
-          try do
-            if msg.have_sanjiahele == false do
-              acc
-            else
-              [acc, "\xC8\x01", Protox.Encode.encode_bool(msg.have_sanjiahele)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_sanjiahele, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_toutiao(acc, msg) do
-          try do
-            if msg.have_toutiao == false do
-              acc
-            else
-              [acc, "\xD0\x01", Protox.Encode.encode_bool(msg.have_toutiao)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_toutiao, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_helelianzhuang(acc, msg) do
-          try do
-            if msg.have_helelianzhuang == false do
-              acc
-            else
-              [acc, "\xD8\x01", Protox.Encode.encode_bool(msg.have_helelianzhuang)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_helelianzhuang, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_helezhongju(acc, msg) do
-          try do
-            if msg.have_helezhongju == false do
-              acc
-            else
-              [acc, "\xE0\x01", Protox.Encode.encode_bool(msg.have_helezhongju)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_helezhongju, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_tingpailianzhuang(acc, msg) do
-          try do
-            if msg.have_tingpailianzhuang == false do
-              acc
-            else
-              [acc, "\xE8\x01", Protox.Encode.encode_bool(msg.have_tingpailianzhuang)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_tingpailianzhuang, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_tingpaizhongju(acc, msg) do
-          try do
-            if msg.have_tingpaizhongju == false do
-              acc
-            else
-              [acc, "\xF0\x01", Protox.Encode.encode_bool(msg.have_tingpaizhongju)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_tingpaizhongju, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_have_yifa(acc, msg) do
-          try do
-            if msg.have_yifa == false do
-              acc
-            else
-              [acc, "\xF8\x01", Protox.Encode.encode_bool(msg.have_yifa)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_yifa, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_have_nanruxiru(acc, msg) do
-          try do
-            if msg.have_nanruxiru == false do
-              acc
-            else
-              [acc, "\x80\x02", Protox.Encode.encode_bool(msg.have_nanruxiru)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_nanruxiru, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_jingsuanyuandian(acc, msg) do
-          try do
-            if msg.jingsuanyuandian == 0 do
-              acc
-            else
-              [acc, "\x88\x02", Protox.Encode.encode_uint32(msg.jingsuanyuandian)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:jingsuanyuandian, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_shunweima_2(acc, msg) do
-          try do
-            if msg.shunweima_2 == 0 do
-              acc
-            else
-              [acc, "\x90\x02", Protox.Encode.encode_int32(msg.shunweima_2)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:shunweima_2, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_shunweima_3(acc, msg) do
-          try do
-            if msg.shunweima_3 == 0 do
-              acc
-            else
-              [acc, "\x98\x02", Protox.Encode.encode_int32(msg.shunweima_3)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:shunweima_3, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_shunweima_4(acc, msg) do
-          try do
-            if msg.shunweima_4 == 0 do
-              acc
-            else
-              [acc, "\xA0\x02", Protox.Encode.encode_int32(msg.shunweima_4)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:shunweima_4, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_bianjietishi(acc, msg) do
-          try do
-            if msg.bianjietishi == false do
-              acc
-            else
-              [acc, "\xA8\x02", Protox.Encode.encode_bool(msg.bianjietishi)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:bianjietishi, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_ai_level(acc, msg) do
-          try do
-            if msg.ai_level == 0 do
-              acc
-            else
-              [acc, "\xB0\x02", Protox.Encode.encode_uint32(msg.ai_level)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:ai_level, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_have_zimosun(acc, msg) do
-          try do
-            if msg.have_zimosun == false do
-              acc
-            else
-              [acc, "\xB8\x02", Protox.Encode.encode_bool(msg.have_zimosun)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:have_zimosun, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_disable_multi_yukaman(acc, msg) do
-          try do
-            if msg.disable_multi_yukaman == false do
-              acc
-            else
-              [acc, "\xC0\x02", Protox.Encode.encode_bool(msg.disable_multi_yukaman)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:disable_multi_yukaman, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end,
-        defp encode_guyi_mode(acc, msg) do
-          try do
-            if msg.guyi_mode == 0 do
-              acc
-            else
-              [acc, "\xC8\x02", Protox.Encode.encode_uint32(msg.guyi_mode)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:guyi_mode, "invalid field value"), __STACKTRACE__
-          end
-        end,
-        defp encode_disable_leijiyiman(acc, msg) do
-          try do
-            if msg.disable_leijiyiman == false do
-              acc
-            else
-              [acc, "\xD0\x02", Protox.Encode.encode_bool(msg.disable_leijiyiman)]
-            end
-          rescue
-            ArgumentError ->
-              reraise Protox.EncodingError.new(:disable_leijiyiman, "invalid field value"),
-                      __STACKTRACE__
-          end
-        end
-      ]
-
-      defp encode_unknown_fields(acc, msg) do
-        Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
-          case wire_type do
-            0 ->
-              [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
-
-            1 ->
-              [acc, Protox.Encode.make_key_bytes(tag, :double), bytes]
-
-            2 ->
-              len_bytes = bytes |> byte_size() |> Protox.Varint.encode()
-              [acc, Protox.Encode.make_key_bytes(tag, :packed), len_bytes, bytes]
-
-            5 ->
-              [acc, Protox.Encode.make_key_bytes(tag, :float), bytes]
-          end
-        end)
-      end
-    )
-
-    (
-      (
-        @spec decode(binary) :: {:ok, struct} | {:error, any}
-        def decode(bytes) do
-          try do
-            {:ok, decode!(bytes)}
-          rescue
-            e in [Protox.DecodingError, Protox.IllegalTagError, Protox.RequiredFieldsError] ->
-              {:error, e}
-          end
-        end
-
-        (
-          @spec decode!(binary) :: struct | no_return
-          def decode!(bytes) do
-            parse_key_value(bytes, struct(Soulless.Tourney.Lq.ContestDetailRule))
-          end
-        )
-      )
-
-      (
-        @spec parse_key_value(binary, struct) :: struct
-        defp parse_key_value(<<>>, msg) do
-          msg
-        end
-
-        defp parse_key_value(bytes, msg) do
-          {field, rest} =
-            case Protox.Decode.parse_key(bytes) do
-              {0, _, _} ->
-                raise %Protox.IllegalTagError{}
-
-              {5, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[init_point: value], rest}
-
-              {6, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[fandian: value], rest}
-
-              {7, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[can_jifei: value], rest}
-
-              {8, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[tianbian_value: value], rest}
-
-              {9, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[liqibang_value: value], rest}
-
-              {10, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[changbang_value: value], rest}
-
-              {11, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[noting_fafu_1: value], rest}
-
-              {12, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[noting_fafu_2: value], rest}
-
-              {13, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[noting_fafu_3: value], rest}
-
-              {14, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_liujumanguan: value], rest}
-
-              {15, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_qieshangmanguan: value], rest}
-
-              {16, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_biao_dora: value], rest}
-
-              {17, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_gang_biao_dora: value], rest}
-
-              {18, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[ming_dora_immediately_open: value], rest}
-
-              {19, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_li_dora: value], rest}
-
-              {20, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_gang_li_dora: value], rest}
-
-              {21, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_sifenglianda: value], rest}
-
-              {22, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_sigangsanle: value], rest}
-
-              {23, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_sijializhi: value], rest}
-
-              {24, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_jiuzhongjiupai: value], rest}
-
-              {25, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_sanjiahele: value], rest}
-
-              {26, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_toutiao: value], rest}
-
-              {27, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_helelianzhuang: value], rest}
-
-              {28, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_helezhongju: value], rest}
-
-              {29, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_tingpailianzhuang: value], rest}
-
-              {30, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_tingpaizhongju: value], rest}
-
-              {31, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_yifa: value], rest}
-
-              {32, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_nanruxiru: value], rest}
-
-              {33, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[jingsuanyuandian: value], rest}
-
-              {34, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_int32(bytes)
-                {[shunweima_2: value], rest}
-
-              {35, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_int32(bytes)
-                {[shunweima_3: value], rest}
-
-              {36, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_int32(bytes)
-                {[shunweima_4: value], rest}
-
-              {37, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[bianjietishi: value], rest}
-
-              {38, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[ai_level: value], rest}
-
-              {39, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[have_zimosun: value], rest}
-
-              {40, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[disable_multi_yukaman: value], rest}
-
-              {41, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_uint32(bytes)
-                {[guyi_mode: value], rest}
-
-              {42, _, bytes} ->
-                {value, rest} = Protox.Decode.parse_bool(bytes)
-                {[disable_leijiyiman: value], rest}
-
-              {tag, wire_type, rest} ->
-                {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
-
-                {[
-                   {msg.__struct__.unknown_fields_name,
-                    [value | msg.__struct__.unknown_fields(msg)]}
-                 ], rest}
-            end
-
-          msg_updated = struct(msg, field)
-          parse_key_value(rest, msg_updated)
-        end
-      )
-
-      []
-    )
-
-    (
-      @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
-      def json_decode(input, opts \\ []) do
+      @spec encode(struct) :: {:ok, iodata} | {:error, any}
+      def encode(msg) do
         try do
-          {:ok, json_decode!(input, opts)}
+          {:ok, encode!(msg)}
         rescue
-          e in Protox.JsonDecodingError -> {:error, e}
+          e in [Protox.EncodingError, Protox.RequiredFieldsError] -> {:error, e}
         end
       end
 
-      @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
-      def json_decode!(input, opts \\ []) do
-        {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
-
-        Protox.JsonDecode.decode!(
-          input,
-          Soulless.Tourney.Lq.ContestDetailRule,
-          &json_library_wrapper.decode!(json_library, &1)
-        )
-      end
-
-      @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
-      def json_encode(msg, opts \\ []) do
-        try do
-          {:ok, json_encode!(msg, opts)}
-        rescue
-          e in Protox.JsonEncodingError -> {:error, e}
-        end
-      end
-
-      @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
-      def json_encode!(msg, opts \\ []) do
-        {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
-        Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
+      @spec encode!(struct) :: iodata | no_return
+      def encode!(msg) do
+        []
+        |> encode_init_point(msg)
+        |> encode_fandian(msg)
+        |> encode_can_jifei(msg)
+        |> encode_tianbian_value(msg)
+        |> encode_liqibang_value(msg)
+        |> encode_changbang_value(msg)
+        |> encode_noting_fafu_1(msg)
+        |> encode_noting_fafu_2(msg)
+        |> encode_noting_fafu_3(msg)
+        |> encode_have_liujumanguan(msg)
+        |> encode_have_qieshangmanguan(msg)
+        |> encode_have_biao_dora(msg)
+        |> encode_have_gang_biao_dora(msg)
+        |> encode_ming_dora_immediately_open(msg)
+        |> encode_have_li_dora(msg)
+        |> encode_have_gang_li_dora(msg)
+        |> encode_have_sifenglianda(msg)
+        |> encode_have_sigangsanle(msg)
+        |> encode_have_sijializhi(msg)
+        |> encode_have_jiuzhongjiupai(msg)
+        |> encode_have_sanjiahele(msg)
+        |> encode_have_toutiao(msg)
+        |> encode_have_helelianzhuang(msg)
+        |> encode_have_helezhongju(msg)
+        |> encode_have_tingpailianzhuang(msg)
+        |> encode_have_tingpaizhongju(msg)
+        |> encode_have_yifa(msg)
+        |> encode_have_nanruxiru(msg)
+        |> encode_jingsuanyuandian(msg)
+        |> encode_shunweima_2(msg)
+        |> encode_shunweima_3(msg)
+        |> encode_shunweima_4(msg)
+        |> encode_bianjietishi(msg)
+        |> encode_ai_level(msg)
+        |> encode_have_zimosun(msg)
+        |> encode_disable_multi_yukaman(msg)
+        |> encode_guyi_mode(msg)
+        |> encode_disable_leijiyiman(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
+    []
+
+    [
+      defp encode_init_point(acc, msg) do
+        try do
+          if msg.init_point == 0 do
+            acc
+          else
+            [acc, "(", Protox.Encode.encode_uint32(msg.init_point)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:init_point, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_fandian(acc, msg) do
+        try do
+          if msg.fandian == 0 do
+            acc
+          else
+            [acc, "0", Protox.Encode.encode_uint32(msg.fandian)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:fandian, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_can_jifei(acc, msg) do
+        try do
+          if msg.can_jifei == false do
+            acc
+          else
+            [acc, "8", Protox.Encode.encode_bool(msg.can_jifei)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:can_jifei, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_tianbian_value(acc, msg) do
+        try do
+          if msg.tianbian_value == 0 do
+            acc
+          else
+            [acc, "@", Protox.Encode.encode_uint32(msg.tianbian_value)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:tianbian_value, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_liqibang_value(acc, msg) do
+        try do
+          if msg.liqibang_value == 0 do
+            acc
+          else
+            [acc, "H", Protox.Encode.encode_uint32(msg.liqibang_value)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:liqibang_value, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_changbang_value(acc, msg) do
+        try do
+          if msg.changbang_value == 0 do
+            acc
+          else
+            [acc, "P", Protox.Encode.encode_uint32(msg.changbang_value)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:changbang_value, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_noting_fafu_1(acc, msg) do
+        try do
+          if msg.noting_fafu_1 == 0 do
+            acc
+          else
+            [acc, "X", Protox.Encode.encode_uint32(msg.noting_fafu_1)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:noting_fafu_1, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_noting_fafu_2(acc, msg) do
+        try do
+          if msg.noting_fafu_2 == 0 do
+            acc
+          else
+            [acc, "`", Protox.Encode.encode_uint32(msg.noting_fafu_2)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:noting_fafu_2, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_noting_fafu_3(acc, msg) do
+        try do
+          if msg.noting_fafu_3 == 0 do
+            acc
+          else
+            [acc, "h", Protox.Encode.encode_uint32(msg.noting_fafu_3)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:noting_fafu_3, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_liujumanguan(acc, msg) do
+        try do
+          if msg.have_liujumanguan == false do
+            acc
+          else
+            [acc, "p", Protox.Encode.encode_bool(msg.have_liujumanguan)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_liujumanguan, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_qieshangmanguan(acc, msg) do
+        try do
+          if msg.have_qieshangmanguan == false do
+            acc
+          else
+            [acc, "x", Protox.Encode.encode_bool(msg.have_qieshangmanguan)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_qieshangmanguan, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_biao_dora(acc, msg) do
+        try do
+          if msg.have_biao_dora == false do
+            acc
+          else
+            [acc, "\x80\x01", Protox.Encode.encode_bool(msg.have_biao_dora)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_biao_dora, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_gang_biao_dora(acc, msg) do
+        try do
+          if msg.have_gang_biao_dora == false do
+            acc
+          else
+            [acc, "\x88\x01", Protox.Encode.encode_bool(msg.have_gang_biao_dora)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_gang_biao_dora, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_ming_dora_immediately_open(acc, msg) do
+        try do
+          if msg.ming_dora_immediately_open == false do
+            acc
+          else
+            [acc, "\x90\x01", Protox.Encode.encode_bool(msg.ming_dora_immediately_open)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:ming_dora_immediately_open, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_li_dora(acc, msg) do
+        try do
+          if msg.have_li_dora == false do
+            acc
+          else
+            [acc, "\x98\x01", Protox.Encode.encode_bool(msg.have_li_dora)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_li_dora, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_have_gang_li_dora(acc, msg) do
+        try do
+          if msg.have_gang_li_dora == false do
+            acc
+          else
+            [acc, "\xA0\x01", Protox.Encode.encode_bool(msg.have_gang_li_dora)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_gang_li_dora, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_sifenglianda(acc, msg) do
+        try do
+          if msg.have_sifenglianda == false do
+            acc
+          else
+            [acc, "\xA8\x01", Protox.Encode.encode_bool(msg.have_sifenglianda)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_sifenglianda, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_sigangsanle(acc, msg) do
+        try do
+          if msg.have_sigangsanle == false do
+            acc
+          else
+            [acc, "\xB0\x01", Protox.Encode.encode_bool(msg.have_sigangsanle)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_sigangsanle, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_sijializhi(acc, msg) do
+        try do
+          if msg.have_sijializhi == false do
+            acc
+          else
+            [acc, "\xB8\x01", Protox.Encode.encode_bool(msg.have_sijializhi)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_sijializhi, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_jiuzhongjiupai(acc, msg) do
+        try do
+          if msg.have_jiuzhongjiupai == false do
+            acc
+          else
+            [acc, "\xC0\x01", Protox.Encode.encode_bool(msg.have_jiuzhongjiupai)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_jiuzhongjiupai, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_sanjiahele(acc, msg) do
+        try do
+          if msg.have_sanjiahele == false do
+            acc
+          else
+            [acc, "\xC8\x01", Protox.Encode.encode_bool(msg.have_sanjiahele)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_sanjiahele, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_toutiao(acc, msg) do
+        try do
+          if msg.have_toutiao == false do
+            acc
+          else
+            [acc, "\xD0\x01", Protox.Encode.encode_bool(msg.have_toutiao)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_toutiao, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_have_helelianzhuang(acc, msg) do
+        try do
+          if msg.have_helelianzhuang == false do
+            acc
+          else
+            [acc, "\xD8\x01", Protox.Encode.encode_bool(msg.have_helelianzhuang)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_helelianzhuang, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_helezhongju(acc, msg) do
+        try do
+          if msg.have_helezhongju == false do
+            acc
+          else
+            [acc, "\xE0\x01", Protox.Encode.encode_bool(msg.have_helezhongju)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_helezhongju, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_tingpailianzhuang(acc, msg) do
+        try do
+          if msg.have_tingpailianzhuang == false do
+            acc
+          else
+            [acc, "\xE8\x01", Protox.Encode.encode_bool(msg.have_tingpailianzhuang)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_tingpailianzhuang, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_tingpaizhongju(acc, msg) do
+        try do
+          if msg.have_tingpaizhongju == false do
+            acc
+          else
+            [acc, "\xF0\x01", Protox.Encode.encode_bool(msg.have_tingpaizhongju)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_tingpaizhongju, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_have_yifa(acc, msg) do
+        try do
+          if msg.have_yifa == false do
+            acc
+          else
+            [acc, "\xF8\x01", Protox.Encode.encode_bool(msg.have_yifa)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_yifa, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_have_nanruxiru(acc, msg) do
+        try do
+          if msg.have_nanruxiru == false do
+            acc
+          else
+            [acc, "\x80\x02", Protox.Encode.encode_bool(msg.have_nanruxiru)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_nanruxiru, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_jingsuanyuandian(acc, msg) do
+        try do
+          if msg.jingsuanyuandian == 0 do
+            acc
+          else
+            [acc, "\x88\x02", Protox.Encode.encode_uint32(msg.jingsuanyuandian)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:jingsuanyuandian, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_shunweima_2(acc, msg) do
+        try do
+          if msg.shunweima_2 == 0 do
+            acc
+          else
+            [acc, "\x90\x02", Protox.Encode.encode_int32(msg.shunweima_2)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:shunweima_2, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_shunweima_3(acc, msg) do
+        try do
+          if msg.shunweima_3 == 0 do
+            acc
+          else
+            [acc, "\x98\x02", Protox.Encode.encode_int32(msg.shunweima_3)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:shunweima_3, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_shunweima_4(acc, msg) do
+        try do
+          if msg.shunweima_4 == 0 do
+            acc
+          else
+            [acc, "\xA0\x02", Protox.Encode.encode_int32(msg.shunweima_4)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:shunweima_4, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_bianjietishi(acc, msg) do
+        try do
+          if msg.bianjietishi == false do
+            acc
+          else
+            [acc, "\xA8\x02", Protox.Encode.encode_bool(msg.bianjietishi)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:bianjietishi, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_ai_level(acc, msg) do
+        try do
+          if msg.ai_level == 0 do
+            acc
+          else
+            [acc, "\xB0\x02", Protox.Encode.encode_uint32(msg.ai_level)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:ai_level, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_have_zimosun(acc, msg) do
+        try do
+          if msg.have_zimosun == false do
+            acc
+          else
+            [acc, "\xB8\x02", Protox.Encode.encode_bool(msg.have_zimosun)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:have_zimosun, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_disable_multi_yukaman(acc, msg) do
+        try do
+          if msg.disable_multi_yukaman == false do
+            acc
+          else
+            [acc, "\xC0\x02", Protox.Encode.encode_bool(msg.disable_multi_yukaman)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:disable_multi_yukaman, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_guyi_mode(acc, msg) do
+        try do
+          if msg.guyi_mode == 0 do
+            acc
+          else
+            [acc, "\xC8\x02", Protox.Encode.encode_uint32(msg.guyi_mode)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:guyi_mode, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_disable_leijiyiman(acc, msg) do
+        try do
+          if msg.disable_leijiyiman == false do
+            acc
+          else
+            [acc, "\xD0\x02", Protox.Encode.encode_bool(msg.disable_leijiyiman)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:disable_leijiyiman, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end
+    ]
+
+    defp encode_unknown_fields(acc, msg) do
+      Enum.reduce(msg.__struct__.unknown_fields(msg), acc, fn {tag, wire_type, bytes}, acc ->
+        case wire_type do
+          0 ->
+            [acc, Protox.Encode.make_key_bytes(tag, :int32), bytes]
+
+          1 ->
+            [acc, Protox.Encode.make_key_bytes(tag, :double), bytes]
+
+          2 ->
+            len_bytes = bytes |> byte_size() |> Protox.Varint.encode()
+            [acc, Protox.Encode.make_key_bytes(tag, :packed), len_bytes, bytes]
+
+          5 ->
+            [acc, Protox.Encode.make_key_bytes(tag, :float), bytes]
+        end
+      end)
+    end
+  )
+
+  (
+    (
+      @spec decode(binary) :: {:ok, struct} | {:error, any}
+      def decode(bytes) do
+        try do
+          {:ok, decode!(bytes)}
+        rescue
+          e in [Protox.DecodingError, Protox.IllegalTagError, Protox.RequiredFieldsError] ->
+            {:error, e}
+        end
+      end
+
+      (
+        @spec decode!(binary) :: struct | no_return
+        def decode!(bytes) do
+          parse_key_value(bytes, struct(Soulless.Tourney.Lq.ContestDetailRule))
+        end
+      )
+    )
+
+    (
+      @spec parse_key_value(binary, struct) :: struct
+      defp parse_key_value(<<>>, msg) do
+        msg
+      end
+
+      defp parse_key_value(bytes, msg) do
+        {field, rest} =
+          case Protox.Decode.parse_key(bytes) do
+            {0, _, _} ->
+              raise %Protox.IllegalTagError{}
+
+            {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[init_point: value], rest}
+
+            {6, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[fandian: value], rest}
+
+            {7, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[can_jifei: value], rest}
+
+            {8, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[tianbian_value: value], rest}
+
+            {9, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[liqibang_value: value], rest}
+
+            {10, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[changbang_value: value], rest}
+
+            {11, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[noting_fafu_1: value], rest}
+
+            {12, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[noting_fafu_2: value], rest}
+
+            {13, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[noting_fafu_3: value], rest}
+
+            {14, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_liujumanguan: value], rest}
+
+            {15, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_qieshangmanguan: value], rest}
+
+            {16, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_biao_dora: value], rest}
+
+            {17, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_gang_biao_dora: value], rest}
+
+            {18, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[ming_dora_immediately_open: value], rest}
+
+            {19, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_li_dora: value], rest}
+
+            {20, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_gang_li_dora: value], rest}
+
+            {21, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_sifenglianda: value], rest}
+
+            {22, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_sigangsanle: value], rest}
+
+            {23, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_sijializhi: value], rest}
+
+            {24, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_jiuzhongjiupai: value], rest}
+
+            {25, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_sanjiahele: value], rest}
+
+            {26, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_toutiao: value], rest}
+
+            {27, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_helelianzhuang: value], rest}
+
+            {28, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_helezhongju: value], rest}
+
+            {29, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_tingpailianzhuang: value], rest}
+
+            {30, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_tingpaizhongju: value], rest}
+
+            {31, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_yifa: value], rest}
+
+            {32, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_nanruxiru: value], rest}
+
+            {33, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[jingsuanyuandian: value], rest}
+
+            {34, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_int32(bytes)
+              {[shunweima_2: value], rest}
+
+            {35, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_int32(bytes)
+              {[shunweima_3: value], rest}
+
+            {36, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_int32(bytes)
+              {[shunweima_4: value], rest}
+
+            {37, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[bianjietishi: value], rest}
+
+            {38, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[ai_level: value], rest}
+
+            {39, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[have_zimosun: value], rest}
+
+            {40, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[disable_multi_yukaman: value], rest}
+
+            {41, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[guyi_mode: value], rest}
+
+            {42, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[disable_leijiyiman: value], rest}
+
+            {tag, wire_type, rest} ->
+              {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
+
+              {[
+                 {msg.__struct__.unknown_fields_name,
+                  [value | msg.__struct__.unknown_fields(msg)]}
+               ], rest}
+          end
+
+        msg_updated = struct(msg, field)
+        parse_key_value(rest, msg_updated)
+      end
+    )
+
+    []
+  )
+
+  (
+    @spec json_decode(iodata(), keyword()) :: {:ok, struct()} | {:error, any()}
+    def json_decode(input, opts \\ []) do
+      try do
+        {:ok, json_decode!(input, opts)}
+      rescue
+        e in Protox.JsonDecodingError -> {:error, e}
+      end
+    end
+
+    @spec json_decode!(iodata(), keyword()) :: struct() | no_return()
+    def json_decode!(input, opts \\ []) do
+      {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :decode)
+
+      Protox.JsonDecode.decode!(
+        input,
+        Soulless.Tourney.Lq.ContestDetailRule,
+        &json_library_wrapper.decode!(json_library, &1)
+      )
+    end
+
+    @spec json_encode(struct(), keyword()) :: {:ok, iodata()} | {:error, any()}
+    def json_encode(msg, opts \\ []) do
+      try do
+        {:ok, json_encode!(msg, opts)}
+      rescue
+        e in Protox.JsonEncodingError -> {:error, e}
+      end
+    end
+
+    @spec json_encode!(struct(), keyword()) :: iodata() | no_return()
+    def json_encode!(msg, opts \\ []) do
+      {json_library_wrapper, json_library} = Protox.JsonLibrary.get_library(opts, :encode)
+      Protox.JsonEncode.encode!(msg, &json_library_wrapper.encode!(json_library, &1))
+    end
+  )
+
+  (
     @deprecated "Use fields_defs()/0 instead"
     @spec defs() :: %{
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
@@ -905,47 +895,49 @@ defmodule Soulless.Tourney.Lq.ContestDetailRule do
           }
     def defs_by_name() do
       %{
-        changbang_value: {10, {:scalar, 0}, :uint32},
-        ming_dora_immediately_open: {18, {:scalar, false}, :bool},
-        disable_multi_yukaman: {40, {:scalar, false}, :bool},
-        have_gang_biao_dora: {17, {:scalar, false}, :bool},
-        have_helelianzhuang: {27, {:scalar, false}, :bool},
-        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
-        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
-        shunweima_3: {35, {:scalar, 0}, :int32},
-        have_gang_li_dora: {20, {:scalar, false}, :bool},
-        have_sifenglianda: {21, {:scalar, false}, :bool},
-        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
-        have_sigangsanle: {22, {:scalar, false}, :bool},
-        have_zimosun: {39, {:scalar, false}, :bool},
-        have_toutiao: {26, {:scalar, false}, :bool},
-        guyi_mode: {41, {:scalar, 0}, :uint32},
-        have_liujumanguan: {14, {:scalar, false}, :bool},
-        have_sijializhi: {23, {:scalar, false}, :bool},
-        init_point: {5, {:scalar, 0}, :uint32},
-        have_sanjiahele: {25, {:scalar, false}, :bool},
-        noting_fafu_2: {12, {:scalar, 0}, :uint32},
-        have_helezhongju: {28, {:scalar, false}, :bool},
-        have_nanruxiru: {32, {:scalar, false}, :bool},
-        can_jifei: {7, {:scalar, false}, :bool},
-        have_qieshangmanguan: {15, {:scalar, false}, :bool},
-        bianjietishi: {37, {:scalar, false}, :bool},
-        noting_fafu_1: {11, {:scalar, 0}, :uint32},
-        disable_leijiyiman: {42, {:scalar, false}, :bool},
-        fandian: {6, {:scalar, 0}, :uint32},
-        tianbian_value: {8, {:scalar, 0}, :uint32},
-        shunweima_4: {36, {:scalar, 0}, :int32},
         liqibang_value: {9, {:scalar, 0}, :uint32},
-        have_biao_dora: {16, {:scalar, false}, :bool},
         have_tingpaizhongju: {30, {:scalar, false}, :bool},
-        have_li_dora: {19, {:scalar, false}, :bool},
-        have_yifa: {31, {:scalar, false}, :bool},
-        ai_level: {38, {:scalar, 0}, :uint32},
+        tianbian_value: {8, {:scalar, 0}, :uint32},
+        shunweima_3: {35, {:scalar, 0}, :int32},
+        ming_dora_immediately_open: {18, {:scalar, false}, :bool},
+        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
+        have_gang_li_dora: {20, {:scalar, false}, :bool},
+        have_toutiao: {26, {:scalar, false}, :bool},
+        noting_fafu_1: {11, {:scalar, 0}, :uint32},
+        noting_fafu_2: {12, {:scalar, 0}, :uint32},
+        have_qieshangmanguan: {15, {:scalar, false}, :bool},
         noting_fafu_3: {13, {:scalar, 0}, :uint32},
-        shunweima_2: {34, {:scalar, 0}, :int32}
+        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
+        have_gang_biao_dora: {17, {:scalar, false}, :bool},
+        have_nanruxiru: {32, {:scalar, false}, :bool},
+        init_point: {5, {:scalar, 0}, :uint32},
+        have_liujumanguan: {14, {:scalar, false}, :bool},
+        guyi_mode: {41, {:scalar, 0}, :uint32},
+        have_biao_dora: {16, {:scalar, false}, :bool},
+        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
+        have_li_dora: {19, {:scalar, false}, :bool},
+        have_sijializhi: {23, {:scalar, false}, :bool},
+        shunweima_2: {34, {:scalar, 0}, :int32},
+        fandian: {6, {:scalar, 0}, :uint32},
+        have_helezhongju: {28, {:scalar, false}, :bool},
+        have_yifa: {31, {:scalar, false}, :bool},
+        disable_leijiyiman: {42, {:scalar, false}, :bool},
+        have_zimosun: {39, {:scalar, false}, :bool},
+        shunweima_4: {36, {:scalar, 0}, :int32},
+        bianjietishi: {37, {:scalar, false}, :bool},
+        have_helelianzhuang: {27, {:scalar, false}, :bool},
+        can_jifei: {7, {:scalar, false}, :bool},
+        have_sifenglianda: {21, {:scalar, false}, :bool},
+        changbang_value: {10, {:scalar, 0}, :uint32},
+        have_sigangsanle: {22, {:scalar, false}, :bool},
+        disable_multi_yukaman: {40, {:scalar, false}, :bool},
+        have_sanjiahele: {25, {:scalar, false}, :bool},
+        ai_level: {38, {:scalar, 0}, :uint32}
       }
     end
+  )
 
+  (
     @spec fields_defs() :: list(Protox.Field.t())
     def fields_defs() do
       [
@@ -2787,153 +2779,157 @@ defmodule Soulless.Tourney.Lq.ContestDetailRule do
         {:error, :no_such_field}
       end
     ]
+  )
 
-    (
-      @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
-      def unknown_fields(msg) do
-        msg.__uf__
-      end
+  (
+    @spec unknown_fields(struct) :: [{non_neg_integer, Protox.Types.tag(), binary}]
+    def unknown_fields(msg) do
+      msg.__uf__
+    end
 
-      @spec unknown_fields_name() :: :__uf__
-      def unknown_fields_name() do
-        :__uf__
-      end
+    @spec unknown_fields_name() :: :__uf__
+    def unknown_fields_name() do
+      :__uf__
+    end
 
-      @spec clear_unknown_fields(struct) :: struct
-      def clear_unknown_fields(msg) do
-        struct!(msg, [{unknown_fields_name(), []}])
-      end
-    )
+    @spec clear_unknown_fields(struct) :: struct
+    def clear_unknown_fields(msg) do
+      struct!(msg, [{unknown_fields_name(), []}])
+    end
+  )
 
+  (
     @spec required_fields() :: []
     def required_fields() do
       []
     end
+  )
 
-    @spec syntax() :: atom
+  (
+    @spec syntax() :: atom()
     def syntax() do
       :proto3
     end
-
-    [
-      @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-      def default(:init_point) do
-        {:ok, 0}
-      end,
-      def default(:fandian) do
-        {:ok, 0}
-      end,
-      def default(:can_jifei) do
-        {:ok, false}
-      end,
-      def default(:tianbian_value) do
-        {:ok, 0}
-      end,
-      def default(:liqibang_value) do
-        {:ok, 0}
-      end,
-      def default(:changbang_value) do
-        {:ok, 0}
-      end,
-      def default(:noting_fafu_1) do
-        {:ok, 0}
-      end,
-      def default(:noting_fafu_2) do
-        {:ok, 0}
-      end,
-      def default(:noting_fafu_3) do
-        {:ok, 0}
-      end,
-      def default(:have_liujumanguan) do
-        {:ok, false}
-      end,
-      def default(:have_qieshangmanguan) do
-        {:ok, false}
-      end,
-      def default(:have_biao_dora) do
-        {:ok, false}
-      end,
-      def default(:have_gang_biao_dora) do
-        {:ok, false}
-      end,
-      def default(:ming_dora_immediately_open) do
-        {:ok, false}
-      end,
-      def default(:have_li_dora) do
-        {:ok, false}
-      end,
-      def default(:have_gang_li_dora) do
-        {:ok, false}
-      end,
-      def default(:have_sifenglianda) do
-        {:ok, false}
-      end,
-      def default(:have_sigangsanle) do
-        {:ok, false}
-      end,
-      def default(:have_sijializhi) do
-        {:ok, false}
-      end,
-      def default(:have_jiuzhongjiupai) do
-        {:ok, false}
-      end,
-      def default(:have_sanjiahele) do
-        {:ok, false}
-      end,
-      def default(:have_toutiao) do
-        {:ok, false}
-      end,
-      def default(:have_helelianzhuang) do
-        {:ok, false}
-      end,
-      def default(:have_helezhongju) do
-        {:ok, false}
-      end,
-      def default(:have_tingpailianzhuang) do
-        {:ok, false}
-      end,
-      def default(:have_tingpaizhongju) do
-        {:ok, false}
-      end,
-      def default(:have_yifa) do
-        {:ok, false}
-      end,
-      def default(:have_nanruxiru) do
-        {:ok, false}
-      end,
-      def default(:jingsuanyuandian) do
-        {:ok, 0}
-      end,
-      def default(:shunweima_2) do
-        {:ok, 0}
-      end,
-      def default(:shunweima_3) do
-        {:ok, 0}
-      end,
-      def default(:shunweima_4) do
-        {:ok, 0}
-      end,
-      def default(:bianjietishi) do
-        {:ok, false}
-      end,
-      def default(:ai_level) do
-        {:ok, 0}
-      end,
-      def default(:have_zimosun) do
-        {:ok, false}
-      end,
-      def default(:disable_multi_yukaman) do
-        {:ok, false}
-      end,
-      def default(:guyi_mode) do
-        {:ok, 0}
-      end,
-      def default(:disable_leijiyiman) do
-        {:ok, false}
-      end,
-      def default(_) do
-        {:error, :no_such_field}
-      end
-    ]
   )
+
+  [
+    @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
+    def default(:init_point) do
+      {:ok, 0}
+    end,
+    def default(:fandian) do
+      {:ok, 0}
+    end,
+    def default(:can_jifei) do
+      {:ok, false}
+    end,
+    def default(:tianbian_value) do
+      {:ok, 0}
+    end,
+    def default(:liqibang_value) do
+      {:ok, 0}
+    end,
+    def default(:changbang_value) do
+      {:ok, 0}
+    end,
+    def default(:noting_fafu_1) do
+      {:ok, 0}
+    end,
+    def default(:noting_fafu_2) do
+      {:ok, 0}
+    end,
+    def default(:noting_fafu_3) do
+      {:ok, 0}
+    end,
+    def default(:have_liujumanguan) do
+      {:ok, false}
+    end,
+    def default(:have_qieshangmanguan) do
+      {:ok, false}
+    end,
+    def default(:have_biao_dora) do
+      {:ok, false}
+    end,
+    def default(:have_gang_biao_dora) do
+      {:ok, false}
+    end,
+    def default(:ming_dora_immediately_open) do
+      {:ok, false}
+    end,
+    def default(:have_li_dora) do
+      {:ok, false}
+    end,
+    def default(:have_gang_li_dora) do
+      {:ok, false}
+    end,
+    def default(:have_sifenglianda) do
+      {:ok, false}
+    end,
+    def default(:have_sigangsanle) do
+      {:ok, false}
+    end,
+    def default(:have_sijializhi) do
+      {:ok, false}
+    end,
+    def default(:have_jiuzhongjiupai) do
+      {:ok, false}
+    end,
+    def default(:have_sanjiahele) do
+      {:ok, false}
+    end,
+    def default(:have_toutiao) do
+      {:ok, false}
+    end,
+    def default(:have_helelianzhuang) do
+      {:ok, false}
+    end,
+    def default(:have_helezhongju) do
+      {:ok, false}
+    end,
+    def default(:have_tingpailianzhuang) do
+      {:ok, false}
+    end,
+    def default(:have_tingpaizhongju) do
+      {:ok, false}
+    end,
+    def default(:have_yifa) do
+      {:ok, false}
+    end,
+    def default(:have_nanruxiru) do
+      {:ok, false}
+    end,
+    def default(:jingsuanyuandian) do
+      {:ok, 0}
+    end,
+    def default(:shunweima_2) do
+      {:ok, 0}
+    end,
+    def default(:shunweima_3) do
+      {:ok, 0}
+    end,
+    def default(:shunweima_4) do
+      {:ok, 0}
+    end,
+    def default(:bianjietishi) do
+      {:ok, false}
+    end,
+    def default(:ai_level) do
+      {:ok, 0}
+    end,
+    def default(:have_zimosun) do
+      {:ok, false}
+    end,
+    def default(:disable_multi_yukaman) do
+      {:ok, false}
+    end,
+    def default(:guyi_mode) do
+      {:ok, 0}
+    end,
+    def default(:disable_leijiyiman) do
+      {:ok, false}
+    end,
+    def default(_) do
+      {:error, :no_such_field}
+    end
+  ]
 end
