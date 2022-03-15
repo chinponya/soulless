@@ -66,6 +66,7 @@ defmodule Soulless.MixProject do
 
   defp aliases do
     [
+      "fetch.game.proto": "run priv/scripts/fetch_proto.exs priv/protos/liqi.json",
       "generate.game.proto":
         "run priv/scripts/generate_proto_file.exs priv/protos/liqi.json priv/protos/majsoul.proto",
       "generate.tourney.proto":
@@ -74,6 +75,7 @@ defmodule Soulless.MixProject do
         "protox.generate --namespace=Soulless.Game --output-path=lib/soulless/game/lq --multiple-files priv/protos/majsoul.proto",
       "generate.tourney":
         "protox.generate --namespace=Soulless.Tourney --output-path=lib/soulless/tourney/lq --multiple-files priv/protos/tourney.proto",
+      "update.game": ["fetch.game.protos", "generate.game.protos", "generate.game"],
       "update.game": ["generate.game.protos", "generate.game"],
       "update.tourney": ["generate.tourney.protos", "generate.tourney"],
       update: ["update.game", "update.tourney"]
