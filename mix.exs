@@ -14,7 +14,8 @@ defmodule Soulless.MixProject do
       start_permanent: Mix.env() == :prod,
       package: package(),
       docs: docs(),
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -44,7 +45,7 @@ defmodule Soulless.MixProject do
       main: "readme",
       name: "Soulless",
       source_ref: "v#{@version}",
-      canonical: "http://hexdocs.pm/soulless",
+      canonical: "https://hexdocs.pm/soulless",
       source_url: @source_url,
       extras: ["README.md"]
     ]
@@ -60,6 +61,22 @@ defmodule Soulless.MixProject do
       {:uuid, "~> 1.1"},
       {:nimble_parsec, "~> 1.1"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      "generate.game.proto":
+        "run priv/scripts/generate_proto_file.exs priv/protos/liqi.json priv/protos/majsoul.proto",
+      "generate.tourney.proto":
+        "run priv/scripts/generate_proto_file.exs priv/protos/dhs.json priv/protos/tourney.proto",
+      "generate.game":
+        "protox.generate --namespace=Soulless.Game --output-path=lib/soulless/game/lq --multiple-files priv/protos/majsoul.proto",
+      "generate.tourney":
+        "protox.generate --namespace=Soulless.Tourney --output-path=lib/soulless/tourney/lq --multiple-files priv/protos/tourney.proto",
+      "update.game": ["generate.game.protos", "generate.game"],
+      "update.tourney": ["generate.tourney.protos", "generate.tourney"],
+      update: ["update.game", "update.tourney"]
     ]
   end
 end
