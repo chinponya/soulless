@@ -75,10 +75,8 @@ defmodule Soulless.MixProject do
         "protox.generate --namespace=Soulless.Game --output-path=lib/soulless/game/lq --multiple-files priv/protos/majsoul.proto",
       "generate.tourney":
         "protox.generate --namespace=Soulless.Tourney --output-path=lib/soulless/tourney/lq --multiple-files priv/protos/tourney.proto",
-      "update.game": ["fetch.game.protos", "generate.game.protos", "generate.game"],
-      "update.game": ["generate.game.protos", "generate.game"],
-      "update.tourney": ["generate.tourney.protos", "generate.tourney"],
-      update: ["update.game", "update.tourney"]
+      "update.game": ["fetch.game.proto", "generate.game.proto", "generate.game"],
+      "update.tourney": ["generate.tourney.proto", "generate.tourney"]
     ]
   end
 end
