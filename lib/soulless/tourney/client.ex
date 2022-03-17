@@ -35,7 +35,8 @@ defmodule Soulless.Tourney.Client do
 
       @impl true
       def handle_info(:spawn_child, %{region: region, reconnect_after: reconnect_after} = state) do
-        with {:ok, endpoint_url} <- Soulless.Tourney.Auth.endpoint_url(region),
+        with {:ok, %{endpoint_url: endpoint_url, passport_url: passport_url}} <-
+               Soulless.Tourney.Auth.endpoint_url(region),
              {:ok, child_pid} <-
                Soulless.Websocket.Client.start_link(
                  endpoint_url: endpoint_url,
@@ -48,7 +49,8 @@ defmodule Soulless.Tourney.Client do
           {:noreply,
            state
            |> Map.put(:status, :initialized)
-           |> Map.put(:child_pid, child_pid)}
+           |> Map.put(:child_pid, child_pid)
+           |> Map.put(:passport_url, passport_url)}
         else
           {:error, reason} ->
             {:stop, reason, state}
@@ -58,9 +60,14 @@ defmodule Soulless.Tourney.Client do
       @impl true
       def handle_cast(
             :ready,
-            %{uid: uid, access_token: access_token, child_pid: child_pid} = state
+            %{
+              uid: uid,
+              access_token: access_token,
+              passport_url: passport_url,
+              child_pid: child_pid
+            } = state
           ) do
-        case Soulless.Tourney.Client.login(uid, access_token, child_pid) do
+        case Soulless.Tourney.Client.login(uid, access_token, passport_url, child_pid) do
           {:ok, nickname} ->
             Logger.info("#{__MODULE__} Logged in as #{nickname}")
             GenServer.cast(self(), :logged_in)
@@ -70,9 +77,9 @@ defmodule Soulless.Tourney.Client do
              |> Map.put(:status, :ready)
              |> Map.put(:nickname, nickname)}
 
-          {:error, _reason} ->
+          {:error, reason} ->
             Logger.error("#{__MODULE__} login failed")
-            {:stop, :login_failed, state}
+            {:stop, reason, state}
         end
       end
 
@@ -153,11 +160,11 @@ defmodule Soulless.Tourney.Client do
     end
   end
 
-  def login(uid, access_token, child_pid) do
+  def login(uid, access_token, passport_url, child_pid) do
     Logger.debug("#{__MODULE__} Logging in with UID #{uid}")
 
     with {:ok, passport} <-
-           Soulless.Auth.get_passport(Soulless.Tourney.Auth.passport_url(), uid, access_token),
+           Soulless.Auth.get_passport(passport_url, uid, access_token),
          {:ok, oauth2_token} <-
            fetch_oauth2_token(child_pid, passport["uid"], passport["accessToken"]),
          {:ok, login_response} <-

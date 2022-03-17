@@ -1,6 +1,6 @@
-defmodule Soulless.Game.Lq do
-  @modules Soulless.Protobuf.Modules.generate_module_lookup_map(
-             "priv/protos/majsoul.proto",
+defmodule Soulless.Tourney.Service do
+  @modules Soulless.Protobuf.Modules.generate_rpc_lookup_map(
+             "priv/protos/tourney.proto",
              Soulless.Game
            )
 

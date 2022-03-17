@@ -16,6 +16,19 @@ defmodule Soulless.Game.Auth do
     end
   end
 
+  def endpoint(:test = region) do
+    with {:ok, version_json} <- version(region) do
+      {:ok,
+       %{
+         endpoint_url: "ws://localhost:8081/socket",
+         passport_url: "#{base_url(region)}/user/login",
+         version: String.trim_trailing(version_json["version"], ".w")
+       }}
+    else
+      error -> error
+    end
+  end
+
   def endpoint(region) do
     raise "Region '#{String.to_atom(region)}' is not supported"
   end
@@ -53,6 +66,10 @@ defmodule Soulless.Game.Auth do
 
   defp base_url(:en) do
     "https://mahjongsoul.game.yo-star.com"
+  end
+
+  defp base_url(:test) do
+    "http://localhost:8081"
   end
 
   defp version_url(region) do

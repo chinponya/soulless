@@ -22,9 +22,14 @@ defmodule Soulless.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :crypto],
+      mod: {Soulless.Application, [env: Mix.env()]},
+      applications: applications(Mix.env())
     ]
   end
+
+  defp applications(:test), do: applications(:default) ++ [:cowboy, :plug, :telemetry]
+  defp applications(_), do: [:protox, :websockex, :jason, :httpoison, :uuid, :nimble_parsec]
 
   defp package do
     [
@@ -60,6 +65,7 @@ defmodule Soulless.MixProject do
       {:jason, "~> 1.2"},
       {:uuid, "~> 1.1"},
       {:nimble_parsec, "~> 1.1"},
+      {:plug_cowboy, "~> 2.0"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
