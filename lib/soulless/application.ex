@@ -10,11 +10,7 @@ defmodule Soulless.Application do
 
         [env: :test] ->
           [
-            {Soulless.MockServer.Repo, []},
-            {Plug.Cowboy,
-             scheme: :http,
-             plug: Soulless.MockServer.Router,
-             options: [port: 8081, dispatch: dispatch()]}
+            Soulless.MockServer
           ]
 
         [env: :dev] ->
@@ -26,15 +22,5 @@ defmodule Soulless.Application do
 
     opts = [strategy: :one_for_one, name: Soulless.Supervisor]
     Supervisor.start_link(children, opts)
-  end
-
-  defp dispatch do
-    [
-      {:_,
-       [
-         {"/socket", Soulless.MockServer.Socket, []},
-         {:_, Plug.Cowboy.Handler, {Soulless.MockServer.Router, []}}
-       ]}
-    ]
   end
 end

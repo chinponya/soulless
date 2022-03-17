@@ -17,8 +17,8 @@ defmodule Soulless.Tourney.Auth do
     end
   end
 
-  def endpoint_url(:test = region) do
-    {:ok, %{endpoint_url: "ws://localhost:8081/socket", passport_url: passport_url(region)}}
+  def endpoint_url({:custom, _opts} = region) do
+    {:ok, %{endpoint_url: socket_base_url(region), passport_url: passport_url(region)}}
   end
 
   def endpoint_url(region) do
@@ -29,12 +29,21 @@ defmodule Soulless.Tourney.Auth do
     "https://passport.mahjongsoul.com/user/login"
   end
 
-  def passport_url(:test) do
-    "http://localhost:8081/user/login"
+  def passport_url({:custom, _opts} = region) do
+    "#{base_url(region)}/user/login"
   end
 
   defp base_url(:en) do
     "https://mahjongsoul.tournament.yo-star.com"
+  end
+
+  defp base_url({:custom, opts}) do
+    Soulless.Auth.test_server_url(opts, false)
+  end
+
+  defp socket_base_url({:custom, opts} = _region) do
+    url = Soulless.Auth.test_server_url(opts, true)
+    "#{url}/socket"
   end
 
   defp config_url(region) do

@@ -6,6 +6,5 @@ config :soulless,
   region: :en
 
 if config_env() == :test do
-  config :soulless,
-    region: :test
+  import_config "test.exs"
 end

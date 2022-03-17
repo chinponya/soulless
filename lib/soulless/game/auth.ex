@@ -16,11 +16,11 @@ defmodule Soulless.Game.Auth do
     end
   end
 
-  def endpoint(:test = region) do
+  def endpoint({:custom, _opts} = region) do
     with {:ok, version_json} <- version(region) do
       {:ok,
        %{
-         endpoint_url: "ws://localhost:8081/socket",
+         endpoint_url: socket_base_url(region),
          passport_url: "#{base_url(region)}/user/login",
          version: String.trim_trailing(version_json["version"], ".w")
        }}
@@ -68,8 +68,8 @@ defmodule Soulless.Game.Auth do
     "https://mahjongsoul.game.yo-star.com"
   end
 
-  defp base_url(:test) do
-    "http://localhost:8081"
+  defp base_url({:custom, opts}) do
+    Soulless.Auth.test_server_url(opts, false)
   end
 
   defp version_url(region) do
@@ -78,6 +78,11 @@ defmodule Soulless.Game.Auth do
 
   defp config_url(region, version) do
     "#{base_url(region)}/v#{version}/config.json"
+  end
+
+  defp socket_base_url({:custom, opts} = _region) do
+    url = Soulless.Auth.test_server_url(opts, true)
+    "#{url}/socket"
   end
 
   defp server_list_url_from_config(config_json) do
