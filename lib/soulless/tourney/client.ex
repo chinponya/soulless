@@ -13,12 +13,14 @@ defmodule Soulless.Tourney.Client do
         name = opts[:name] || __MODULE__
         uid = opts[:uid] || Application.fetch_env!(:soulless, :uid)
         access_token = opts[:access_token] || Application.fetch_env!(:soulless, :access_token)
+        token_kind = opts[:token_kind] || Application.get_env(:soulless, :token_kind, :permanent)
         region = opts[:region] || Application.fetch_env!(:soulless, :region)
 
         state = %{
           name: name,
           uid: uid,
           access_token: access_token,
+          token_kind: token_kind,
           region: region,
           status: :disconnected,
           reconnect_after: 5 * 60 * 1000
@@ -58,9 +60,16 @@ defmodule Soulless.Tourney.Client do
       @impl true
       def handle_cast(
             :ready,
-            %{uid: uid, access_token: access_token, child_pid: child_pid} = state
+            %{uid: uid, access_token: access_token, token_kind: token_kind, child_pid: child_pid} =
+              state
           ) do
-        case Soulless.Tourney.Client.login(uid, access_token, child_pid) do
+        login_result =
+          case token_kind do
+            :permanent -> Soulless.Tourney.Client.full_login(uid, access_token, child_pid)
+            :transient -> Soulless.Tourney.Client.partial_login(uid, access_token, child_pid)
+          end
+
+        case login_result do
           {:ok, nickname} ->
             Logger.info("#{__MODULE__} Logged in as #{nickname}")
             GenServer.cast(self(), :logged_in)
@@ -153,24 +162,33 @@ defmodule Soulless.Tourney.Client do
     end
   end
 
-  def login(uid, access_token, child_pid) do
+  def full_login(uid, access_token, child_pid) do
     Logger.debug("#{__MODULE__} Logging in with UID #{uid}")
 
     with {:ok, passport} <-
            Soulless.Auth.get_passport(Soulless.Tourney.Auth.passport_url(), uid, access_token),
-         {:ok, oauth2_token} <-
-           fetch_oauth2_token(child_pid, passport["uid"], passport["accessToken"]),
-         {:ok, login_response} <-
-           oauth2_login(child_pid, oauth2_token) do
+         {:ok, login_response} <- ws_login(child_pid, uid, passport["accessToken"]) do
       {:ok, login_response.nickname}
-    else
-      error -> error
     end
   end
 
-  def fetch_oauth2_token(child_pid, uid, access_token) do
+  def partial_login(uid, access_token, child_pid) do
+    Logger.debug("#{__MODULE__} Logging in with UID #{uid}")
+
+    with {:ok, login_response} <- ws_login(child_pid, uid, access_token) do
+      {:ok, login_response.nickname}
+    end
+  end
+
+  defp ws_login(pid, uid, transient_token) do
+    with {:ok, oauth2_token} <- fetch_ws_oauth2_token(pid, uid, transient_token) do
+      ws_oauth2_login(pid, oauth2_token)
+    end
+  end
+
+  def fetch_ws_oauth2_token(child_pid, uid, transient_token) do
     response =
-      %Lq.ReqContestManageOauth2Auth{type: 7, code: access_token, uid: uid}
+      %Lq.ReqContestManageOauth2Auth{type: 7, code: transient_token, uid: uid}
       |> Api.oauth2_auth_contest_manager()
       |> Soulless.RPC.fetch(child_pid)
 
@@ -184,7 +202,7 @@ defmodule Soulless.Tourney.Client do
     end
   end
 
-  def oauth2_login(child_pid, oauth2_token) do
+  def ws_oauth2_login(child_pid, oauth2_token) do
     response =
       %Lq.ReqContestManageOauth2Login{type: 7, access_token: oauth2_token, reconnect: false}
       |> Api.oauth2_login_contest_manager()

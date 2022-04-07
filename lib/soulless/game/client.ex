@@ -10,12 +10,14 @@ defmodule Soulless.Game.Client do
         name = opts[:name] || __MODULE__
         uid = opts[:uid] || Application.fetch_env!(:soulless, :uid)
         access_token = opts[:access_token] || Application.fetch_env!(:soulless, :access_token)
+        token_kind = opts[:token_kind] || Application.get_env(:soulless, :token_kind, :permanent)
         region = opts[:region] || Application.fetch_env!(:soulless, :region)
 
         state = %{
           name: name,
           uid: uid,
           access_token: access_token,
+          token_kind: token_kind,
           region: region,
           status: :disconnected,
           reconnect_after: 5 * 60 * 1000
@@ -69,12 +71,22 @@ defmodule Soulless.Game.Client do
             %{
               uid: uid,
               access_token: access_token,
+              token_kind: token_kind,
               passport_url: passport_url,
               version: version,
               child_pid: child_pid
             } = state
           ) do
-        case Soulless.Game.Client.login(uid, access_token, passport_url, version, child_pid) do
+        login_result =
+          case token_kind do
+            :permanent ->
+              Soulless.Game.Client.full_login(uid, access_token, passport_url, version, child_pid)
+
+            :transient ->
+              Soulless.Game.Client.partial_login(uid, access_token, version, child_pid)
+          end
+
+        case login_result do
           {:ok, account} ->
             Logger.info("#{__MODULE__} Logged in as #{account.nickname}")
             GenServer.cast(self(), :logged_in)
@@ -167,26 +179,38 @@ defmodule Soulless.Game.Client do
     end
   end
 
-  def login(uid, access_token, passport_url, version, child_pid) do
+  def full_login(uid, access_token, passport_url, version, child_pid) do
     Logger.debug("#{__MODULE__} Logging in with UID #{uid}")
 
-    with {:ok, passport} <-
-           Soulless.Auth.get_passport(passport_url, uid, access_token),
-         {:ok, oauth2_token} <-
-           fetch_oauth2_token(child_pid, passport["uid"], passport["accessToken"], version),
-         {:ok, login_response} <-
-           oauth2_login(child_pid, oauth2_token, version) do
+    with {:ok, passport} <- Soulless.Auth.get_passport(passport_url, uid, access_token),
+         {:ok, login_response} <- ws_login(child_pid, uid, version, passport["accessToken"]) do
       {:ok, login_response.account}
     else
       error -> error
     end
   end
 
-  defp fetch_oauth2_token(pid, uid, access_token, version) do
+  def partial_login(uid, access_token, version, child_pid) do
+    Logger.debug("#{__MODULE__} Logging in with UID #{uid}")
+
+    with {:ok, login_response} <- ws_login(child_pid, uid, version, access_token) do
+      {:ok, login_response.account}
+    else
+      error -> error
+    end
+  end
+
+  defp ws_login(pid, uid, version, transient_token) do
+    with {:ok, oauth2_token} <- fetch_ws_oauth2_token(pid, uid, version, transient_token) do
+      ws_oauth2_login(pid, version, oauth2_token)
+    end
+  end
+
+  defp fetch_ws_oauth2_token(pid, uid, version, transient_token) do
     response =
       %Soulless.Game.Lq.ReqOauth2Auth{
         type: 7,
-        code: access_token,
+        code: transient_token,
         uid: uid,
         client_version_string: "web-#{version}"
       }
@@ -203,10 +227,10 @@ defmodule Soulless.Game.Client do
     end
   end
 
-  defp oauth2_login(pid, access_token, version) do
+  defp ws_oauth2_login(pid, version, ws_oauth2_token) do
     payload = %Soulless.Game.Lq.ReqOauth2Login{
       type: 7,
-      access_token: access_token,
+      access_token: ws_oauth2_token,
       device: %Soulless.Game.Lq.ClientDeviceInfo{
         platform: "pc",
         hardware: "pc",

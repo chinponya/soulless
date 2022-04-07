@@ -109,30 +109,54 @@ response =
 ## Configuration 
 
 This library needs the user ID and token in order to authenticate.
-These can be obtained by extracting values from the response made to `https://passport.mahjongsoul.com/user/login` during the login operation.
-The relevant fields are `uid` and `token` (not to be confused with `access_token`).
+These can be obtained by extracting values from the response made to `https://passport.mahjongsoul.com/user/login` during the login operation. At this point have two options:
+
+1. Use `uid` and `token`. This `token` is permanent and will never change.
+When using `token`, you also need to configure `token_kind` to `:permanent`.
 In addition, we also need to specify a `region`. Currently only `:en` is supported.
-
-These values should be provided either in the global configuration or via `{YourModule}.start_link()`.
-
-For global configuration this should look like so (note that all instances will share the global configuration):
 
 ```elixir
 # config/config.exs
 import Config
 
 config :soulless,
-  uid: "123456",
+  uid: "1234567",
   access_token: "effeffeffeffeffeffeffeffeffeff",
+  token_kind: :permanent,
   region: :en
 ```
 
-And for `Soulless.Client.start_link()`:
+**IMPORTANT**
+This method will call the `https://passport.mahjongsoul.com` endpoint, which as of 2022-04-04 is placed behind the Imperva WAF (Web Application Firewall).
+As a result, you can get temporarily IP banned. For this reason, the second method is recommended.
+
+2. Use `uid` and `accessToken`. This `accessToken` will change when another session takes its place.
+This can happen when another client logs into your account at the same time, invalidating the old token.
+When using `accessToken`, you also need to configure `token_kind` to `:transient`.
+In addition, we also need to specify a `region`. Currently only `:en` is supported.
+
+```elixir
+# config/config.exs
+import Config
+
+config :soulless,
+  uid: "1234567",
+  access_token: "deedeedeedeedeedeedeedeedeedee",
+  token_kind: :transient
+  region: :en
+```
+
+This method will bypass requests a request to `https://passport.mahjongsoul.com`, effectively skipping the WAF.
+Only downside is that you will need to manually update the token when it expires.
+
+
+For either method, it is also possible to set these values via `{YourModule}.start_link()`.
 
 ```elixir
 {:ok, pid} = Majsoul.Client.start_link(%{
-  uid: "123456",
+  uid: "1234567",
   access_token: "effeffeffeffeffeffeffeffeffeff",
+  token_kind: :permanent, # or :transient
   region: :en
 })
 ```
@@ -148,6 +172,7 @@ defmodule Soulless.Application do
       {Majsoul.Client, %{
         uid: "123456",
         access_token: "effeffeffeffeffeffeffeffeffeff",
+        token_kind: :permanent, # or :transient
         region: :en
       }}
     ]
