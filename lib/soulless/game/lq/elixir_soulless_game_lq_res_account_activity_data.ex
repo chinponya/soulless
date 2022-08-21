@@ -18,6 +18,8 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
             arena_data: [],
             feed_data: [],
             segment_task_progress_list: [],
+            vote_records: [],
+            spot_data: [],
             __uf__: []
 
   (
@@ -51,6 +53,8 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         |> encode_arena_data(msg)
         |> encode_feed_data(msg)
         |> encode_segment_task_progress_list(msg)
+        |> encode_vote_records(msg)
+        |> encode_spot_data(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -375,6 +379,44 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
             reraise Protox.EncodingError.new(:segment_task_progress_list, "invalid field value"),
                     __STACKTRACE__
         end
+      end,
+      defp encode_vote_records(acc, msg) do
+        try do
+          case msg.vote_records do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\x92\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:vote_records, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_spot_data(acc, msg) do
+        try do
+          case msg.spot_data do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\x9A\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:spot_data, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -601,6 +643,22 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
                      [Soulless.Game.Lq.SegmentTaskProgress.decode!(delimited)]
                ], rest}
 
+            {18, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[vote_records: msg.vote_records ++ [Soulless.Game.Lq.VoteData.decode!(delimited)]],
+               rest}
+
+            {19, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 spot_data:
+                   msg.spot_data ++ [Soulless.Game.Lq.ActivitySpotData.decode!(delimited)]
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -690,7 +748,9 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         16 => {:feed_data, :unpacked, {:message, Soulless.Game.Lq.FeedActivityData}},
         17 =>
           {:segment_task_progress_list, :unpacked,
-           {:message, Soulless.Game.Lq.SegmentTaskProgress}}
+           {:message, Soulless.Game.Lq.SegmentTaskProgress}},
+        18 => {:vote_records, :unpacked, {:message, Soulless.Game.Lq.VoteData}},
+        19 => {:spot_data, :unpacked, {:message, Soulless.Game.Lq.ActivitySpotData}}
       }
     end
 
@@ -723,7 +783,9 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         sns_data:
           {12, {:scalar, nil},
            {:message, Soulless.Game.Lq.ResAccountActivityData.ActivitySNSData}},
-        task_progress_list: {3, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}}
+        spot_data: {19, :unpacked, {:message, Soulless.Game.Lq.ActivitySpotData}},
+        task_progress_list: {3, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
+        vote_records: {18, :unpacked, {:message, Soulless.Game.Lq.VoteData}}
       }
     end
   )
@@ -884,6 +946,24 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
           name: :segment_task_progress_list,
           tag: 17,
           type: {:message, Soulless.Game.Lq.SegmentTaskProgress}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "voteRecords",
+          kind: :unpacked,
+          label: :repeated,
+          name: :vote_records,
+          tag: 18,
+          type: {:message, Soulless.Game.Lq.VoteData}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "spotData",
+          kind: :unpacked,
+          label: :repeated,
+          name: :spot_data,
+          tag: 19,
+          type: {:message, Soulless.Game.Lq.ActivitySpotData}
         }
       ]
     end
@@ -1559,6 +1639,86 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
            }}
         end
       ),
+      (
+        def field_def(:vote_records) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "voteRecords",
+             kind: :unpacked,
+             label: :repeated,
+             name: :vote_records,
+             tag: 18,
+             type: {:message, Soulless.Game.Lq.VoteData}
+           }}
+        end
+
+        def field_def("voteRecords") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "voteRecords",
+             kind: :unpacked,
+             label: :repeated,
+             name: :vote_records,
+             tag: 18,
+             type: {:message, Soulless.Game.Lq.VoteData}
+           }}
+        end
+
+        def field_def("vote_records") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "voteRecords",
+             kind: :unpacked,
+             label: :repeated,
+             name: :vote_records,
+             tag: 18,
+             type: {:message, Soulless.Game.Lq.VoteData}
+           }}
+        end
+      ),
+      (
+        def field_def(:spot_data) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "spotData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :spot_data,
+             tag: 19,
+             type: {:message, Soulless.Game.Lq.ActivitySpotData}
+           }}
+        end
+
+        def field_def("spotData") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "spotData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :spot_data,
+             tag: 19,
+             type: {:message, Soulless.Game.Lq.ActivitySpotData}
+           }}
+        end
+
+        def field_def("spot_data") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "spotData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :spot_data,
+             tag: 19,
+             type: {:message, Soulless.Game.Lq.ActivitySpotData}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1647,6 +1807,12 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
       {:error, :no_default_value}
     end,
     def default(:segment_task_progress_list) do
+      {:error, :no_default_value}
+    end,
+    def default(:vote_records) do
+      {:error, :no_default_value}
+    end,
+    def default(:spot_data) do
       {:error, :no_default_value}
     end,
     def default(_) do

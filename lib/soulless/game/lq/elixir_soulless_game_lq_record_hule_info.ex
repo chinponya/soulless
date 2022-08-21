@@ -22,6 +22,7 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
             is_jue_zhang: false,
             xun: 0,
             ting_type: 0,
+            ting_mian: 0,
             __uf__: []
 
   (
@@ -59,6 +60,7 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
         |> encode_is_jue_zhang(msg)
         |> encode_xun(msg)
         |> encode_ting_type(msg)
+        |> encode_ting_mian(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -354,6 +356,18 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
           ArgumentError ->
             reraise Protox.EncodingError.new(:ting_type, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_ting_mian(acc, msg) do
+        try do
+          if msg.ting_mian == 0 do
+            acc
+          else
+            [acc, "\xB0\x01", Protox.Encode.encode_uint32(msg.ting_mian)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:ting_mian, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -503,6 +517,10 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[ting_type: value], rest}
 
+            {22, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[ting_mian: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -584,7 +602,8 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
         18 => {:dadian, {:scalar, 0}, :uint32},
         19 => {:is_jue_zhang, {:scalar, false}, :bool},
         20 => {:xun, {:scalar, 0}, :uint32},
-        21 => {:ting_type, {:scalar, 0}, :uint32}
+        21 => {:ting_type, {:scalar, 0}, :uint32},
+        22 => {:ting_mian, {:scalar, 0}, :uint32}
       }
     end
 
@@ -610,6 +629,7 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
         point_zimo_xian: {15, {:scalar, 0}, :uint32},
         qinjia: {6, {:scalar, false}, :bool},
         seat: {4, {:scalar, 0}, :uint32},
+        ting_mian: {22, {:scalar, 0}, :uint32},
         ting_type: {21, {:scalar, 0}, :uint32},
         title_id: {16, {:scalar, 0}, :uint32},
         xun: {20, {:scalar, 0}, :uint32},
@@ -810,6 +830,15 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
           label: :optional,
           name: :ting_type,
           tag: 21,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "tingMian",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :ting_mian,
+          tag: 22,
           type: :uint32
         }
       ]
@@ -1514,6 +1543,46 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
            }}
         end
       ),
+      (
+        def field_def(:ting_mian) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tingMian",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :ting_mian,
+             tag: 22,
+             type: :uint32
+           }}
+        end
+
+        def field_def("tingMian") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tingMian",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :ting_mian,
+             tag: 22,
+             type: :uint32
+           }}
+        end
+
+        def field_def("ting_mian") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tingMian",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :ting_mian,
+             tag: 22,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1614,6 +1683,9 @@ defmodule Soulless.Game.Lq.RecordHuleInfo do
       {:ok, 0}
     end,
     def default(:ting_type) do
+      {:ok, 0}
+    end,
+    def default(:ting_mian) do
       {:ok, 0}
     end,
     def default(_) do

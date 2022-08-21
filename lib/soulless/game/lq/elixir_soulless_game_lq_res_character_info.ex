@@ -10,6 +10,7 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
             finished_endings: [],
             rewarded_endings: [],
             character_sort: [],
+            hidden_characters: [],
             __uf__: []
 
   (
@@ -35,6 +36,7 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
         |> encode_finished_endings(msg)
         |> encode_rewarded_endings(msg)
         |> encode_character_sort(msg)
+        |> encode_hidden_characters(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -218,6 +220,33 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
             reraise Protox.EncodingError.new(:character_sort, "invalid field value"),
                     __STACKTRACE__
         end
+      end,
+      defp encode_hidden_characters(acc, msg) do
+        try do
+          case msg.hidden_characters do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "R",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:hidden_characters, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -349,6 +378,19 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[character_sort: msg.character_sort ++ [value]], rest}
 
+            {10, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 hidden_characters:
+                   msg.hidden_characters ++ Protox.Decode.parse_repeated_uint32([], delimited)
+               ], rest}
+
+            {10, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[hidden_characters: msg.hidden_characters ++ [value]], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -418,7 +460,8 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
         6 => {:send_gift_limit, {:scalar, 0}, :uint32},
         7 => {:finished_endings, :packed, :uint32},
         8 => {:rewarded_endings, :packed, :uint32},
-        9 => {:character_sort, :packed, :uint32}
+        9 => {:character_sort, :packed, :uint32},
+        10 => {:hidden_characters, :packed, :uint32}
       }
     end
 
@@ -432,6 +475,7 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
         characters: {2, :unpacked, {:message, Soulless.Game.Lq.Character}},
         error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
         finished_endings: {7, :packed, :uint32},
+        hidden_characters: {10, :packed, :uint32},
         main_character_id: {4, {:scalar, 0}, :uint32},
         rewarded_endings: {8, :packed, :uint32},
         send_gift_count: {5, {:scalar, 0}, :uint32},
@@ -524,6 +568,15 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
           label: :repeated,
           name: :character_sort,
           tag: 9,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "hiddenCharacters",
+          kind: :packed,
+          label: :repeated,
+          name: :hidden_characters,
+          tag: 10,
           type: :uint32
         }
       ]
@@ -858,6 +911,46 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
            }}
         end
       ),
+      (
+        def field_def(:hidden_characters) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hiddenCharacters",
+             kind: :packed,
+             label: :repeated,
+             name: :hidden_characters,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+
+        def field_def("hiddenCharacters") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hiddenCharacters",
+             kind: :packed,
+             label: :repeated,
+             name: :hidden_characters,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+
+        def field_def("hidden_characters") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hiddenCharacters",
+             kind: :packed,
+             label: :repeated,
+             name: :hidden_characters,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -922,6 +1015,9 @@ defmodule Soulless.Game.Lq.ResCharacterInfo do
       {:error, :no_default_value}
     end,
     def default(:character_sort) do
+      {:error, :no_default_value}
+    end,
+    def default(:hidden_characters) do
       {:error, :no_default_value}
     end,
     def default(_) do

@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ResActivityBuff do
+defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
   @moduledoc false
-  defstruct error: nil, buff_list: [], __uf__: []
+  defstruct unique_id: 0, rewarded: 0, unlocked_ending: [], __uf__: []
 
   (
     (
@@ -16,42 +16,66 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_error(msg) |> encode_buff_list(msg) |> encode_unknown_fields(msg)
+        []
+        |> encode_unique_id(msg)
+        |> encode_rewarded(msg)
+        |> encode_unlocked_ending(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_error(acc, msg) do
+      defp encode_unique_id(acc, msg) do
         try do
-          if msg.error == nil do
+          if msg.unique_id == 0 do
             acc
           else
-            [acc, "\n", Protox.Encode.encode_message(msg.error)]
+            [acc, "\b", Protox.Encode.encode_uint32(msg.unique_id)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:unique_id, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_buff_list(acc, msg) do
+      defp encode_rewarded(acc, msg) do
         try do
-          case msg.buff_list do
+          if msg.rewarded == 0 do
+            acc
+          else
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.rewarded)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:rewarded, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_unlocked_ending(acc, msg) do
+        try do
+          case msg.unlocked_ending do
             [] ->
               acc
 
             values ->
               [
                 acc,
-                Enum.reduce(values, [], fn value, acc ->
-                  [acc, "\x12", Protox.Encode.encode_message(value)]
-                end)
+                "\x1A",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
               ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:buff_list, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:unlocked_ending, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -91,7 +115,7 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ResActivityBuff))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ActivitySpotData.SpotData))
         end
       )
     )
@@ -109,22 +133,25 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[
-                 error:
-                   Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
-               ], rest}
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[unique_id: value], rest}
 
             {2, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[rewarded: value], rest}
+
+            {3, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
               {[
-                 buff_list:
-                   msg.buff_list ++ [Soulless.Game.Lq.ActivityBuffData.decode!(delimited)]
+                 unlocked_ending:
+                   msg.unlocked_ending ++ Protox.Decode.parse_repeated_uint32([], delimited)
                ], rest}
+
+            {3, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[unlocked_ending: msg.unlocked_ending ++ [value]], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -159,7 +186,7 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ResActivityBuff,
+        Soulless.Game.Lq.ActivitySpotData.SpotData,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -187,8 +214,9 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
           }
     def defs() do
       %{
-        1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        2 => {:buff_list, :unpacked, {:message, Soulless.Game.Lq.ActivityBuffData}}
+        1 => {:unique_id, {:scalar, 0}, :uint32},
+        2 => {:rewarded, {:scalar, 0}, :uint32},
+        3 => {:unlocked_ending, :packed, :uint32}
       }
     end
 
@@ -198,8 +226,9 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
           }
     def defs_by_name() do
       %{
-        buff_list: {2, :unpacked, {:message, Soulless.Game.Lq.ActivityBuffData}},
-        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}}
+        rewarded: {2, {:scalar, 0}, :uint32},
+        unique_id: {1, {:scalar, 0}, :uint32},
+        unlocked_ending: {3, :packed, :uint32}
       }
     end
   )
@@ -210,21 +239,30 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "error",
-          kind: {:scalar, nil},
+          json_name: "uniqueId",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :error,
+          name: :unique_id,
           tag: 1,
-          type: {:message, Soulless.Game.Lq.Error}
+          type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "buffList",
-          kind: :unpacked,
-          label: :repeated,
-          name: :buff_list,
+          json_name: "rewarded",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :rewarded,
           tag: 2,
-          type: {:message, Soulless.Game.Lq.ActivityBuffData}
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "unlockedEnding",
+          kind: :packed,
+          label: :repeated,
+          name: :unlocked_ending,
+          tag: 3,
+          type: :uint32
         }
       ]
     end
@@ -232,71 +270,111 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:error) do
+        def field_def(:unique_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "error",
-             kind: {:scalar, nil},
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :error,
+             name: :unique_id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.Error}
+             type: :uint32
            }}
         end
 
-        def field_def("error") do
+        def field_def("uniqueId") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "error",
-             kind: {:scalar, nil},
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :error,
+             name: :unique_id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.Error}
+             type: :uint32
+           }}
+        end
+
+        def field_def("unique_id") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :unique_id,
+             tag: 1,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:rewarded) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewarded",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :rewarded,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("rewarded") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewarded",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :rewarded,
+             tag: 2,
+             type: :uint32
            }}
         end
 
         []
       ),
       (
-        def field_def(:buff_list) do
+        def field_def(:unlocked_ending) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "buffList",
-             kind: :unpacked,
+             json_name: "unlockedEnding",
+             kind: :packed,
              label: :repeated,
-             name: :buff_list,
-             tag: 2,
-             type: {:message, Soulless.Game.Lq.ActivityBuffData}
+             name: :unlocked_ending,
+             tag: 3,
+             type: :uint32
            }}
         end
 
-        def field_def("buffList") do
+        def field_def("unlockedEnding") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "buffList",
-             kind: :unpacked,
+             json_name: "unlockedEnding",
+             kind: :packed,
              label: :repeated,
-             name: :buff_list,
-             tag: 2,
-             type: {:message, Soulless.Game.Lq.ActivityBuffData}
+             name: :unlocked_ending,
+             tag: 3,
+             type: :uint32
            }}
         end
 
-        def field_def("buff_list") do
+        def field_def("unlocked_ending") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "buffList",
-             kind: :unpacked,
+             json_name: "unlockedEnding",
+             kind: :packed,
              label: :repeated,
-             name: :buff_list,
-             tag: 2,
-             type: {:message, Soulless.Game.Lq.ActivityBuffData}
+             name: :unlocked_ending,
+             tag: 3,
+             type: :uint32
            }}
         end
       ),
@@ -339,10 +417,13 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:error) do
-      {:ok, nil}
+    def default(:unique_id) do
+      {:ok, 0}
     end,
-    def default(:buff_list) do
+    def default(:rewarded) do
+      {:ok, 0}
+    end,
+    def default(:unlocked_ending) do
       {:error, :no_default_value}
     end,
     def default(_) do

@@ -238,7 +238,9 @@ defmodule Soulless.Game.Client do
         os: "windows",
         os_version: "win10",
         sale_platform: "web",
-        software: "Chrome"
+        software: "Chrome",
+        screen_width: 1280,
+        screen_height: 720
       },
       random_key: UUID.uuid1(),
       currency_platforms: [2, 9],

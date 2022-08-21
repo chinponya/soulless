@@ -21,6 +21,7 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             muyu: nil,
             operations: [],
             ju_count: 0,
+            field_spell: 0,
             __uf__: []
 
   (
@@ -57,6 +58,7 @@ defmodule Soulless.Game.Lq.RecordNewRound do
         |> encode_muyu(msg)
         |> encode_operations(msg)
         |> encode_ju_count(msg)
+        |> encode_field_spell(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -374,6 +376,18 @@ defmodule Soulless.Game.Lq.RecordNewRound do
           ArgumentError ->
             reraise Protox.EncodingError.new(:ju_count, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_field_spell(acc, msg) do
+        try do
+          if msg.field_spell == 0 do
+            acc
+          else
+            [acc, "\xA8\x01", Protox.Encode.encode_uint32(msg.field_spell)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:field_spell, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -551,6 +565,10 @@ defmodule Soulless.Game.Lq.RecordNewRound do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[ju_count: value], rest}
 
+            {21, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[field_spell: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -631,7 +649,8 @@ defmodule Soulless.Game.Lq.RecordNewRound do
         17 => {:opens, :unpacked, {:message, Soulless.Game.Lq.NewRoundOpenedTiles}},
         18 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         19 => {:operations, :unpacked, {:message, Soulless.Game.Lq.OptionalOperationList}},
-        20 => {:ju_count, {:scalar, 0}, :uint32}
+        20 => {:ju_count, {:scalar, 0}, :uint32},
+        21 => {:field_spell, {:scalar, 0}, :uint32}
       }
     end
 
@@ -645,6 +664,7 @@ defmodule Soulless.Game.Lq.RecordNewRound do
         chang: {1, {:scalar, 0}, :uint32},
         dora: {4, {:scalar, ""}, :string},
         doras: {16, :unpacked, :string},
+        field_spell: {21, {:scalar, 0}, :uint32},
         ju: {2, {:scalar, 0}, :uint32},
         ju_count: {20, {:scalar, 0}, :uint32},
         left_tile_count: {15, {:scalar, 0}, :uint32},
@@ -847,6 +867,15 @@ defmodule Soulless.Game.Lq.RecordNewRound do
           label: :optional,
           name: :ju_count,
           tag: 20,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "fieldSpell",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :field_spell,
+          tag: 21,
           type: :uint32
         }
       ]
@@ -1456,6 +1485,46 @@ defmodule Soulless.Game.Lq.RecordNewRound do
            }}
         end
       ),
+      (
+        def field_def(:field_spell) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpell",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell,
+             tag: 21,
+             type: :uint32
+           }}
+        end
+
+        def field_def("fieldSpell") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpell",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell,
+             tag: 21,
+             type: :uint32
+           }}
+        end
+
+        def field_def("field_spell") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpell",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell,
+             tag: 21,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1553,6 +1622,9 @@ defmodule Soulless.Game.Lq.RecordNewRound do
       {:error, :no_default_value}
     end,
     def default(:ju_count) do
+      {:ok, 0}
+    end,
+    def default(:field_spell) do
       {:ok, 0}
     end,
     def default(_) do

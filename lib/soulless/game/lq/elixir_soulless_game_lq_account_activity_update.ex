@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.AccountActivityUpdate do
   @moduledoc false
-  defstruct mine_data: [], rpg_data: [], feed_data: [], __uf__: []
+  defstruct mine_data: [], rpg_data: [], feed_data: [], spot_data: [], __uf__: []
 
   (
     (
@@ -20,6 +20,7 @@ defmodule Soulless.Game.Lq.AccountActivityUpdate do
         |> encode_mine_data(msg)
         |> encode_rpg_data(msg)
         |> encode_feed_data(msg)
+        |> encode_spot_data(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -82,6 +83,25 @@ defmodule Soulless.Game.Lq.AccountActivityUpdate do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:feed_data, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_spot_data(acc, msg) do
+        try do
+          case msg.spot_data do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\"", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:spot_data, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -163,6 +183,15 @@ defmodule Soulless.Game.Lq.AccountActivityUpdate do
                    msg.feed_data ++ [Soulless.Game.Lq.ActivityFeedData.decode!(delimited)]
                ], rest}
 
+            {4, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 spot_data:
+                   msg.spot_data ++ [Soulless.Game.Lq.ActivitySpotData.decode!(delimited)]
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -226,7 +255,8 @@ defmodule Soulless.Game.Lq.AccountActivityUpdate do
       %{
         1 => {:mine_data, :unpacked, {:message, Soulless.Game.Lq.MineActivityData}},
         2 => {:rpg_data, :unpacked, {:message, Soulless.Game.Lq.RPGActivity}},
-        3 => {:feed_data, :unpacked, {:message, Soulless.Game.Lq.ActivityFeedData}}
+        3 => {:feed_data, :unpacked, {:message, Soulless.Game.Lq.ActivityFeedData}},
+        4 => {:spot_data, :unpacked, {:message, Soulless.Game.Lq.ActivitySpotData}}
       }
     end
 
@@ -238,7 +268,8 @@ defmodule Soulless.Game.Lq.AccountActivityUpdate do
       %{
         feed_data: {3, :unpacked, {:message, Soulless.Game.Lq.ActivityFeedData}},
         mine_data: {1, :unpacked, {:message, Soulless.Game.Lq.MineActivityData}},
-        rpg_data: {2, :unpacked, {:message, Soulless.Game.Lq.RPGActivity}}
+        rpg_data: {2, :unpacked, {:message, Soulless.Game.Lq.RPGActivity}},
+        spot_data: {4, :unpacked, {:message, Soulless.Game.Lq.ActivitySpotData}}
       }
     end
   )
@@ -273,6 +304,15 @@ defmodule Soulless.Game.Lq.AccountActivityUpdate do
           name: :feed_data,
           tag: 3,
           type: {:message, Soulless.Game.Lq.ActivityFeedData}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "spotData",
+          kind: :unpacked,
+          label: :repeated,
+          name: :spot_data,
+          tag: 4,
+          type: {:message, Soulless.Game.Lq.ActivitySpotData}
         }
       ]
     end
@@ -399,6 +439,46 @@ defmodule Soulless.Game.Lq.AccountActivityUpdate do
            }}
         end
       ),
+      (
+        def field_def(:spot_data) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "spotData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :spot_data,
+             tag: 4,
+             type: {:message, Soulless.Game.Lq.ActivitySpotData}
+           }}
+        end
+
+        def field_def("spotData") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "spotData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :spot_data,
+             tag: 4,
+             type: {:message, Soulless.Game.Lq.ActivitySpotData}
+           }}
+        end
+
+        def field_def("spot_data") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "spotData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :spot_data,
+             tag: 4,
+             type: {:message, Soulless.Game.Lq.ActivitySpotData}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -445,6 +525,9 @@ defmodule Soulless.Game.Lq.AccountActivityUpdate do
       {:error, :no_default_value}
     end,
     def default(:feed_data) do
+      {:error, :no_default_value}
+    end,
+    def default(:spot_data) do
       {:error, :no_default_value}
     end,
     def default(_) do

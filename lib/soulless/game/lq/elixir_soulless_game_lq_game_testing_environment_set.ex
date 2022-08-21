@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
   @moduledoc false
-  defstruct paixing: 0, left_count: 0, __uf__: []
+  defstruct paixing: 0, left_count: 0, field_spell_var: 0, __uf__: []
 
   (
     (
@@ -16,7 +16,11 @@ defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_paixing(msg) |> encode_left_count(msg) |> encode_unknown_fields(msg)
+        []
+        |> encode_paixing(msg)
+        |> encode_left_count(msg)
+        |> encode_field_spell_var(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
@@ -45,6 +49,19 @@ defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:left_count, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_field_spell_var(acc, msg) do
+        try do
+          if msg.field_spell_var == 0 do
+            acc
+          else
+            [acc, "\x18", Protox.Encode.encode_uint32(msg.field_spell_var)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:field_spell_var, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -109,6 +126,10 @@ defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[left_count: value], rest}
 
+            {3, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[field_spell_var: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -169,7 +190,11 @@ defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:paixing, {:scalar, 0}, :uint32}, 2 => {:left_count, {:scalar, 0}, :uint32}}
+      %{
+        1 => {:paixing, {:scalar, 0}, :uint32},
+        2 => {:left_count, {:scalar, 0}, :uint32},
+        3 => {:field_spell_var, {:scalar, 0}, :uint32}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -177,7 +202,11 @@ defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{left_count: {2, {:scalar, 0}, :uint32}, paixing: {1, {:scalar, 0}, :uint32}}
+      %{
+        field_spell_var: {3, {:scalar, 0}, :uint32},
+        left_count: {2, {:scalar, 0}, :uint32},
+        paixing: {1, {:scalar, 0}, :uint32}
+      }
     end
   )
 
@@ -201,6 +230,15 @@ defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
           label: :optional,
           name: :left_count,
           tag: 2,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "fieldSpellVar",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :field_spell_var,
+          tag: 3,
           type: :uint32
         }
       ]
@@ -277,6 +315,46 @@ defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
            }}
         end
       ),
+      (
+        def field_def(:field_spell_var) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpellVar",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell_var,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("fieldSpellVar") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpellVar",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell_var,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("field_spell_var") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpellVar",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell_var,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -320,6 +398,9 @@ defmodule Soulless.Game.Lq.GameTestingEnvironmentSet do
       {:ok, 0}
     end,
     def default(:left_count) do
+      {:ok, 0}
+    end,
+    def default(:field_spell_var) do
       {:ok, 0}
     end,
     def default(_) do

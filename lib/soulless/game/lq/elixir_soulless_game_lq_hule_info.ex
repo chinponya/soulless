@@ -21,6 +21,7 @@ defmodule Soulless.Game.Lq.HuleInfo do
             title_id: 0,
             point_sum: 0,
             dadian: 0,
+            baopai: 0,
             __uf__: []
 
   (
@@ -57,6 +58,7 @@ defmodule Soulless.Game.Lq.HuleInfo do
         |> encode_title_id(msg)
         |> encode_point_sum(msg)
         |> encode_dadian(msg)
+        |> encode_baopai(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -340,6 +342,18 @@ defmodule Soulless.Game.Lq.HuleInfo do
           ArgumentError ->
             reraise Protox.EncodingError.new(:dadian, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_baopai(acc, msg) do
+        try do
+          if msg.baopai == 0 do
+            acc
+          else
+            [acc, "\xA8\x01", Protox.Encode.encode_uint32(msg.baopai)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:baopai, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -482,6 +496,10 @@ defmodule Soulless.Game.Lq.HuleInfo do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[dadian: value], rest}
 
+            {21, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[baopai: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -562,7 +580,8 @@ defmodule Soulless.Game.Lq.HuleInfo do
         17 => {:point_zimo_xian, {:scalar, 0}, :uint32},
         18 => {:title_id, {:scalar, 0}, :uint32},
         19 => {:point_sum, {:scalar, 0}, :uint32},
-        20 => {:dadian, {:scalar, 0}, :uint32}
+        20 => {:dadian, {:scalar, 0}, :uint32},
+        21 => {:baopai, {:scalar, 0}, :uint32}
       }
     end
 
@@ -572,6 +591,7 @@ defmodule Soulless.Game.Lq.HuleInfo do
           }
     def defs_by_name() do
       %{
+        baopai: {21, {:scalar, 0}, :uint32},
         count: {11, {:scalar, 0}, :uint32},
         dadian: {20, {:scalar, 0}, :uint32},
         doras: {8, :unpacked, :string},
@@ -778,6 +798,15 @@ defmodule Soulless.Game.Lq.HuleInfo do
           label: :optional,
           name: :dadian,
           tag: 20,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "baopai",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :baopai,
+          tag: 21,
           type: :uint32
         }
       ]
@@ -1442,6 +1471,35 @@ defmodule Soulless.Game.Lq.HuleInfo do
 
         []
       ),
+      (
+        def field_def(:baopai) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "baopai",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :baopai,
+             tag: 21,
+             type: :uint32
+           }}
+        end
+
+        def field_def("baopai") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "baopai",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :baopai,
+             tag: 21,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1539,6 +1597,9 @@ defmodule Soulless.Game.Lq.HuleInfo do
       {:ok, 0}
     end,
     def default(:dadian) do
+      {:ok, 0}
+    end,
+    def default(:baopai) do
       {:ok, 0}
     end,
     def default(_) do

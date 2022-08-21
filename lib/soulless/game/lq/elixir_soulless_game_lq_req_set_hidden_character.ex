@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.NotifyRollingNotice do
+defmodule Soulless.Game.Lq.ReqSetHiddenCharacter do
   @moduledoc false
-  defstruct notice: [], __uf__: []
+  defstruct chara_list: [], __uf__: []
 
   (
     (
@@ -16,30 +16,37 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_notice(msg) |> encode_unknown_fields(msg)
+        [] |> encode_chara_list(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_notice(acc, msg) do
+      defp encode_chara_list(acc, msg) do
         try do
-          case msg.notice do
+          case msg.chara_list do
             [] ->
               acc
 
             values ->
               [
                 acc,
-                Enum.reduce(values, [], fn value, acc ->
-                  [acc, "\n", Protox.Encode.encode_message(value)]
-                end)
+                "\n",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
               ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:notice, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:chara_list, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -79,7 +86,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.NotifyRollingNotice))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ReqSetHiddenCharacter))
         end
       )
     )
@@ -96,10 +103,16 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
             {0, _, _} ->
               raise %Protox.IllegalTagError{}
 
-            {1, _, bytes} ->
+            {1, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[notice: msg.notice ++ [Soulless.Game.Lq.RollingNotice.decode!(delimited)]], rest}
+
+              {[chara_list: msg.chara_list ++ Protox.Decode.parse_repeated_uint32([], delimited)],
+               rest}
+
+            {1, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[chara_list: msg.chara_list ++ [value]], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -134,7 +147,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.NotifyRollingNotice,
+        Soulless.Game.Lq.ReqSetHiddenCharacter,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -161,7 +174,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:notice, :unpacked, {:message, Soulless.Game.Lq.RollingNotice}}}
+      %{1 => {:chara_list, :packed, :uint32}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -169,7 +182,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{notice: {1, :unpacked, {:message, Soulless.Game.Lq.RollingNotice}}}
+      %{chara_list: {1, :packed, :uint32}}
     end
   )
 
@@ -179,12 +192,12 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "notice",
-          kind: :unpacked,
+          json_name: "charaList",
+          kind: :packed,
           label: :repeated,
-          name: :notice,
+          name: :chara_list,
           tag: 1,
-          type: {:message, Soulless.Game.Lq.RollingNotice}
+          type: :uint32
         }
       ]
     end
@@ -192,33 +205,44 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:notice) do
+        def field_def(:chara_list) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "notice",
-             kind: :unpacked,
+             json_name: "charaList",
+             kind: :packed,
              label: :repeated,
-             name: :notice,
+             name: :chara_list,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.RollingNotice}
+             type: :uint32
            }}
         end
 
-        def field_def("notice") do
+        def field_def("charaList") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "notice",
-             kind: :unpacked,
+             json_name: "charaList",
+             kind: :packed,
              label: :repeated,
-             name: :notice,
+             name: :chara_list,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.RollingNotice}
+             type: :uint32
            }}
         end
 
-        []
+        def field_def("chara_list") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "charaList",
+             kind: :packed,
+             label: :repeated,
+             name: :chara_list,
+             tag: 1,
+             type: :uint32
+           }}
+        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -259,7 +283,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:notice) do
+    def default(:chara_list) do
       {:error, :no_default_value}
     end,
     def default(_) do

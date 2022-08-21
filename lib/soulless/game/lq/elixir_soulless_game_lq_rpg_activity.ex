@@ -7,6 +7,7 @@ defmodule Soulless.Game.Lq.RPGActivity do
             current_state: nil,
             last_show_state: nil,
             received_rewards: [],
+            last_show_id: 0,
             __uf__: []
 
   (
@@ -29,6 +30,7 @@ defmodule Soulless.Game.Lq.RPGActivity do
         |> encode_current_state(msg)
         |> encode_last_show_state(msg)
         |> encode_received_rewards(msg)
+        |> encode_last_show_id(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -125,6 +127,18 @@ defmodule Soulless.Game.Lq.RPGActivity do
           ArgumentError ->
             reraise Protox.EncodingError.new(:received_rewards, "invalid field value"),
                     __STACKTRACE__
+        end
+      end,
+      defp encode_last_show_id(acc, msg) do
+        try do
+          if msg.last_show_id == 0 do
+            acc
+          else
+            [acc, "P", Protox.Encode.encode_uint32(msg.last_show_id)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:last_show_id, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -232,6 +246,10 @@ defmodule Soulless.Game.Lq.RPGActivity do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[received_rewards: msg.received_rewards ++ [value]], rest}
 
+            {10, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[last_show_id: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -298,7 +316,8 @@ defmodule Soulless.Game.Lq.RPGActivity do
         6 => {:last_played_uuid, {:scalar, ""}, :string},
         7 => {:current_state, {:scalar, nil}, {:message, Soulless.Game.Lq.RPGState}},
         8 => {:last_show_state, {:scalar, nil}, {:message, Soulless.Game.Lq.RPGState}},
-        9 => {:received_rewards, :packed, :uint32}
+        9 => {:received_rewards, :packed, :uint32},
+        10 => {:last_show_id, {:scalar, 0}, :uint32}
       }
     end
 
@@ -311,6 +330,7 @@ defmodule Soulless.Game.Lq.RPGActivity do
         activity_id: {1, {:scalar, 0}, :uint32},
         current_state: {7, {:scalar, nil}, {:message, Soulless.Game.Lq.RPGState}},
         last_played_uuid: {6, {:scalar, ""}, :string},
+        last_show_id: {10, {:scalar, 0}, :uint32},
         last_show_state: {8, {:scalar, nil}, {:message, Soulless.Game.Lq.RPGState}},
         last_show_uuid: {5, {:scalar, ""}, :string},
         received_rewards: {9, :packed, :uint32}
@@ -374,6 +394,15 @@ defmodule Soulless.Game.Lq.RPGActivity do
           label: :repeated,
           name: :received_rewards,
           tag: 9,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "lastShowId",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :last_show_id,
+          tag: 10,
           type: :uint32
         }
       ]
@@ -621,6 +650,46 @@ defmodule Soulless.Game.Lq.RPGActivity do
            }}
         end
       ),
+      (
+        def field_def(:last_show_id) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lastShowId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :last_show_id,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+
+        def field_def("lastShowId") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lastShowId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :last_show_id,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+
+        def field_def("last_show_id") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lastShowId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :last_show_id,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -677,6 +746,9 @@ defmodule Soulless.Game.Lq.RPGActivity do
     end,
     def default(:received_rewards) do
       {:error, :no_default_value}
+    end,
+    def default(:last_show_id) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.NotifyRollingNotice do
+defmodule Soulless.Game.Lq.ResSetHiddenCharacter do
   @moduledoc false
-  defstruct notice: [], __uf__: []
+  defstruct error: nil, hidden_characters: [], __uf__: []
 
   (
     (
@@ -16,30 +16,50 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_notice(msg) |> encode_unknown_fields(msg)
+        [] |> encode_error(msg) |> encode_hidden_characters(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_notice(acc, msg) do
+      defp encode_error(acc, msg) do
         try do
-          case msg.notice do
+          if msg.error == nil do
+            acc
+          else
+            [acc, "\n", Protox.Encode.encode_message(msg.error)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_hidden_characters(acc, msg) do
+        try do
+          case msg.hidden_characters do
             [] ->
               acc
 
             values ->
               [
                 acc,
-                Enum.reduce(values, [], fn value, acc ->
-                  [acc, "\n", Protox.Encode.encode_message(value)]
-                end)
+                "\x12",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
               ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:notice, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:hidden_characters, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -79,7 +99,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.NotifyRollingNotice))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ResSetHiddenCharacter))
         end
       )
     )
@@ -99,7 +119,24 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[notice: msg.notice ++ [Soulless.Game.Lq.RollingNotice.decode!(delimited)]], rest}
+
+              {[
+                 error:
+                   Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
+               ], rest}
+
+            {2, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 hidden_characters:
+                   msg.hidden_characters ++ Protox.Decode.parse_repeated_uint32([], delimited)
+               ], rest}
+
+            {2, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[hidden_characters: msg.hidden_characters ++ [value]], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -134,7 +171,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.NotifyRollingNotice,
+        Soulless.Game.Lq.ResSetHiddenCharacter,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -161,7 +198,10 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:notice, :unpacked, {:message, Soulless.Game.Lq.RollingNotice}}}
+      %{
+        1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        2 => {:hidden_characters, :packed, :uint32}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -169,7 +209,10 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{notice: {1, :unpacked, {:message, Soulless.Game.Lq.RollingNotice}}}
+      %{
+        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        hidden_characters: {2, :packed, :uint32}
+      }
     end
   )
 
@@ -179,12 +222,21 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "notice",
-          kind: :unpacked,
-          label: :repeated,
-          name: :notice,
+          json_name: "error",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :error,
           tag: 1,
-          type: {:message, Soulless.Game.Lq.RollingNotice}
+          type: {:message, Soulless.Game.Lq.Error}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "hiddenCharacters",
+          kind: :packed,
+          label: :repeated,
+          name: :hidden_characters,
+          tag: 2,
+          type: :uint32
         }
       ]
     end
@@ -192,33 +244,73 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:notice) do
+        def field_def(:error) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "notice",
-             kind: :unpacked,
-             label: :repeated,
-             name: :notice,
+             json_name: "error",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :error,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.RollingNotice}
+             type: {:message, Soulless.Game.Lq.Error}
            }}
         end
 
-        def field_def("notice") do
+        def field_def("error") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "notice",
-             kind: :unpacked,
-             label: :repeated,
-             name: :notice,
+             json_name: "error",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :error,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.RollingNotice}
+             type: {:message, Soulless.Game.Lq.Error}
            }}
         end
 
         []
+      ),
+      (
+        def field_def(:hidden_characters) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hiddenCharacters",
+             kind: :packed,
+             label: :repeated,
+             name: :hidden_characters,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("hiddenCharacters") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hiddenCharacters",
+             kind: :packed,
+             label: :repeated,
+             name: :hidden_characters,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("hidden_characters") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hiddenCharacters",
+             kind: :packed,
+             label: :repeated,
+             name: :hidden_characters,
+             tag: 2,
+             type: :uint32
+           }}
+        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -259,7 +351,10 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:notice) do
+    def default(:error) do
+      {:ok, nil}
+    end,
+    def default(:hidden_characters) do
       {:error, :no_default_value}
     end,
     def default(_) do

@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ResActivityBuff do
+defmodule Soulless.Game.Lq.ResFetchVoteActivity do
   @moduledoc false
-  defstruct error: nil, buff_list: [], __uf__: []
+  defstruct error: nil, vote_rank: [], update_time: 0, __uf__: []
 
   (
     (
@@ -16,7 +16,11 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_error(msg) |> encode_buff_list(msg) |> encode_unknown_fields(msg)
+        []
+        |> encode_error(msg)
+        |> encode_vote_rank(msg)
+        |> encode_update_time(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
@@ -35,23 +39,42 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
             reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_buff_list(acc, msg) do
+      defp encode_vote_rank(acc, msg) do
         try do
-          case msg.buff_list do
+          case msg.vote_rank do
             [] ->
               acc
 
             values ->
               [
                 acc,
-                Enum.reduce(values, [], fn value, acc ->
-                  [acc, "\x12", Protox.Encode.encode_message(value)]
-                end)
+                "\x12",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
               ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:buff_list, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:vote_rank, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_update_time(acc, msg) do
+        try do
+          if msg.update_time == 0 do
+            acc
+          else
+            [acc, "\x18", Protox.Encode.encode_uint32(msg.update_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:update_time, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -91,7 +114,7 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ResActivityBuff))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ResFetchVoteActivity))
         end
       )
     )
@@ -117,14 +140,20 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
                    Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
                ], rest}
 
-            {2, _, bytes} ->
+            {2, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
-              {[
-                 buff_list:
-                   msg.buff_list ++ [Soulless.Game.Lq.ActivityBuffData.decode!(delimited)]
-               ], rest}
+              {[vote_rank: msg.vote_rank ++ Protox.Decode.parse_repeated_uint32([], delimited)],
+               rest}
+
+            {2, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[vote_rank: msg.vote_rank ++ [value]], rest}
+
+            {3, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[update_time: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -159,7 +188,7 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ResActivityBuff,
+        Soulless.Game.Lq.ResFetchVoteActivity,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -188,7 +217,8 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
     def defs() do
       %{
         1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        2 => {:buff_list, :unpacked, {:message, Soulless.Game.Lq.ActivityBuffData}}
+        2 => {:vote_rank, :packed, :uint32},
+        3 => {:update_time, {:scalar, 0}, :uint32}
       }
     end
 
@@ -198,8 +228,9 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
           }
     def defs_by_name() do
       %{
-        buff_list: {2, :unpacked, {:message, Soulless.Game.Lq.ActivityBuffData}},
-        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}}
+        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        update_time: {3, {:scalar, 0}, :uint32},
+        vote_rank: {2, :packed, :uint32}
       }
     end
   )
@@ -219,12 +250,21 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
         },
         %{
           __struct__: Protox.Field,
-          json_name: "buffList",
-          kind: :unpacked,
+          json_name: "voteRank",
+          kind: :packed,
           label: :repeated,
-          name: :buff_list,
+          name: :vote_rank,
           tag: 2,
-          type: {:message, Soulless.Game.Lq.ActivityBuffData}
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "updateTime",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :update_time,
+          tag: 3,
+          type: :uint32
         }
       ]
     end
@@ -261,42 +301,82 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
         []
       ),
       (
-        def field_def(:buff_list) do
+        def field_def(:vote_rank) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "buffList",
-             kind: :unpacked,
+             json_name: "voteRank",
+             kind: :packed,
              label: :repeated,
-             name: :buff_list,
+             name: :vote_rank,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.ActivityBuffData}
+             type: :uint32
            }}
         end
 
-        def field_def("buffList") do
+        def field_def("voteRank") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "buffList",
-             kind: :unpacked,
+             json_name: "voteRank",
+             kind: :packed,
              label: :repeated,
-             name: :buff_list,
+             name: :vote_rank,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.ActivityBuffData}
+             type: :uint32
            }}
         end
 
-        def field_def("buff_list") do
+        def field_def("vote_rank") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "buffList",
-             kind: :unpacked,
+             json_name: "voteRank",
+             kind: :packed,
              label: :repeated,
-             name: :buff_list,
+             name: :vote_rank,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.ActivityBuffData}
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:update_time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "updateTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :update_time,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("updateTime") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "updateTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :update_time,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("update_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "updateTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :update_time,
+             tag: 3,
+             type: :uint32
            }}
         end
       ),
@@ -342,8 +422,11 @@ defmodule Soulless.Game.Lq.ResActivityBuff do
     def default(:error) do
       {:ok, nil}
     end,
-    def default(:buff_list) do
+    def default(:vote_rank) do
       {:error, :no_default_value}
+    end,
+    def default(:update_time) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

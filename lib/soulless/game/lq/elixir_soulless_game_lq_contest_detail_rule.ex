@@ -39,6 +39,10 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
             disable_multi_yukaman: false,
             guyi_mode: 0,
             disable_leijiyiman: false,
+            dora3_mode: 0,
+            xuezhandaodi: 0,
+            huansanzhang: 0,
+            chuanma: 0,
             __uf__: []
 
   (
@@ -93,6 +97,10 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
         |> encode_disable_multi_yukaman(msg)
         |> encode_guyi_mode(msg)
         |> encode_disable_leijiyiman(msg)
+        |> encode_dora3_mode(msg)
+        |> encode_xuezhandaodi(msg)
+        |> encode_huansanzhang(msg)
+        |> encode_chuanma(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -580,6 +588,54 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
             reraise Protox.EncodingError.new(:disable_leijiyiman, "invalid field value"),
                     __STACKTRACE__
         end
+      end,
+      defp encode_dora3_mode(acc, msg) do
+        try do
+          if msg.dora3_mode == 0 do
+            acc
+          else
+            [acc, "\xD8\x02", Protox.Encode.encode_uint32(msg.dora3_mode)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:dora3_mode, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_xuezhandaodi(acc, msg) do
+        try do
+          if msg.xuezhandaodi == 0 do
+            acc
+          else
+            [acc, "\xE0\x02", Protox.Encode.encode_uint32(msg.xuezhandaodi)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:xuezhandaodi, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_huansanzhang(acc, msg) do
+        try do
+          if msg.huansanzhang == 0 do
+            acc
+          else
+            [acc, "\xE8\x02", Protox.Encode.encode_uint32(msg.huansanzhang)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:huansanzhang, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_chuanma(acc, msg) do
+        try do
+          if msg.chuanma == 0 do
+            acc
+          else
+            [acc, "\xF0\x02", Protox.Encode.encode_uint32(msg.chuanma)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:chuanma, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -787,6 +843,22 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
               {value, rest} = Protox.Decode.parse_bool(bytes)
               {[disable_leijiyiman: value], rest}
 
+            {43, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[dora3_mode: value], rest}
+
+            {44, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[xuezhandaodi: value], rest}
+
+            {45, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[huansanzhang: value], rest}
+
+            {46, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[chuanma: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -850,11 +922,15 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
       %{
         33 => {:jingsuanyuandian, {:scalar, 0}, :uint32},
         12 => {:noting_fafu_2, {:scalar, 0}, :uint32},
+        44 => {:xuezhandaodi, {:scalar, 0}, :uint32},
         23 => {:have_sijializhi, {:scalar, false}, :bool},
         29 => {:have_tingpailianzhuang, {:scalar, false}, :bool},
         30 => {:have_tingpaizhongju, {:scalar, false}, :bool},
+        43 => {:dora3_mode, {:scalar, 0}, :uint32},
         39 => {:have_zimosun, {:scalar, false}, :bool},
+        45 => {:huansanzhang, {:scalar, 0}, :uint32},
         26 => {:have_toutiao, {:scalar, false}, :bool},
+        46 => {:chuanma, {:scalar, 0}, :uint32},
         31 => {:have_yifa, {:scalar, false}, :bool},
         11 => {:noting_fafu_1, {:scalar, 0}, :uint32},
         37 => {:bianjietishi, {:scalar, false}, :bool},
@@ -895,44 +971,48 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
           }
     def defs_by_name() do
       %{
-        init_point: {5, {:scalar, 0}, :uint32},
-        have_gang_li_dora: {20, {:scalar, false}, :bool},
-        shunweima_2: {34, {:scalar, 0}, :int32},
+        fandian: {6, {:scalar, 0}, :uint32},
+        have_gang_biao_dora: {17, {:scalar, false}, :bool},
+        noting_fafu_1: {11, {:scalar, 0}, :uint32},
         tianbian_value: {8, {:scalar, 0}, :uint32},
-        have_toutiao: {26, {:scalar, false}, :bool},
-        disable_multi_yukaman: {40, {:scalar, false}, :bool},
-        have_yifa: {31, {:scalar, false}, :bool},
-        have_tingpaizhongju: {30, {:scalar, false}, :bool},
-        have_sigangsanle: {22, {:scalar, false}, :bool},
-        have_sanjiahele: {25, {:scalar, false}, :bool},
-        shunweima_3: {35, {:scalar, 0}, :int32},
-        guyi_mode: {41, {:scalar, 0}, :uint32},
-        have_biao_dora: {16, {:scalar, false}, :bool},
-        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
-        shunweima_4: {36, {:scalar, 0}, :int32},
-        disable_leijiyiman: {42, {:scalar, false}, :bool},
+        dora3_mode: {43, {:scalar, 0}, :uint32},
+        liqibang_value: {9, {:scalar, 0}, :uint32},
+        shunweima_2: {34, {:scalar, 0}, :int32},
         bianjietishi: {37, {:scalar, false}, :bool},
+        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
+        shunweima_4: {36, {:scalar, 0}, :int32},
+        noting_fafu_2: {12, {:scalar, 0}, :uint32},
+        have_toutiao: {26, {:scalar, false}, :bool},
+        xuezhandaodi: {44, {:scalar, 0}, :uint32},
+        have_qieshangmanguan: {15, {:scalar, false}, :bool},
+        have_sigangsanle: {22, {:scalar, false}, :bool},
+        have_helezhongju: {28, {:scalar, false}, :bool},
+        have_nanruxiru: {32, {:scalar, false}, :bool},
+        huansanzhang: {45, {:scalar, 0}, :uint32},
+        chuanma: {46, {:scalar, 0}, :uint32},
+        ai_level: {38, {:scalar, 0}, :uint32},
+        shunweima_3: {35, {:scalar, 0}, :int32},
+        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
+        have_helelianzhuang: {27, {:scalar, false}, :bool},
+        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
+        have_tingpaizhongju: {30, {:scalar, false}, :bool},
+        guyi_mode: {41, {:scalar, 0}, :uint32},
+        can_jifei: {7, {:scalar, false}, :bool},
+        have_gang_li_dora: {20, {:scalar, false}, :bool},
+        have_sijializhi: {23, {:scalar, false}, :bool},
+        have_biao_dora: {16, {:scalar, false}, :bool},
+        init_point: {5, {:scalar, 0}, :uint32},
+        have_li_dora: {19, {:scalar, false}, :bool},
         changbang_value: {10, {:scalar, 0}, :uint32},
         have_sifenglianda: {21, {:scalar, false}, :bool},
-        have_nanruxiru: {32, {:scalar, false}, :bool},
-        noting_fafu_1: {11, {:scalar, 0}, :uint32},
-        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
-        have_helelianzhuang: {27, {:scalar, false}, :bool},
-        ming_dora_immediately_open: {18, {:scalar, false}, :bool},
-        noting_fafu_3: {13, {:scalar, 0}, :uint32},
-        have_liujumanguan: {14, {:scalar, false}, :bool},
-        can_jifei: {7, {:scalar, false}, :bool},
-        ai_level: {38, {:scalar, 0}, :uint32},
-        have_qieshangmanguan: {15, {:scalar, false}, :bool},
-        have_helezhongju: {28, {:scalar, false}, :bool},
         have_zimosun: {39, {:scalar, false}, :bool},
-        have_gang_biao_dora: {17, {:scalar, false}, :bool},
-        have_sijializhi: {23, {:scalar, false}, :bool},
-        fandian: {6, {:scalar, 0}, :uint32},
-        liqibang_value: {9, {:scalar, 0}, :uint32},
-        noting_fafu_2: {12, {:scalar, 0}, :uint32},
-        have_li_dora: {19, {:scalar, false}, :bool},
-        jingsuanyuandian: {33, {:scalar, 0}, :uint32}
+        disable_multi_yukaman: {40, {:scalar, false}, :bool},
+        have_liujumanguan: {14, {:scalar, false}, :bool},
+        have_yifa: {31, {:scalar, false}, :bool},
+        noting_fafu_3: {13, {:scalar, 0}, :uint32},
+        have_sanjiahele: {25, {:scalar, false}, :bool},
+        disable_leijiyiman: {42, {:scalar, false}, :bool},
+        ming_dora_immediately_open: {18, {:scalar, false}, :bool}
       }
     end
   )
@@ -1282,6 +1362,42 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
           name: :disable_leijiyiman,
           tag: 42,
           type: :bool
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "dora3Mode",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :dora3_mode,
+          tag: 43,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "xuezhandaodi",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :xuezhandaodi,
+          tag: 44,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "huansanzhang",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :huansanzhang,
+          tag: 45,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "chuanma",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :chuanma,
+          tag: 46,
+          type: :uint32
         }
       ]
     end
@@ -2775,6 +2891,133 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
            }}
         end
       ),
+      (
+        def field_def(:dora3_mode) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "dora3Mode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :dora3_mode,
+             tag: 43,
+             type: :uint32
+           }}
+        end
+
+        def field_def("dora3Mode") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "dora3Mode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :dora3_mode,
+             tag: 43,
+             type: :uint32
+           }}
+        end
+
+        def field_def("dora3_mode") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "dora3Mode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :dora3_mode,
+             tag: 43,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:xuezhandaodi) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "xuezhandaodi",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :xuezhandaodi,
+             tag: 44,
+             type: :uint32
+           }}
+        end
+
+        def field_def("xuezhandaodi") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "xuezhandaodi",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :xuezhandaodi,
+             tag: 44,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:huansanzhang) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "huansanzhang",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :huansanzhang,
+             tag: 45,
+             type: :uint32
+           }}
+        end
+
+        def field_def("huansanzhang") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "huansanzhang",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :huansanzhang,
+             tag: 45,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:chuanma) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "chuanma",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :chuanma,
+             tag: 46,
+             type: :uint32
+           }}
+        end
+
+        def field_def("chuanma") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "chuanma",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :chuanma,
+             tag: 46,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -2927,6 +3170,18 @@ defmodule Soulless.Game.Lq.ContestDetailRule do
     end,
     def default(:disable_leijiyiman) do
       {:ok, false}
+    end,
+    def default(:dora3_mode) do
+      {:ok, 0}
+    end,
+    def default(:xuezhandaodi) do
+      {:ok, 0}
+    end,
+    def default(:huansanzhang) do
+      {:ok, 0}
+    end,
+    def default(:chuanma) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

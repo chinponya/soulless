@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.NotifyRollingNotice do
+defmodule Soulless.Game.Lq.ActivityBuffData do
   @moduledoc false
-  defstruct notice: [], __uf__: []
+  defstruct buff_id: 0, level: 0, __uf__: []
 
   (
     (
@@ -16,30 +16,35 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_notice(msg) |> encode_unknown_fields(msg)
+        [] |> encode_buff_id(msg) |> encode_level(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_notice(acc, msg) do
+      defp encode_buff_id(acc, msg) do
         try do
-          case msg.notice do
-            [] ->
-              acc
-
-            values ->
-              [
-                acc,
-                Enum.reduce(values, [], fn value, acc ->
-                  [acc, "\n", Protox.Encode.encode_message(value)]
-                end)
-              ]
+          if msg.buff_id == 0 do
+            acc
+          else
+            [acc, "\b", Protox.Encode.encode_uint32(msg.buff_id)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:notice, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:buff_id, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_level(acc, msg) do
+        try do
+          if msg.level == 0 do
+            acc
+          else
+            [acc, "(", Protox.Encode.encode_uint32(msg.level)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -79,7 +84,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.NotifyRollingNotice))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ActivityBuffData))
         end
       )
     )
@@ -97,9 +102,12 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[notice: msg.notice ++ [Soulless.Game.Lq.RollingNotice.decode!(delimited)]], rest}
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[buff_id: value], rest}
+
+            {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[level: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -134,7 +142,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.NotifyRollingNotice,
+        Soulless.Game.Lq.ActivityBuffData,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -161,7 +169,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:notice, :unpacked, {:message, Soulless.Game.Lq.RollingNotice}}}
+      %{1 => {:buff_id, {:scalar, 0}, :uint32}, 5 => {:level, {:scalar, 0}, :uint32}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -169,7 +177,7 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{notice: {1, :unpacked, {:message, Soulless.Game.Lq.RollingNotice}}}
+      %{buff_id: {1, {:scalar, 0}, :uint32}, level: {5, {:scalar, 0}, :uint32}}
     end
   )
 
@@ -179,12 +187,21 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "notice",
-          kind: :unpacked,
-          label: :repeated,
-          name: :notice,
+          json_name: "buffId",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :buff_id,
           tag: 1,
-          type: {:message, Soulless.Game.Lq.RollingNotice}
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "level",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :level,
+          tag: 5,
+          type: :uint32
         }
       ]
     end
@@ -192,29 +209,69 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:notice) do
+        def field_def(:buff_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "notice",
-             kind: :unpacked,
-             label: :repeated,
-             name: :notice,
+             json_name: "buffId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :buff_id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.RollingNotice}
+             type: :uint32
            }}
         end
 
-        def field_def("notice") do
+        def field_def("buffId") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "notice",
-             kind: :unpacked,
-             label: :repeated,
-             name: :notice,
+             json_name: "buffId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :buff_id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.RollingNotice}
+             type: :uint32
+           }}
+        end
+
+        def field_def("buff_id") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "buffId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :buff_id,
+             tag: 1,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:level) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "level",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :level,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("level") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "level",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :level,
+             tag: 5,
+             type: :uint32
            }}
         end
 
@@ -259,8 +316,11 @@ defmodule Soulless.Game.Lq.NotifyRollingNotice do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:notice) do
-      {:error, :no_default_value}
+    def default(:buff_id) do
+      {:ok, 0}
+    end,
+    def default(:level) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

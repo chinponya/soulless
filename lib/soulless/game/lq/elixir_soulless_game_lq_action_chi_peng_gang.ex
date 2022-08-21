@@ -11,6 +11,8 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
             tingpais: [],
             tile_states: [],
             muyu: nil,
+            scores: [],
+            liqibang: 0,
             __uf__: []
 
   (
@@ -37,6 +39,8 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
         |> encode_tingpais(msg)
         |> encode_tile_states(msg)
         |> encode_muyu(msg)
+        |> encode_scores(msg)
+        |> encode_liqibang(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -205,6 +209,44 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
           ArgumentError ->
             reraise Protox.EncodingError.new(:muyu, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_scores(acc, msg) do
+        try do
+          case msg.scores do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "Z",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_int32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:scores, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_liqibang(acc, msg) do
+        try do
+          if msg.liqibang == 0 do
+            acc
+          else
+            [acc, "`", Protox.Encode.encode_uint32(msg.liqibang)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:liqibang, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -344,6 +386,19 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
                    )
                ], rest}
 
+            {11, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[scores: msg.scores ++ Protox.Decode.parse_repeated_int32([], delimited)], rest}
+
+            {11, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_int32(bytes)
+              {[scores: msg.scores ++ [value]], rest}
+
+            {12, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[liqibang: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -414,7 +469,9 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
         7 => {:zhenting, {:scalar, false}, :bool},
         8 => {:tingpais, :unpacked, {:message, Soulless.Game.Lq.TingPaiDiscardInfo}},
         9 => {:tile_states, :packed, :uint32},
-        10 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}}
+        10 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
+        11 => {:scores, :packed, :int32},
+        12 => {:liqibang, {:scalar, 0}, :uint32}
       }
     end
 
@@ -426,8 +483,10 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
       %{
         froms: {4, :packed, :uint32},
         liqi: {5, {:scalar, nil}, {:message, Soulless.Game.Lq.LiQiSuccess}},
+        liqibang: {12, {:scalar, 0}, :uint32},
         muyu: {10, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         operation: {6, {:scalar, nil}, {:message, Soulless.Game.Lq.OptionalOperationList}},
+        scores: {11, :packed, :int32},
         seat: {1, {:scalar, 0}, :uint32},
         tile_states: {9, :packed, :uint32},
         tiles: {3, :unpacked, :string},
@@ -531,6 +590,24 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
           name: :muyu,
           tag: 10,
           type: {:message, Soulless.Game.Lq.MuyuInfo}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "scores",
+          kind: :packed,
+          label: :repeated,
+          name: :scores,
+          tag: 11,
+          type: :int32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "liqibang",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :liqibang,
+          tag: 12,
+          type: :uint32
         }
       ]
     end
@@ -838,6 +915,64 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
 
         []
       ),
+      (
+        def field_def(:scores) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "scores",
+             kind: :packed,
+             label: :repeated,
+             name: :scores,
+             tag: 11,
+             type: :int32
+           }}
+        end
+
+        def field_def("scores") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "scores",
+             kind: :packed,
+             label: :repeated,
+             name: :scores,
+             tag: 11,
+             type: :int32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:liqibang) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "liqibang",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :liqibang,
+             tag: 12,
+             type: :uint32
+           }}
+        end
+
+        def field_def("liqibang") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "liqibang",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :liqibang,
+             tag: 12,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -906,6 +1041,12 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
     end,
     def default(:muyu) do
       {:ok, nil}
+    end,
+    def default(:scores) do
+      {:error, :no_default_value}
+    end,
+    def default(:liqibang) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}
