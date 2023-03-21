@@ -4539,7 +4539,7 @@ message GameSnapshot {
 message ActionPrototype {
   uint32 step = 1;
   string name = 2;
-  Wrapper data = 3;
+  bytes data = 3;
 }
 
 message GameDetailRecords {

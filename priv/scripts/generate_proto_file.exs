@@ -111,7 +111,7 @@ defmodule GenerateProtoFile do
 
   def maybe_override_type(parent_name, field_name, current_type) do
     cond do
-      parent_name != "Wrapper" and current_type == "bytes" ->
+      parent_name != "Wrapper" and parent_name != "ActionPrototype" and current_type == "bytes" ->
         "Wrapper"
 
       parent_name == "Error" and field_name == "code" ->
