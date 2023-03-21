@@ -11,6 +11,7 @@ defmodule Soulless.Game.Lq.ActionDealTile do
             tingpais: [],
             tile_state: 0,
             muyu: nil,
+            tile_index: 0,
             __uf__: []
 
   (
@@ -37,6 +38,7 @@ defmodule Soulless.Game.Lq.ActionDealTile do
         |> encode_tingpais(msg)
         |> encode_tile_state(msg)
         |> encode_muyu(msg)
+        |> encode_tile_index(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -178,6 +180,18 @@ defmodule Soulless.Game.Lq.ActionDealTile do
           ArgumentError ->
             reraise Protox.EncodingError.new(:muyu, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_tile_index(acc, msg) do
+        try do
+          if msg.tile_index == 0 do
+            acc
+          else
+            [acc, "X", Protox.Encode.encode_uint32(msg.tile_index)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:tile_index, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -304,6 +318,10 @@ defmodule Soulless.Game.Lq.ActionDealTile do
                    )
                ], rest}
 
+            {11, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[tile_index: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -374,7 +392,8 @@ defmodule Soulless.Game.Lq.ActionDealTile do
         7 => {:zhenting, {:scalar, false}, :bool},
         8 => {:tingpais, :unpacked, {:message, Soulless.Game.Lq.TingPaiDiscardInfo}},
         9 => {:tile_state, {:scalar, 0}, :uint32},
-        10 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}}
+        10 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
+        11 => {:tile_index, {:scalar, 0}, :uint32}
       }
     end
 
@@ -391,6 +410,7 @@ defmodule Soulless.Game.Lq.ActionDealTile do
         operation: {4, {:scalar, nil}, {:message, Soulless.Game.Lq.OptionalOperationList}},
         seat: {1, {:scalar, 0}, :uint32},
         tile: {2, {:scalar, ""}, :string},
+        tile_index: {11, {:scalar, 0}, :uint32},
         tile_state: {9, {:scalar, 0}, :uint32},
         tingpais: {8, :unpacked, {:message, Soulless.Game.Lq.TingPaiDiscardInfo}},
         zhenting: {7, {:scalar, false}, :bool}
@@ -491,6 +511,15 @@ defmodule Soulless.Game.Lq.ActionDealTile do
           name: :muyu,
           tag: 10,
           type: {:message, Soulless.Game.Lq.MuyuInfo}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "tileIndex",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :tile_index,
+          tag: 11,
+          type: :uint32
         }
       ]
     end
@@ -809,6 +838,46 @@ defmodule Soulless.Game.Lq.ActionDealTile do
 
         []
       ),
+      (
+        def field_def(:tile_index) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tileIndex",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tile_index,
+             tag: 11,
+             type: :uint32
+           }}
+        end
+
+        def field_def("tileIndex") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tileIndex",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tile_index,
+             tag: 11,
+             type: :uint32
+           }}
+        end
+
+        def field_def("tile_index") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tileIndex",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tile_index,
+             tag: 11,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -877,6 +946,9 @@ defmodule Soulless.Game.Lq.ActionDealTile do
     end,
     def default(:muyu) do
       {:ok, nil}
+    end,
+    def default(:tile_index) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

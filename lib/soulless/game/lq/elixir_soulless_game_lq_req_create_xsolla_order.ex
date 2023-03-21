@@ -6,6 +6,7 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
             account_id: 0,
             payment_method: 0,
             debt_order_id: "",
+            client_version_string: "",
             __uf__: []
 
   (
@@ -27,6 +28,7 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
         |> encode_account_id(msg)
         |> encode_payment_method(msg)
         |> encode_debt_order_id(msg)
+        |> encode_client_version_string(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -93,6 +95,19 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:debt_order_id, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_client_version_string(acc, msg) do
+        try do
+          if msg.client_version_string == "" do
+            acc
+          else
+            [acc, "2", Protox.Encode.encode_string(msg.client_version_string)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:client_version_string, "invalid field value"),
                     __STACKTRACE__
         end
       end
@@ -171,6 +186,11 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[debt_order_id: delimited], rest}
 
+            {6, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[client_version_string: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -236,7 +256,8 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
         2 => {:client_type, {:scalar, 0}, :uint32},
         3 => {:account_id, {:scalar, 0}, :uint32},
         4 => {:payment_method, {:scalar, 0}, :uint32},
-        5 => {:debt_order_id, {:scalar, ""}, :string}
+        5 => {:debt_order_id, {:scalar, ""}, :string},
+        6 => {:client_version_string, {:scalar, ""}, :string}
       }
     end
 
@@ -248,6 +269,7 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
       %{
         account_id: {3, {:scalar, 0}, :uint32},
         client_type: {2, {:scalar, 0}, :uint32},
+        client_version_string: {6, {:scalar, ""}, :string},
         debt_order_id: {5, {:scalar, ""}, :string},
         goods_id: {1, {:scalar, 0}, :uint32},
         payment_method: {4, {:scalar, 0}, :uint32}
@@ -302,6 +324,15 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
           label: :optional,
           name: :debt_order_id,
           tag: 5,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "clientVersionString",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :client_version_string,
+          tag: 6,
           type: :string
         }
       ]
@@ -509,6 +540,46 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
            }}
         end
       ),
+      (
+        def field_def(:client_version_string) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 6,
+             type: :string
+           }}
+        end
+
+        def field_def("clientVersionString") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 6,
+             type: :string
+           }}
+        end
+
+        def field_def("client_version_string") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 6,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -561,6 +632,9 @@ defmodule Soulless.Game.Lq.ReqCreateXsollaOrder do
       {:ok, 0}
     end,
     def default(:debt_order_id) do
+      {:ok, ""}
+    end,
+    def default(:client_version_string) do
       {:ok, ""}
     end,
     def default(_) do

@@ -1,7 +1,12 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
   @moduledoc false
-  defstruct goods_id: 0, client_type: 0, account_id: 0, order_type: 0, __uf__: []
+  defstruct goods_id: 0,
+            client_type: 0,
+            account_id: 0,
+            order_type: 0,
+            client_version_string: "",
+            __uf__: []
 
   (
     (
@@ -21,6 +26,7 @@ defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
         |> encode_client_type(msg)
         |> encode_account_id(msg)
         |> encode_order_type(msg)
+        |> encode_client_version_string(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -74,6 +80,19 @@ defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:order_type, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_client_version_string(acc, msg) do
+        try do
+          if msg.client_version_string == "" do
+            acc
+          else
+            [acc, "*", Protox.Encode.encode_string(msg.client_version_string)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:client_version_string, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -146,6 +165,11 @@ defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[order_type: value], rest}
 
+            {5, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[client_version_string: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -210,7 +234,8 @@ defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
         1 => {:goods_id, {:scalar, 0}, :uint32},
         2 => {:client_type, {:scalar, 0}, :uint32},
         3 => {:account_id, {:scalar, 0}, :uint32},
-        4 => {:order_type, {:scalar, 0}, :uint32}
+        4 => {:order_type, {:scalar, 0}, :uint32},
+        5 => {:client_version_string, {:scalar, ""}, :string}
       }
     end
 
@@ -222,6 +247,7 @@ defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
       %{
         account_id: {3, {:scalar, 0}, :uint32},
         client_type: {2, {:scalar, 0}, :uint32},
+        client_version_string: {5, {:scalar, ""}, :string},
         goods_id: {1, {:scalar, 0}, :uint32},
         order_type: {4, {:scalar, 0}, :uint32}
       }
@@ -267,6 +293,15 @@ defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
           name: :order_type,
           tag: 4,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "clientVersionString",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :client_version_string,
+          tag: 5,
+          type: :string
         }
       ]
     end
@@ -433,6 +468,46 @@ defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
            }}
         end
       ),
+      (
+        def field_def(:client_version_string) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 5,
+             type: :string
+           }}
+        end
+
+        def field_def("clientVersionString") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 5,
+             type: :string
+           }}
+        end
+
+        def field_def("client_version_string") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 5,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -483,6 +558,9 @@ defmodule Soulless.Game.Lq.ReqCreateYostarOrder do
     end,
     def default(:order_type) do
       {:ok, 0}
+    end,
+    def default(:client_version_string) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}

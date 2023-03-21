@@ -11,6 +11,7 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
             currency_platforms: [],
             version: 0,
             client_version_string: "",
+            tag: "",
             __uf__: []
 
   (
@@ -37,6 +38,7 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
         |> encode_currency_platforms(msg)
         |> encode_version(msg)
         |> encode_client_version_string(msg)
+        |> encode_tag(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -181,6 +183,18 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
             reraise Protox.EncodingError.new(:client_version_string, "invalid field value"),
                     __STACKTRACE__
         end
+      end,
+      defp encode_tag(acc, msg) do
+        try do
+          if msg.tag == "" do
+            acc
+          else
+            [acc, "Z", Protox.Encode.encode_string(msg.tag)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:tag, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -304,6 +318,11 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[client_version_string: delimited], rest}
 
+            {11, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[tag: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -374,7 +393,8 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
         7 => {:gen_access_token, {:scalar, false}, :bool},
         8 => {:currency_platforms, :packed, :uint32},
         9 => {:version, {:scalar, 0}, :uint32},
-        10 => {:client_version_string, {:scalar, ""}, :string}
+        10 => {:client_version_string, {:scalar, ""}, :string},
+        11 => {:tag, {:scalar, ""}, :string}
       }
     end
 
@@ -392,6 +412,7 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
         gen_access_token: {7, {:scalar, false}, :bool},
         random_key: {5, {:scalar, ""}, :string},
         reconnect: {3, {:scalar, false}, :bool},
+        tag: {11, {:scalar, ""}, :string},
         type: {1, {:scalar, 0}, :uint32},
         version: {9, {:scalar, 0}, :uint32}
       }
@@ -490,6 +511,15 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
           label: :optional,
           name: :client_version_string,
           tag: 10,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "tag",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :tag,
+          tag: 11,
           type: :string
         }
       ]
@@ -853,6 +883,35 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
            }}
         end
       ),
+      (
+        def field_def(:tag) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tag",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :tag,
+             tag: 11,
+             type: :string
+           }}
+        end
+
+        def field_def("tag") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tag",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :tag,
+             tag: 11,
+             type: :string
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -920,6 +979,9 @@ defmodule Soulless.Game.Lq.ReqOauth2Login do
       {:ok, 0}
     end,
     def default(:client_version_string) do
+      {:ok, ""}
+    end,
+    def default(:tag) do
       {:ok, ""}
     end,
     def default(_) do

@@ -7,6 +7,7 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
             type: 0,
             device: nil,
             client_version_string: "",
+            tag: "",
             __uf__: []
 
   (
@@ -29,6 +30,7 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
         |> encode_type(msg)
         |> encode_device(msg)
         |> encode_client_version_string(msg)
+        |> encode_tag(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -107,6 +109,18 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
           ArgumentError ->
             reraise Protox.EncodingError.new(:client_version_string, "invalid field value"),
                     __STACKTRACE__
+        end
+      end,
+      defp encode_tag(acc, msg) do
+        try do
+          if msg.tag == "" do
+            acc
+          else
+            [acc, ":", Protox.Encode.encode_string(msg.tag)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:tag, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -199,6 +213,11 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[client_version_string: delimited], rest}
 
+            {7, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[tag: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -265,7 +284,8 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
         3 => {:code, {:scalar, ""}, :string},
         4 => {:type, {:scalar, 0}, :uint32},
         5 => {:device, {:scalar, nil}, {:message, Soulless.Game.Lq.ClientDeviceInfo}},
-        6 => {:client_version_string, {:scalar, ""}, :string}
+        6 => {:client_version_string, {:scalar, ""}, :string},
+        7 => {:tag, {:scalar, ""}, :string}
       }
     end
 
@@ -280,6 +300,7 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
         code: {3, {:scalar, ""}, :string},
         device: {5, {:scalar, nil}, {:message, Soulless.Game.Lq.ClientDeviceInfo}},
         password: {2, {:scalar, ""}, :string},
+        tag: {7, {:scalar, ""}, :string},
         type: {4, {:scalar, 0}, :uint32}
       }
     end
@@ -341,6 +362,15 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
           label: :optional,
           name: :client_version_string,
           tag: 6,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "tag",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :tag,
+          tag: 7,
           type: :string
         }
       ]
@@ -533,6 +563,35 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
            }}
         end
       ),
+      (
+        def field_def(:tag) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tag",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :tag,
+             tag: 7,
+             type: :string
+           }}
+        end
+
+        def field_def("tag") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tag",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :tag,
+             tag: 7,
+             type: :string
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -588,6 +647,9 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
       {:ok, nil}
     end,
     def default(:client_version_string) do
+      {:ok, ""}
+    end,
+    def default(:tag) do
       {:ok, ""}
     end,
     def default(_) do

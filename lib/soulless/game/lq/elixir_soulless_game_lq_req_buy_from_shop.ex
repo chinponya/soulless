@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ReqBuyFromShop do
   @moduledoc false
-  defstruct goods_id: 0, count: 0, bill_short_cut: [], deal_price: 0, __uf__: []
+  defstruct goods_id: 0, count: 0, ver_price: [], ver_goods: [], __uf__: []
 
   (
     (
@@ -19,8 +19,8 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
         []
         |> encode_goods_id(msg)
         |> encode_count(msg)
-        |> encode_bill_short_cut(msg)
-        |> encode_deal_price(msg)
+        |> encode_ver_price(msg)
+        |> encode_ver_goods(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -52,9 +52,9 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
             reraise Protox.EncodingError.new(:count, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_bill_short_cut(acc, msg) do
+      defp encode_ver_price(acc, msg) do
         try do
-          case msg.bill_short_cut do
+          case msg.ver_price do
             [] ->
               acc
 
@@ -68,20 +68,26 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:bill_short_cut, "invalid field value"),
-                    __STACKTRACE__
+            reraise Protox.EncodingError.new(:ver_price, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_deal_price(acc, msg) do
+      defp encode_ver_goods(acc, msg) do
         try do
-          if msg.deal_price == 0 do
-            acc
-          else
-            [acc, " ", Protox.Encode.encode_uint32(msg.deal_price)]
+          case msg.ver_goods do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\"", Protox.Encode.encode_message(value)]
+                end)
+              ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:deal_price, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:ver_goods, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -151,13 +157,18 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
               {[
-                 bill_short_cut:
-                   msg.bill_short_cut ++ [Soulless.Game.Lq.BillShortcut.decode!(delimited)]
+                 ver_price:
+                   msg.ver_price ++ [Soulless.Game.Lq.ReqBuyFromShop.Item.decode!(delimited)]
                ], rest}
 
             {4, _, bytes} ->
-              {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[deal_price: value], rest}
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 ver_goods:
+                   msg.ver_goods ++ [Soulless.Game.Lq.ReqBuyFromShop.Item.decode!(delimited)]
+               ], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -222,8 +233,8 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
       %{
         1 => {:goods_id, {:scalar, 0}, :uint32},
         2 => {:count, {:scalar, 0}, :uint32},
-        3 => {:bill_short_cut, :unpacked, {:message, Soulless.Game.Lq.BillShortcut}},
-        4 => {:deal_price, {:scalar, 0}, :uint32}
+        3 => {:ver_price, :unpacked, {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}},
+        4 => {:ver_goods, :unpacked, {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}}
       }
     end
 
@@ -233,10 +244,10 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
           }
     def defs_by_name() do
       %{
-        bill_short_cut: {3, :unpacked, {:message, Soulless.Game.Lq.BillShortcut}},
         count: {2, {:scalar, 0}, :uint32},
-        deal_price: {4, {:scalar, 0}, :uint32},
-        goods_id: {1, {:scalar, 0}, :uint32}
+        goods_id: {1, {:scalar, 0}, :uint32},
+        ver_goods: {4, :unpacked, {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}},
+        ver_price: {3, :unpacked, {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}}
       }
     end
   )
@@ -265,21 +276,21 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
         },
         %{
           __struct__: Protox.Field,
-          json_name: "billShortCut",
+          json_name: "verPrice",
           kind: :unpacked,
           label: :repeated,
-          name: :bill_short_cut,
+          name: :ver_price,
           tag: 3,
-          type: {:message, Soulless.Game.Lq.BillShortcut}
+          type: {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}
         },
         %{
           __struct__: Protox.Field,
-          json_name: "dealPrice",
-          kind: {:scalar, 0},
-          label: :optional,
-          name: :deal_price,
+          json_name: "verGoods",
+          kind: :unpacked,
+          label: :repeated,
+          name: :ver_goods,
           tag: 4,
-          type: :uint32
+          type: {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}
         }
       ]
     end
@@ -356,82 +367,82 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
         []
       ),
       (
-        def field_def(:bill_short_cut) do
+        def field_def(:ver_price) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "billShortCut",
+             json_name: "verPrice",
              kind: :unpacked,
              label: :repeated,
-             name: :bill_short_cut,
+             name: :ver_price,
              tag: 3,
-             type: {:message, Soulless.Game.Lq.BillShortcut}
+             type: {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}
            }}
         end
 
-        def field_def("billShortCut") do
+        def field_def("verPrice") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "billShortCut",
+             json_name: "verPrice",
              kind: :unpacked,
              label: :repeated,
-             name: :bill_short_cut,
+             name: :ver_price,
              tag: 3,
-             type: {:message, Soulless.Game.Lq.BillShortcut}
+             type: {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}
            }}
         end
 
-        def field_def("bill_short_cut") do
+        def field_def("ver_price") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "billShortCut",
+             json_name: "verPrice",
              kind: :unpacked,
              label: :repeated,
-             name: :bill_short_cut,
+             name: :ver_price,
              tag: 3,
-             type: {:message, Soulless.Game.Lq.BillShortcut}
+             type: {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}
            }}
         end
       ),
       (
-        def field_def(:deal_price) do
+        def field_def(:ver_goods) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "dealPrice",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :deal_price,
+             json_name: "verGoods",
+             kind: :unpacked,
+             label: :repeated,
+             name: :ver_goods,
              tag: 4,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}
            }}
         end
 
-        def field_def("dealPrice") do
+        def field_def("verGoods") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "dealPrice",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :deal_price,
+             json_name: "verGoods",
+             kind: :unpacked,
+             label: :repeated,
+             name: :ver_goods,
              tag: 4,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}
            }}
         end
 
-        def field_def("deal_price") do
+        def field_def("ver_goods") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "dealPrice",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :deal_price,
+             json_name: "verGoods",
+             kind: :unpacked,
+             label: :repeated,
+             name: :ver_goods,
              tag: 4,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.ReqBuyFromShop.Item}
            }}
         end
       ),
@@ -480,11 +491,11 @@ defmodule Soulless.Game.Lq.ReqBuyFromShop do
     def default(:count) do
       {:ok, 0}
     end,
-    def default(:bill_short_cut) do
+    def default(:ver_price) do
       {:error, :no_default_value}
     end,
-    def default(:deal_price) do
-      {:ok, 0}
+    def default(:ver_goods) do
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

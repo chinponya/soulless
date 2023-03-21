@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ReqCreateNickname do
   @moduledoc false
-  defstruct nickname: "", advertise_str: "", __uf__: []
+  defstruct nickname: "", advertise_str: "", tag: "", __uf__: []
 
   (
     (
@@ -16,7 +16,11 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_nickname(msg) |> encode_advertise_str(msg) |> encode_unknown_fields(msg)
+        []
+        |> encode_nickname(msg)
+        |> encode_advertise_str(msg)
+        |> encode_tag(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
@@ -46,6 +50,18 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
           ArgumentError ->
             reraise Protox.EncodingError.new(:advertise_str, "invalid field value"),
                     __STACKTRACE__
+        end
+      end,
+      defp encode_tag(acc, msg) do
+        try do
+          if msg.tag == "" do
+            acc
+          else
+            [acc, "\x1A", Protox.Encode.encode_string(msg.tag)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:tag, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -112,6 +128,11 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[advertise_str: delimited], rest}
 
+            {3, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[tag: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -172,7 +193,11 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:nickname, {:scalar, ""}, :string}, 2 => {:advertise_str, {:scalar, ""}, :string}}
+      %{
+        1 => {:nickname, {:scalar, ""}, :string},
+        2 => {:advertise_str, {:scalar, ""}, :string},
+        3 => {:tag, {:scalar, ""}, :string}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -180,7 +205,11 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{advertise_str: {2, {:scalar, ""}, :string}, nickname: {1, {:scalar, ""}, :string}}
+      %{
+        advertise_str: {2, {:scalar, ""}, :string},
+        nickname: {1, {:scalar, ""}, :string},
+        tag: {3, {:scalar, ""}, :string}
+      }
     end
   )
 
@@ -204,6 +233,15 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
           label: :optional,
           name: :advertise_str,
           tag: 2,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "tag",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :tag,
+          tag: 3,
           type: :string
         }
       ]
@@ -280,6 +318,35 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
            }}
         end
       ),
+      (
+        def field_def(:tag) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tag",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :tag,
+             tag: 3,
+             type: :string
+           }}
+        end
+
+        def field_def("tag") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tag",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :tag,
+             tag: 3,
+             type: :string
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -323,6 +390,9 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
       {:ok, ""}
     end,
     def default(:advertise_str) do
+      {:ok, ""}
+    end,
+    def default(:tag) do
       {:ok, ""}
     end,
     def default(_) do

@@ -6,6 +6,7 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
             account_id: 0,
             alipay_trade_type: "",
             return_url: "",
+            client_version_string: "",
             __uf__: []
 
   (
@@ -27,6 +28,7 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
         |> encode_account_id(msg)
         |> encode_alipay_trade_type(msg)
         |> encode_return_url(msg)
+        |> encode_client_version_string(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -93,6 +95,19 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:return_url, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_client_version_string(acc, msg) do
+        try do
+          if msg.client_version_string == "" do
+            acc
+          else
+            [acc, "2", Protox.Encode.encode_string(msg.client_version_string)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:client_version_string, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -171,6 +186,11 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[return_url: delimited], rest}
 
+            {6, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[client_version_string: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -236,7 +256,8 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
         2 => {:client_type, {:scalar, 0}, :uint32},
         3 => {:account_id, {:scalar, 0}, :uint32},
         4 => {:alipay_trade_type, {:scalar, ""}, :string},
-        5 => {:return_url, {:scalar, ""}, :string}
+        5 => {:return_url, {:scalar, ""}, :string},
+        6 => {:client_version_string, {:scalar, ""}, :string}
       }
     end
 
@@ -249,6 +270,7 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
         account_id: {3, {:scalar, 0}, :uint32},
         alipay_trade_type: {4, {:scalar, ""}, :string},
         client_type: {2, {:scalar, 0}, :uint32},
+        client_version_string: {6, {:scalar, ""}, :string},
         goods_id: {1, {:scalar, 0}, :uint32},
         return_url: {5, {:scalar, ""}, :string}
       }
@@ -302,6 +324,15 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
           label: :optional,
           name: :return_url,
           tag: 5,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "clientVersionString",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :client_version_string,
+          tag: 6,
           type: :string
         }
       ]
@@ -509,6 +540,46 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
            }}
         end
       ),
+      (
+        def field_def(:client_version_string) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 6,
+             type: :string
+           }}
+        end
+
+        def field_def("clientVersionString") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 6,
+             type: :string
+           }}
+        end
+
+        def field_def("client_version_string") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "clientVersionString",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :client_version_string,
+             tag: 6,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -561,6 +632,9 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
       {:ok, ""}
     end,
     def default(:return_url) do
+      {:ok, ""}
+    end,
+    def default(:client_version_string) do
       {:ok, ""}
     end,
     def default(_) do
