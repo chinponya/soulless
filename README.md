@@ -142,7 +142,7 @@ import Config
 config :soulless,
   uid: "1234567",
   access_token: "deedeedeedeedeedeedeedeedeedee",
-  token_kind: :transient
+  token_kind: :transient,
   region: :en
 ```
 
