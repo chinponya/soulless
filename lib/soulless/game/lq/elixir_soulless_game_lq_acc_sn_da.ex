@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.Announcement do
+defmodule Soulless.Game.Lq.AccSnDa do
   @moduledoc false
-  defstruct id: 0, title: "", content: "", header_image: "", __uf__: []
+  defstruct account_id: 0, time: 0, snapshot: nil, __uf__: []
 
   (
     (
@@ -17,10 +17,9 @@ defmodule Soulless.Game.Lq.Announcement do
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
         []
-        |> encode_id(msg)
-        |> encode_title(msg)
-        |> encode_content(msg)
-        |> encode_header_image(msg)
+        |> encode_account_id(msg)
+        |> encode_time(msg)
+        |> encode_snapshot(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -28,52 +27,40 @@ defmodule Soulless.Game.Lq.Announcement do
     []
 
     [
-      defp encode_id(acc, msg) do
+      defp encode_account_id(acc, msg) do
         try do
-          if msg.id == 0 do
+          if msg.account_id == 0 do
             acc
           else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.id)]
+            [acc, "\b", Protox.Encode.encode_uint32(msg.account_id)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:account_id, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_title(acc, msg) do
+      defp encode_time(acc, msg) do
         try do
-          if msg.title == "" do
+          if msg.time == 0 do
             acc
           else
-            [acc, "\x12", Protox.Encode.encode_string(msg.title)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.time)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:time, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_content(acc, msg) do
+      defp encode_snapshot(acc, msg) do
         try do
-          if msg.content == "" do
+          if msg.snapshot == nil do
             acc
           else
-            [acc, "\x1A", Protox.Encode.encode_string(msg.content)]
+            [acc, "\x1A", Protox.Encode.encode_message(msg.snapshot)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:content, "invalid field value"), __STACKTRACE__
-        end
-      end,
-      defp encode_header_image(acc, msg) do
-        try do
-          if msg.header_image == "" do
-            acc
-          else
-            [acc, "\"", Protox.Encode.encode_string(msg.header_image)]
-          end
-        rescue
-          ArgumentError ->
-            reraise Protox.EncodingError.new(:header_image, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:snapshot, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -113,7 +100,7 @@ defmodule Soulless.Game.Lq.Announcement do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.Announcement))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.AccSnDa))
         end
       )
     )
@@ -132,22 +119,23 @@ defmodule Soulless.Game.Lq.Announcement do
 
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[id: value], rest}
+              {[account_id: value], rest}
 
             {2, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[title: delimited], rest}
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[time: value], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[content: delimited], rest}
 
-            {4, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[header_image: delimited], rest}
+              {[
+                 snapshot:
+                   Protox.MergeMessage.merge(
+                     msg.snapshot,
+                     Soulless.Game.Lq.Wrapper.decode!(delimited)
+                   )
+               ], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -182,7 +170,7 @@ defmodule Soulless.Game.Lq.Announcement do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.Announcement,
+        Soulless.Game.Lq.AccSnDa,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -210,10 +198,9 @@ defmodule Soulless.Game.Lq.Announcement do
           }
     def defs() do
       %{
-        1 => {:id, {:scalar, 0}, :uint32},
-        2 => {:title, {:scalar, ""}, :string},
-        3 => {:content, {:scalar, ""}, :string},
-        4 => {:header_image, {:scalar, ""}, :string}
+        1 => {:account_id, {:scalar, 0}, :uint32},
+        2 => {:time, {:scalar, 0}, :uint32},
+        3 => {:snapshot, {:scalar, nil}, {:message, Soulless.Game.Lq.Wrapper}}
       }
     end
 
@@ -223,10 +210,9 @@ defmodule Soulless.Game.Lq.Announcement do
           }
     def defs_by_name() do
       %{
-        content: {3, {:scalar, ""}, :string},
-        header_image: {4, {:scalar, ""}, :string},
-        id: {1, {:scalar, 0}, :uint32},
-        title: {2, {:scalar, ""}, :string}
+        account_id: {1, {:scalar, 0}, :uint32},
+        snapshot: {3, {:scalar, nil}, {:message, Soulless.Game.Lq.Wrapper}},
+        time: {2, {:scalar, 0}, :uint32}
       }
     end
   )
@@ -237,39 +223,30 @@ defmodule Soulless.Game.Lq.Announcement do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "id",
+          json_name: "accountId",
           kind: {:scalar, 0},
           label: :optional,
-          name: :id,
+          name: :account_id,
           tag: 1,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "title",
-          kind: {:scalar, ""},
+          json_name: "time",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :title,
+          name: :time,
           tag: 2,
-          type: :string
+          type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "content",
-          kind: {:scalar, ""},
+          json_name: "snapshot",
+          kind: {:scalar, nil},
           label: :optional,
-          name: :content,
+          name: :snapshot,
           tag: 3,
-          type: :string
-        },
-        %{
-          __struct__: Protox.Field,
-          json_name: "headerImage",
-          kind: {:scalar, ""},
-          label: :optional,
-          name: :header_image,
-          tag: 4,
-          type: :string
+          type: {:message, Soulless.Game.Lq.Wrapper}
         }
       ]
     end
@@ -277,28 +254,68 @@ defmodule Soulless.Game.Lq.Announcement do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:id) do
+        def field_def(:account_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "id",
+             json_name: "accountId",
              kind: {:scalar, 0},
              label: :optional,
-             name: :id,
+             name: :account_id,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("id") do
+        def field_def("accountId") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "id",
+             json_name: "accountId",
              kind: {:scalar, 0},
              label: :optional,
-             name: :id,
+             name: :account_id,
              tag: 1,
+             type: :uint32
+           }}
+        end
+
+        def field_def("account_id") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "accountId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :account_id,
+             tag: 1,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "time",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :time,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "time",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :time,
+             tag: 2,
              type: :uint32
            }}
         end
@@ -306,102 +323,33 @@ defmodule Soulless.Game.Lq.Announcement do
         []
       ),
       (
-        def field_def(:title) do
+        def field_def(:snapshot) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "title",
-             kind: {:scalar, ""},
+             json_name: "snapshot",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :title,
-             tag: 2,
-             type: :string
+             name: :snapshot,
+             tag: 3,
+             type: {:message, Soulless.Game.Lq.Wrapper}
            }}
         end
 
-        def field_def("title") do
+        def field_def("snapshot") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "title",
-             kind: {:scalar, ""},
+             json_name: "snapshot",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :title,
-             tag: 2,
-             type: :string
+             name: :snapshot,
+             tag: 3,
+             type: {:message, Soulless.Game.Lq.Wrapper}
            }}
         end
 
         []
-      ),
-      (
-        def field_def(:content) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "content",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :content,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        def field_def("content") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "content",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :content,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        []
-      ),
-      (
-        def field_def(:header_image) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
-
-        def field_def("headerImage") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
-
-        def field_def("header_image") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -442,17 +390,14 @@ defmodule Soulless.Game.Lq.Announcement do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:id) do
+    def default(:account_id) do
       {:ok, 0}
     end,
-    def default(:title) do
-      {:ok, ""}
+    def default(:time) do
+      {:ok, 0}
     end,
-    def default(:content) do
-      {:ok, ""}
-    end,
-    def default(:header_image) do
-      {:ok, ""}
+    def default(:snapshot) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.Announcement do
+defmodule Soulless.Game.Lq.AccountResourceSnapshot do
   @moduledoc false
-  defstruct id: 0, title: "", content: "", header_image: "", __uf__: []
+  defstruct bag_item: [], currency: [], title: nil, used_title: nil, __uf__: []
 
   (
     (
@@ -17,10 +17,10 @@ defmodule Soulless.Game.Lq.Announcement do
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
         []
-        |> encode_id(msg)
+        |> encode_bag_item(msg)
+        |> encode_currency(msg)
         |> encode_title(msg)
-        |> encode_content(msg)
-        |> encode_header_image(msg)
+        |> encode_used_title(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -28,52 +28,66 @@ defmodule Soulless.Game.Lq.Announcement do
     []
 
     [
-      defp encode_id(acc, msg) do
+      defp encode_bag_item(acc, msg) do
         try do
-          if msg.id == 0 do
-            acc
-          else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.id)]
+          case msg.bag_item do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\n", Protox.Encode.encode_message(value)]
+                end)
+              ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:bag_item, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_currency(acc, msg) do
+        try do
+          case msg.currency do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\x12", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:currency, "invalid field value"), __STACKTRACE__
         end
       end,
       defp encode_title(acc, msg) do
         try do
-          if msg.title == "" do
+          if msg.title == nil do
             acc
           else
-            [acc, "\x12", Protox.Encode.encode_string(msg.title)]
+            [acc, "\x1A", Protox.Encode.encode_message(msg.title)]
           end
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_content(acc, msg) do
+      defp encode_used_title(acc, msg) do
         try do
-          if msg.content == "" do
+          if msg.used_title == nil do
             acc
           else
-            [acc, "\x1A", Protox.Encode.encode_string(msg.content)]
+            [acc, "\"", Protox.Encode.encode_message(msg.used_title)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:content, "invalid field value"), __STACKTRACE__
-        end
-      end,
-      defp encode_header_image(acc, msg) do
-        try do
-          if msg.header_image == "" do
-            acc
-          else
-            [acc, "\"", Protox.Encode.encode_string(msg.header_image)]
-          end
-        rescue
-          ArgumentError ->
-            reraise Protox.EncodingError.new(:header_image, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:used_title, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -113,7 +127,7 @@ defmodule Soulless.Game.Lq.Announcement do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.Announcement))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.AccountResourceSnapshot))
         end
       )
     )
@@ -131,23 +145,52 @@ defmodule Soulless.Game.Lq.Announcement do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[id: value], rest}
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 bag_item:
+                   msg.bag_item ++
+                     [Soulless.Game.Lq.AccountResourceSnapshot.BagItemSnapshot.decode!(delimited)]
+               ], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[title: delimited], rest}
+
+              {[
+                 currency:
+                   msg.currency ++
+                     [
+                       Soulless.Game.Lq.AccountResourceSnapshot.CurrencySnapshot.decode!(
+                         delimited
+                       )
+                     ]
+               ], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[content: delimited], rest}
+
+              {[
+                 title:
+                   Protox.MergeMessage.merge(
+                     msg.title,
+                     Soulless.Game.Lq.AccountResourceSnapshot.TitleSnapshot.decode!(delimited)
+                   )
+               ], rest}
 
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[header_image: delimited], rest}
+
+              {[
+                 used_title:
+                   Protox.MergeMessage.merge(
+                     msg.used_title,
+                     Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot.decode!(delimited)
+                   )
+               ], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -182,7 +225,7 @@ defmodule Soulless.Game.Lq.Announcement do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.Announcement,
+        Soulless.Game.Lq.AccountResourceSnapshot,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -210,10 +253,18 @@ defmodule Soulless.Game.Lq.Announcement do
           }
     def defs() do
       %{
-        1 => {:id, {:scalar, 0}, :uint32},
-        2 => {:title, {:scalar, ""}, :string},
-        3 => {:content, {:scalar, ""}, :string},
-        4 => {:header_image, {:scalar, ""}, :string}
+        1 =>
+          {:bag_item, :unpacked,
+           {:message, Soulless.Game.Lq.AccountResourceSnapshot.BagItemSnapshot}},
+        2 =>
+          {:currency, :unpacked,
+           {:message, Soulless.Game.Lq.AccountResourceSnapshot.CurrencySnapshot}},
+        3 =>
+          {:title, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountResourceSnapshot.TitleSnapshot}},
+        4 =>
+          {:used_title, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}}
       }
     end
 
@@ -223,10 +274,15 @@ defmodule Soulless.Game.Lq.Announcement do
           }
     def defs_by_name() do
       %{
-        content: {3, {:scalar, ""}, :string},
-        header_image: {4, {:scalar, ""}, :string},
-        id: {1, {:scalar, 0}, :uint32},
-        title: {2, {:scalar, ""}, :string}
+        bag_item:
+          {1, :unpacked, {:message, Soulless.Game.Lq.AccountResourceSnapshot.BagItemSnapshot}},
+        currency:
+          {2, :unpacked, {:message, Soulless.Game.Lq.AccountResourceSnapshot.CurrencySnapshot}},
+        title:
+          {3, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountResourceSnapshot.TitleSnapshot}},
+        used_title:
+          {4, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}}
       }
     end
   )
@@ -237,39 +293,39 @@ defmodule Soulless.Game.Lq.Announcement do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "id",
-          kind: {:scalar, 0},
-          label: :optional,
-          name: :id,
+          json_name: "bagItem",
+          kind: :unpacked,
+          label: :repeated,
+          name: :bag_item,
           tag: 1,
-          type: :uint32
+          type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.BagItemSnapshot}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "currency",
+          kind: :unpacked,
+          label: :repeated,
+          name: :currency,
+          tag: 2,
+          type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.CurrencySnapshot}
         },
         %{
           __struct__: Protox.Field,
           json_name: "title",
-          kind: {:scalar, ""},
+          kind: {:scalar, nil},
           label: :optional,
           name: :title,
-          tag: 2,
-          type: :string
-        },
-        %{
-          __struct__: Protox.Field,
-          json_name: "content",
-          kind: {:scalar, ""},
-          label: :optional,
-          name: :content,
           tag: 3,
-          type: :string
+          type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.TitleSnapshot}
         },
         %{
           __struct__: Protox.Field,
-          json_name: "headerImage",
-          kind: {:scalar, ""},
+          json_name: "usedTitle",
+          kind: {:scalar, nil},
           label: :optional,
-          name: :header_image,
+          name: :used_title,
           tag: 4,
-          type: :string
+          type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}
         }
       ]
     end
@@ -277,29 +333,69 @@ defmodule Soulless.Game.Lq.Announcement do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:id) do
+        def field_def(:bag_item) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "id",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :id,
+             json_name: "bagItem",
+             kind: :unpacked,
+             label: :repeated,
+             name: :bag_item,
              tag: 1,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.BagItemSnapshot}
            }}
         end
 
-        def field_def("id") do
+        def field_def("bagItem") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "id",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :id,
+             json_name: "bagItem",
+             kind: :unpacked,
+             label: :repeated,
+             name: :bag_item,
              tag: 1,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.BagItemSnapshot}
+           }}
+        end
+
+        def field_def("bag_item") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "bagItem",
+             kind: :unpacked,
+             label: :repeated,
+             name: :bag_item,
+             tag: 1,
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.BagItemSnapshot}
+           }}
+        end
+      ),
+      (
+        def field_def(:currency) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "currency",
+             kind: :unpacked,
+             label: :repeated,
+             name: :currency,
+             tag: 2,
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.CurrencySnapshot}
+           }}
+        end
+
+        def field_def("currency") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "currency",
+             kind: :unpacked,
+             label: :repeated,
+             name: :currency,
+             tag: 2,
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.CurrencySnapshot}
            }}
         end
 
@@ -311,11 +407,11 @@ defmodule Soulless.Game.Lq.Announcement do
            %{
              __struct__: Protox.Field,
              json_name: "title",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :title,
-             tag: 2,
-             type: :string
+             tag: 3,
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.TitleSnapshot}
            }}
         end
 
@@ -324,82 +420,53 @@ defmodule Soulless.Game.Lq.Announcement do
            %{
              __struct__: Protox.Field,
              json_name: "title",
-             kind: {:scalar, ""},
+             kind: {:scalar, nil},
              label: :optional,
              name: :title,
-             tag: 2,
-             type: :string
+             tag: 3,
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.TitleSnapshot}
            }}
         end
 
         []
       ),
       (
-        def field_def(:content) do
+        def field_def(:used_title) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "content",
-             kind: {:scalar, ""},
+             json_name: "usedTitle",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :content,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        def field_def("content") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "content",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :content,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        []
-      ),
-      (
-        def field_def(:header_image) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
+             name: :used_title,
              tag: 4,
-             type: :string
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}
            }}
         end
 
-        def field_def("headerImage") do
+        def field_def("usedTitle") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
+             json_name: "usedTitle",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :header_image,
+             name: :used_title,
              tag: 4,
-             type: :string
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}
            }}
         end
 
-        def field_def("header_image") do
+        def field_def("used_title") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
+             json_name: "usedTitle",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :header_image,
+             name: :used_title,
              tag: 4,
-             type: :string
+             type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}
            }}
         end
       ),
@@ -442,17 +509,17 @@ defmodule Soulless.Game.Lq.Announcement do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:id) do
-      {:ok, 0}
+    def default(:bag_item) do
+      {:error, :no_default_value}
+    end,
+    def default(:currency) do
+      {:error, :no_default_value}
     end,
     def default(:title) do
-      {:ok, ""}
+      {:ok, nil}
     end,
-    def default(:content) do
-      {:ok, ""}
-    end,
-    def default(:header_image) do
-      {:ok, ""}
+    def default(:used_title) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

@@ -690,7 +690,16 @@ message GameDetailRule {
   uint32 reveal_discard = 51;
   uint32 field_spell_mode = 52;
   uint32 zhanxing = 53;
+  uint32 tianming_mode = 54;
   bool disable_leijiyiman = 60;
+  uint32 disable_double_yakuman = 62;
+  uint32 disable_composite_yakuman = 63;
+  uint32 enable_shiti = 64;
+  uint32 enable_nontsumo_liqi = 65;
+  uint32 disable_double_wind_four_fu = 66;
+  uint32 disable_angang_guoshi = 67;
+  uint32 enable_renhe = 68;
+  uint32 enable_baopai_extend_settings = 69;
 }
 
 message Room {
@@ -804,6 +813,7 @@ message Mail {
   uint32 reference_id = 9;
   repeated I18nContext title_i18n = 10;
   repeated I18nContext content_i18n = 11;
+  uint32 template_id = 12;
 }
 
 message AchievementProgress {
@@ -942,6 +952,7 @@ message Announcement {
   uint32 id = 1;
   string title = 2;
   string content = 3;
+  string header_image = 4;
 }
 
 message TaskProgress {
@@ -1030,6 +1041,7 @@ message AccountActivityUpdate {
   repeated lq.ActivitySpotData spot_data = 4;
   repeated lq.ActivityFriendGiftData friend_gift_data = 5;
   repeated lq.ActivityUpgradeData upgrade_data = 6;
+  repeated lq.ActivityGachaUpdateData gacha_data = 7;
 }
 
 message ActivityFeedData {
@@ -1087,6 +1099,22 @@ message ActivityUpgradeData {
     uint32 level = 2;
   }
 
+}
+
+message GachaRecord {
+  uint32 id = 1;
+  uint32 count = 2;
+}
+
+message ActivityGachaData {
+  uint32 activity_id = 1;
+  repeated GachaRecord gained = 2;
+}
+
+message ActivityGachaUpdateData {
+  uint32 activity_id = 1;
+  repeated GachaRecord gained = 2;
+  uint32 remain_count = 3;
 }
 
 message ActivitySpotData {
@@ -1311,6 +1339,7 @@ message ChestDataV2 {
   uint32 chest_id = 1;
   uint32 total_open_count = 2;
   uint32 face_black_count = 3;
+  uint32 ticket_face_black_count = 4;
 }
 
 message FaithData {
@@ -1593,6 +1622,15 @@ message ContestDetailRule {
   uint32 xuezhandaodi = 44;
   uint32 huansanzhang = 45;
   uint32 chuanma = 46;
+  uint32 disable_double_yakuman = 62;
+  uint32 disable_composite_yakuman = 63;
+  uint32 enable_shiti = 64;
+  uint32 enable_nontsumo_liqi = 65;
+  uint32 disable_double_wind_four_fu = 66;
+  uint32 disable_angang_guoshi = 67;
+  uint32 enable_renhe = 68;
+  uint32 enable_baopai_extend_settings = 69;
+  uint32 fanfu = 70;
 }
 
 message ContestDetailRuleV2 {
@@ -1738,10 +1776,134 @@ message ActivityBuffData {
   uint32 level = 5;
 }
 
+message AccountResourceSnapshot {
+  repeated BagItemSnapshot bag_item = 1;
+  repeated CurrencySnapshot currency = 2;
+  TitleSnapshot title = 3;
+  UsedTitleSnapshot used_title = 4;
+  message BagItemSnapshot {
+    uint32 resource_id = 1;
+    uint32 resource_count = 2;
+    uint32 resource_version = 3;
+  }
+
+  message CurrencySnapshot {
+    uint32 currency_id = 1;
+    uint32 currency_count = 2;
+  }
+
+  message TitleSnapshot {
+    repeated uint32 title_list = 1;
+  }
+
+  message UsedTitleSnapshot {
+    uint32 title_id = 1;
+  }
+
+}
+
+message AccountCharacterSnapshot {
+  repeated uint32 created_characters = 1;
+  repeated Character removed_characters = 2;
+  repeated Character modified_characters = 3;
+  MainCharacterSnapshot main_character = 4;
+  SkinsSnapshot skins = 5;
+  HiddenCharacter hidden_characters = 6;
+  message MainCharacterSnapshot {
+    uint32 character_id = 1;
+  }
+
+  message SkinsSnapshot {
+    repeated uint32 skin_list = 1;
+  }
+
+  message HiddenCharacter {
+    repeated uint32 hidden_list = 1;
+  }
+
+}
+
+message AccountMailRecord {
+  repeated uint32 created_mails = 1;
+  repeated MailSnapshot removed_mails = 2;
+  repeated MailSnapshot modified_mails = 3;
+  message MailSnapshot {
+    uint32 mail_id = 1;
+    uint32 reference_id = 2;
+    uint32 create_time = 3;
+    uint32 expire_time = 4;
+    uint32 take_attachment = 5;
+    repeated RewardSlot attachments = 6;
+  }
+
+}
+
+message AccountAchievementSnapshot {
+  repeated AchievementProgress achievements = 1;
+  RewardedGroupSnapshot rewarded_group = 2;
+  AchievementVersion version = 3;
+  message RewardedGroupSnapshot {
+    uint32 rewarded_id = 1;
+  }
+
+  message AchievementVersion {
+    uint32 version = 1;
+  }
+
+}
+
+message AccountMiscSnapshot {
+  FaithData faith_data = 1;
+  AccountVIPRewardSnapshot vip_reward_gained = 2;
+  AccountVIP vip = 3;
+  ShopInfo shop_info = 4;
+  AccountMonthTicketSnapshot month_ticket = 5;
+  message AccountVIPRewardSnapshot {
+    repeated uint32 rewarded = 1;
+  }
+
+  message MonthTicketInfo {
+    uint32 id = 1;
+    uint32 end_time = 2;
+    uint32 last_pay_time = 3;
+    uint32 record_start_time = 4;
+    repeated uint32 history = 5;
+  }
+
+  message AccountMonthTicketSnapshot {
+    repeated MonthTicketInfo tickets = 1;
+  }
+
+  message AccountVIP {
+    uint32 vip = 1;
+  }
+
+}
+
+message AccountGiftCodeRecord {
+  repeated string used_gift_code = 1;
+}
+
+message AccSn {
+  AccountResourceSnapshot resource = 1;
+  AccountCharacterSnapshot character = 2;
+  AccountMailRecord mail = 3;
+  AccountAchievementSnapshot achievement = 4;
+  AccountMiscSnapshot misc = 5;
+  AccountGiftCodeRecord gift_code = 6;
+}
+
+message AccSnDa {
+  uint32 account_id = 1;
+  uint32 time = 2;
+  Wrapper snapshot = 3;
+}
+
 service Lobby {
   rpc fetchConnectionInfo (ReqCommon) returns (ResConnectionInfo);
   rpc fetchQueueInfo (ReqCommon) returns (ResFetchQueueInfo);
   rpc cancelQueue (ReqCommon) returns (ResCommon);
+  rpc openidCheck (ReqOpenidCheck) returns (ResOauth2Check);
   rpc signup (ReqSignupAccount) returns (ResSignupAccount);
   rpc login (ReqLogin) returns (ResLogin);
   rpc loginSuccess (ReqCommon) returns (ResCommon);
@@ -1955,6 +2117,7 @@ service Lobby {
   rpc completeActivityTask (ReqCompleteActivityTask) returns (ResCommon);
   rpc completeActivityFlipTask (ReqCompleteActivityTask) returns (ResCommon);
   rpc completePeriodActivityTask (ReqCompleteActivityTask) returns (ResCommon);
+  rpc completePeriodActivityTaskBatch (ReqCompletePeriodActivityTaskBatch) returns (ResCommon);
   rpc completeRandomActivityTask (ReqCompleteActivityTask) returns (ResCommon);
   rpc receiveActivityFlipTask (ReqReceiveActivityFlipTask) returns (ResReceiveActivityFlipTask);
   rpc completeSegmentTaskReward (ReqCompleteSegmentTaskReward) returns (ResCompleteSegmentTaskReward);
@@ -2021,6 +2184,7 @@ service Lobby {
   rpc fetchShopInterval (ReqCommon) returns (ResFetchShopInterval);
   rpc fetchActivityInterval (ReqCommon) returns (ResFetchActivityInterval);
   rpc fetchRecentFriend (ReqCommon) returns (ResFetchrecentFriend);
+  rpc openGacha (ReqOpenGacha) returns (ResOpenGacha);
 }
 
 message ResConnectionInfo {
@@ -2032,6 +2196,11 @@ message ResFetchQueueInfo {
   Error error = 1;
   uint32 remain = 2;
   uint32 rank = 3;
+}
+
+message ReqOpenidCheck {
+  uint32 type = 1;
+  string token = 2;
 }
 
 message ReqSignupAccount {
@@ -3736,6 +3905,7 @@ message ResAccountActivityData {
   repeated lq.ActivitySpotData spot_data = 19;
   repeated lq.ActivityFriendGiftData friend_gift_data = 20;
   repeated lq.ActivityUpgradeData upgrade_data = 21;
+  repeated lq.ActivityGachaUpdateData gacha_data = 22;
   message ActivitySignInData {
     uint32 activity_id = 1;
     uint32 sign_in_count = 2;
@@ -3793,6 +3963,10 @@ message ResExchangeActivityItem {
 
 message ReqCompleteActivityTask {
   uint32 task_id = 1;
+}
+
+message ReqCompletePeriodActivityTaskBatch {
+  repeated uint32 task_list = 1;
 }
 
 message ReqReceiveActivityFlipTask {
@@ -4427,6 +4601,19 @@ message ResFetchrecentFriend {
   repeated uint32 account_list = 2;
 }
 
+message ReqOpenGacha {
+  uint32 activity_id = 1;
+  uint32 count = 2;
+}
+
+message ResOpenGacha {
+  Error error = 1;
+  repeated uint32 result_list = 2;
+  repeated ExecuteReward reward_items = 3;
+  repeated ExecuteReward sp_reward_items = 4;
+  uint32 remain_count = 5;
+}
+
 message ActionMJStart {
 }
 
@@ -4478,6 +4665,7 @@ message ActionNewRound {
   MuyuInfo muyu = 16;
   uint32 ju_count = 17;
   uint32 field_spell = 18;
+  string sha256 = 19;
 }
 
 message RecordNewRound {
@@ -4502,6 +4690,7 @@ message RecordNewRound {
   repeated OptionalOperationList operations = 19;
   uint32 ju_count = 20;
   uint32 field_spell = 21;
+  string sha256 = 22;
   message TingPai {
     uint32 seat = 1;
     repeated TingPaiInfo tingpais1 = 2;
@@ -4646,6 +4835,9 @@ message HuleInfo {
   uint32 point_sum = 19;
   uint32 dadian = 20;
   uint32 baopai = 21;
+  repeated uint32 baopai_seats = 22;
+  repeated string lines = 23;
+  uint32 tianming_bonus = 24;
 }
 
 message TingPaiInfo {

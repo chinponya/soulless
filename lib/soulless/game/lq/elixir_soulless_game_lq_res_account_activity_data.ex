@@ -22,6 +22,7 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
             spot_data: [],
             friend_gift_data: [],
             upgrade_data: [],
+            gacha_data: [],
             __uf__: []
 
   (
@@ -59,6 +60,7 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         |> encode_spot_data(msg)
         |> encode_friend_gift_data(msg)
         |> encode_upgrade_data(msg)
+        |> encode_gacha_data(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -460,6 +462,25 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
           ArgumentError ->
             reraise Protox.EncodingError.new(:upgrade_data, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_gacha_data(acc, msg) do
+        try do
+          case msg.gacha_data do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xB2\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:gacha_data, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -721,6 +742,15 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
                    msg.upgrade_data ++ [Soulless.Game.Lq.ActivityUpgradeData.decode!(delimited)]
                ], rest}
 
+            {22, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 gacha_data:
+                   msg.gacha_data ++ [Soulless.Game.Lq.ActivityGachaUpdateData.decode!(delimited)]
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -814,7 +844,8 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         18 => {:vote_records, :unpacked, {:message, Soulless.Game.Lq.VoteData}},
         19 => {:spot_data, :unpacked, {:message, Soulless.Game.Lq.ActivitySpotData}},
         20 => {:friend_gift_data, :unpacked, {:message, Soulless.Game.Lq.ActivityFriendGiftData}},
-        21 => {:upgrade_data, :unpacked, {:message, Soulless.Game.Lq.ActivityUpgradeData}}
+        21 => {:upgrade_data, :unpacked, {:message, Soulless.Game.Lq.ActivityUpgradeData}},
+        22 => {:gacha_data, :unpacked, {:message, Soulless.Game.Lq.ActivityGachaUpdateData}}
       }
     end
 
@@ -834,6 +865,7 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         feed_data: {16, :unpacked, {:message, Soulless.Game.Lq.FeedActivityData}},
         flip_task_progress_list: {6, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
         friend_gift_data: {20, :unpacked, {:message, Soulless.Game.Lq.ActivityFriendGiftData}},
+        gacha_data: {22, :unpacked, {:message, Soulless.Game.Lq.ActivityGachaUpdateData}},
         mine_data: {13, :unpacked, {:message, Soulless.Game.Lq.MineActivityData}},
         period_task_progress_list: {9, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
         random_task_progress_list: {10, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
@@ -1048,6 +1080,15 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
           name: :upgrade_data,
           tag: 21,
           type: {:message, Soulless.Game.Lq.ActivityUpgradeData}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "gachaData",
+          kind: :unpacked,
+          label: :repeated,
+          name: :gacha_data,
+          tag: 22,
+          type: {:message, Soulless.Game.Lq.ActivityGachaUpdateData}
         }
       ]
     end
@@ -1883,6 +1924,46 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
            }}
         end
       ),
+      (
+        def field_def(:gacha_data) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "gachaData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :gacha_data,
+             tag: 22,
+             type: {:message, Soulless.Game.Lq.ActivityGachaUpdateData}
+           }}
+        end
+
+        def field_def("gachaData") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "gachaData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :gacha_data,
+             tag: 22,
+             type: {:message, Soulless.Game.Lq.ActivityGachaUpdateData}
+           }}
+        end
+
+        def field_def("gacha_data") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "gachaData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :gacha_data,
+             tag: 22,
+             type: {:message, Soulless.Game.Lq.ActivityGachaUpdateData}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1983,6 +2064,9 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
       {:error, :no_default_value}
     end,
     def default(:upgrade_data) do
+      {:error, :no_default_value}
+    end,
+    def default(:gacha_data) do
       {:error, :no_default_value}
     end,
     def default(_) do

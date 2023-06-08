@@ -12,6 +12,7 @@ defmodule Soulless.Game.Lq.Mail do
             reference_id: 0,
             title_i18n: [],
             content_i18n: [],
+            template_id: 0,
             __uf__: []
 
   (
@@ -39,6 +40,7 @@ defmodule Soulless.Game.Lq.Mail do
         |> encode_reference_id(msg)
         |> encode_title_i18n(msg)
         |> encode_content_i18n(msg)
+        |> encode_template_id(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -199,6 +201,18 @@ defmodule Soulless.Game.Lq.Mail do
           ArgumentError ->
             reraise Protox.EncodingError.new(:content_i18n, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_template_id(acc, msg) do
+        try do
+          if msg.template_id == 0 do
+            acc
+          else
+            [acc, "`", Protox.Encode.encode_uint32(msg.template_id)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:template_id, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -311,6 +325,10 @@ defmodule Soulless.Game.Lq.Mail do
                    msg.content_i18n ++ [Soulless.Game.Lq.I18nContext.decode!(delimited)]
                ], rest}
 
+            {12, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[template_id: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -382,7 +400,8 @@ defmodule Soulless.Game.Lq.Mail do
         8 => {:expire_time, {:scalar, 0}, :uint32},
         9 => {:reference_id, {:scalar, 0}, :uint32},
         10 => {:title_i18n, :unpacked, {:message, Soulless.Game.Lq.I18nContext}},
-        11 => {:content_i18n, :unpacked, {:message, Soulless.Game.Lq.I18nContext}}
+        11 => {:content_i18n, :unpacked, {:message, Soulless.Game.Lq.I18nContext}},
+        12 => {:template_id, {:scalar, 0}, :uint32}
       }
     end
 
@@ -401,6 +420,7 @@ defmodule Soulless.Game.Lq.Mail do
         reference_id: {9, {:scalar, 0}, :uint32},
         state: {2, {:scalar, 0}, :uint32},
         take_attachment: {3, {:scalar, false}, :bool},
+        template_id: {12, {:scalar, 0}, :uint32},
         title: {4, {:scalar, ""}, :string},
         title_i18n: {10, :unpacked, {:message, Soulless.Game.Lq.I18nContext}}
       }
@@ -509,6 +529,15 @@ defmodule Soulless.Game.Lq.Mail do
           name: :content_i18n,
           tag: 11,
           type: {:message, Soulless.Game.Lq.I18nContext}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "templateId",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :template_id,
+          tag: 12,
+          type: :uint32
         }
       ]
     end
@@ -911,6 +940,46 @@ defmodule Soulless.Game.Lq.Mail do
            }}
         end
       ),
+      (
+        def field_def(:template_id) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "templateId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :template_id,
+             tag: 12,
+             type: :uint32
+           }}
+        end
+
+        def field_def("templateId") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "templateId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :template_id,
+             tag: 12,
+             type: :uint32
+           }}
+        end
+
+        def field_def("template_id") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "templateId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :template_id,
+             tag: 12,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -982,6 +1051,9 @@ defmodule Soulless.Game.Lq.Mail do
     end,
     def default(:content_i18n) do
       {:error, :no_default_value}
+    end,
+    def default(:template_id) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

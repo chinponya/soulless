@@ -19,6 +19,7 @@ defmodule Soulless.Game.Lq.ActionNewRound do
             muyu: nil,
             ju_count: 0,
             field_spell: 0,
+            sha256: "",
             __uf__: []
 
   (
@@ -53,6 +54,7 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         |> encode_muyu(msg)
         |> encode_ju_count(msg)
         |> encode_field_spell(msg)
+        |> encode_sha256(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -325,6 +327,18 @@ defmodule Soulless.Game.Lq.ActionNewRound do
           ArgumentError ->
             reraise Protox.EncodingError.new(:field_spell, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_sha256(acc, msg) do
+        try do
+          if msg.sha256 == "" do
+            acc
+          else
+            [acc, "\x9A\x01", Protox.Encode.encode_string(msg.sha256)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:sha256, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -488,6 +502,11 @@ defmodule Soulless.Game.Lq.ActionNewRound do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[field_spell: value], rest}
 
+            {19, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[sha256: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -566,7 +585,8 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         15 => {:opens, :unpacked, {:message, Soulless.Game.Lq.NewRoundOpenedTiles}},
         16 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         17 => {:ju_count, {:scalar, 0}, :uint32},
-        18 => {:field_spell, {:scalar, 0}, :uint32}
+        18 => {:field_spell, {:scalar, 0}, :uint32},
+        19 => {:sha256, {:scalar, ""}, :string}
       }
     end
 
@@ -591,6 +611,7 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         opens: {15, :unpacked, {:message, Soulless.Game.Lq.NewRoundOpenedTiles}},
         operation: {7, {:scalar, nil}, {:message, Soulless.Game.Lq.OptionalOperationList}},
         scores: {6, :packed, :int32},
+        sha256: {19, {:scalar, ""}, :string},
         tiles: {4, :unpacked, :string},
         tingpais0: {9, :unpacked, {:message, Soulless.Game.Lq.TingPaiDiscardInfo}},
         tingpais1: {10, :unpacked, {:message, Soulless.Game.Lq.TingPaiInfo}}
@@ -763,6 +784,15 @@ defmodule Soulless.Game.Lq.ActionNewRound do
           name: :field_spell,
           tag: 18,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "sha256",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :sha256,
+          tag: 19,
+          type: :string
         }
       ]
     end
@@ -1324,6 +1354,35 @@ defmodule Soulless.Game.Lq.ActionNewRound do
            }}
         end
       ),
+      (
+        def field_def(:sha256) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "sha256",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :sha256,
+             tag: 19,
+             type: :string
+           }}
+        end
+
+        def field_def("sha256") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "sha256",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :sha256,
+             tag: 19,
+             type: :string
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1416,6 +1475,9 @@ defmodule Soulless.Game.Lq.ActionNewRound do
     end,
     def default(:field_spell) do
       {:ok, 0}
+    end,
+    def default(:sha256) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}

@@ -1,10 +1,12 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ChestDataV2 do
+defmodule Soulless.Game.Lq.AccountMailRecord.MailSnapshot do
   @moduledoc false
-  defstruct chest_id: 0,
-            total_open_count: 0,
-            face_black_count: 0,
-            ticket_face_black_count: 0,
+  defstruct mail_id: 0,
+            reference_id: 0,
+            create_time: 0,
+            expire_time: 0,
+            take_attachment: 0,
+            attachments: [],
             __uf__: []
 
   (
@@ -21,10 +23,12 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
         []
-        |> encode_chest_id(msg)
-        |> encode_total_open_count(msg)
-        |> encode_face_black_count(msg)
-        |> encode_ticket_face_black_count(msg)
+        |> encode_mail_id(msg)
+        |> encode_reference_id(msg)
+        |> encode_create_time(msg)
+        |> encode_expire_time(msg)
+        |> encode_take_attachment(msg)
+        |> encode_attachments(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -32,55 +36,84 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
     []
 
     [
-      defp encode_chest_id(acc, msg) do
+      defp encode_mail_id(acc, msg) do
         try do
-          if msg.chest_id == 0 do
+          if msg.mail_id == 0 do
             acc
           else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.chest_id)]
+            [acc, "\b", Protox.Encode.encode_uint32(msg.mail_id)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:chest_id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:mail_id, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_total_open_count(acc, msg) do
+      defp encode_reference_id(acc, msg) do
         try do
-          if msg.total_open_count == 0 do
+          if msg.reference_id == 0 do
             acc
           else
-            [acc, "\x10", Protox.Encode.encode_uint32(msg.total_open_count)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.reference_id)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:total_open_count, "invalid field value"),
+            reraise Protox.EncodingError.new(:reference_id, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_create_time(acc, msg) do
+        try do
+          if msg.create_time == 0 do
+            acc
+          else
+            [acc, "\x18", Protox.Encode.encode_uint32(msg.create_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:create_time, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_expire_time(acc, msg) do
+        try do
+          if msg.expire_time == 0 do
+            acc
+          else
+            [acc, " ", Protox.Encode.encode_uint32(msg.expire_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:expire_time, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_take_attachment(acc, msg) do
+        try do
+          if msg.take_attachment == 0 do
+            acc
+          else
+            [acc, "(", Protox.Encode.encode_uint32(msg.take_attachment)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:take_attachment, "invalid field value"),
                     __STACKTRACE__
         end
       end,
-      defp encode_face_black_count(acc, msg) do
+      defp encode_attachments(acc, msg) do
         try do
-          if msg.face_black_count == 0 do
-            acc
-          else
-            [acc, "\x18", Protox.Encode.encode_uint32(msg.face_black_count)]
+          case msg.attachments do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "2", Protox.Encode.encode_message(value)]
+                end)
+              ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:face_black_count, "invalid field value"),
-                    __STACKTRACE__
-        end
-      end,
-      defp encode_ticket_face_black_count(acc, msg) do
-        try do
-          if msg.ticket_face_black_count == 0 do
-            acc
-          else
-            [acc, " ", Protox.Encode.encode_uint32(msg.ticket_face_black_count)]
-          end
-        rescue
-          ArgumentError ->
-            reraise Protox.EncodingError.new(:ticket_face_black_count, "invalid field value"),
-                    __STACKTRACE__
+            reraise Protox.EncodingError.new(:attachments, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -120,7 +153,7 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ChestDataV2))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.AccountMailRecord.MailSnapshot))
         end
       )
     )
@@ -139,19 +172,30 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
 
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[chest_id: value], rest}
+              {[mail_id: value], rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[total_open_count: value], rest}
+              {[reference_id: value], rest}
 
             {3, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[face_black_count: value], rest}
+              {[create_time: value], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[ticket_face_black_count: value], rest}
+              {[expire_time: value], rest}
+
+            {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[take_attachment: value], rest}
+
+            {6, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[attachments: msg.attachments ++ [Soulless.Game.Lq.RewardSlot.decode!(delimited)]],
+               rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -186,7 +230,7 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ChestDataV2,
+        Soulless.Game.Lq.AccountMailRecord.MailSnapshot,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -214,10 +258,12 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
           }
     def defs() do
       %{
-        1 => {:chest_id, {:scalar, 0}, :uint32},
-        2 => {:total_open_count, {:scalar, 0}, :uint32},
-        3 => {:face_black_count, {:scalar, 0}, :uint32},
-        4 => {:ticket_face_black_count, {:scalar, 0}, :uint32}
+        1 => {:mail_id, {:scalar, 0}, :uint32},
+        2 => {:reference_id, {:scalar, 0}, :uint32},
+        3 => {:create_time, {:scalar, 0}, :uint32},
+        4 => {:expire_time, {:scalar, 0}, :uint32},
+        5 => {:take_attachment, {:scalar, 0}, :uint32},
+        6 => {:attachments, :unpacked, {:message, Soulless.Game.Lq.RewardSlot}}
       }
     end
 
@@ -227,10 +273,12 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
           }
     def defs_by_name() do
       %{
-        chest_id: {1, {:scalar, 0}, :uint32},
-        face_black_count: {3, {:scalar, 0}, :uint32},
-        ticket_face_black_count: {4, {:scalar, 0}, :uint32},
-        total_open_count: {2, {:scalar, 0}, :uint32}
+        attachments: {6, :unpacked, {:message, Soulless.Game.Lq.RewardSlot}},
+        create_time: {3, {:scalar, 0}, :uint32},
+        expire_time: {4, {:scalar, 0}, :uint32},
+        mail_id: {1, {:scalar, 0}, :uint32},
+        reference_id: {2, {:scalar, 0}, :uint32},
+        take_attachment: {5, {:scalar, 0}, :uint32}
       }
     end
   )
@@ -241,39 +289,57 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "chestId",
+          json_name: "mailId",
           kind: {:scalar, 0},
           label: :optional,
-          name: :chest_id,
+          name: :mail_id,
           tag: 1,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "totalOpenCount",
+          json_name: "referenceId",
           kind: {:scalar, 0},
           label: :optional,
-          name: :total_open_count,
+          name: :reference_id,
           tag: 2,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "faceBlackCount",
+          json_name: "createTime",
           kind: {:scalar, 0},
           label: :optional,
-          name: :face_black_count,
+          name: :create_time,
           tag: 3,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "ticketFaceBlackCount",
+          json_name: "expireTime",
           kind: {:scalar, 0},
           label: :optional,
-          name: :ticket_face_black_count,
+          name: :expire_time,
           tag: 4,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "takeAttachment",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :take_attachment,
+          tag: 5,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "attachments",
+          kind: :unpacked,
+          label: :repeated,
+          name: :attachments,
+          tag: 6,
+          type: {:message, Soulless.Game.Lq.RewardSlot}
         }
       ]
     end
@@ -281,164 +347,233 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:chest_id) do
+        def field_def(:mail_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "chestId",
+             json_name: "mailId",
              kind: {:scalar, 0},
              label: :optional,
-             name: :chest_id,
+             name: :mail_id,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("chestId") do
+        def field_def("mailId") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "chestId",
+             json_name: "mailId",
              kind: {:scalar, 0},
              label: :optional,
-             name: :chest_id,
+             name: :mail_id,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("chest_id") do
+        def field_def("mail_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "chestId",
+             json_name: "mailId",
              kind: {:scalar, 0},
              label: :optional,
-             name: :chest_id,
+             name: :mail_id,
              tag: 1,
              type: :uint32
            }}
         end
       ),
       (
-        def field_def(:total_open_count) do
+        def field_def(:reference_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "totalOpenCount",
+             json_name: "referenceId",
              kind: {:scalar, 0},
              label: :optional,
-             name: :total_open_count,
+             name: :reference_id,
              tag: 2,
              type: :uint32
            }}
         end
 
-        def field_def("totalOpenCount") do
+        def field_def("referenceId") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "totalOpenCount",
+             json_name: "referenceId",
              kind: {:scalar, 0},
              label: :optional,
-             name: :total_open_count,
+             name: :reference_id,
              tag: 2,
              type: :uint32
            }}
         end
 
-        def field_def("total_open_count") do
+        def field_def("reference_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "totalOpenCount",
+             json_name: "referenceId",
              kind: {:scalar, 0},
              label: :optional,
-             name: :total_open_count,
+             name: :reference_id,
              tag: 2,
              type: :uint32
            }}
         end
       ),
       (
-        def field_def(:face_black_count) do
+        def field_def(:create_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "faceBlackCount",
+             json_name: "createTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :face_black_count,
+             name: :create_time,
              tag: 3,
              type: :uint32
            }}
         end
 
-        def field_def("faceBlackCount") do
+        def field_def("createTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "faceBlackCount",
+             json_name: "createTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :face_black_count,
+             name: :create_time,
              tag: 3,
              type: :uint32
            }}
         end
 
-        def field_def("face_black_count") do
+        def field_def("create_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "faceBlackCount",
+             json_name: "createTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :face_black_count,
+             name: :create_time,
              tag: 3,
              type: :uint32
            }}
         end
       ),
       (
-        def field_def(:ticket_face_black_count) do
+        def field_def(:expire_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "ticketFaceBlackCount",
+             json_name: "expireTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :ticket_face_black_count,
+             name: :expire_time,
              tag: 4,
              type: :uint32
            }}
         end
 
-        def field_def("ticketFaceBlackCount") do
+        def field_def("expireTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "ticketFaceBlackCount",
+             json_name: "expireTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :ticket_face_black_count,
+             name: :expire_time,
              tag: 4,
              type: :uint32
            }}
         end
 
-        def field_def("ticket_face_black_count") do
+        def field_def("expire_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "ticketFaceBlackCount",
+             json_name: "expireTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :ticket_face_black_count,
+             name: :expire_time,
              tag: 4,
              type: :uint32
            }}
         end
+      ),
+      (
+        def field_def(:take_attachment) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "takeAttachment",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :take_attachment,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("takeAttachment") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "takeAttachment",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :take_attachment,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("take_attachment") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "takeAttachment",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :take_attachment,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:attachments) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "attachments",
+             kind: :unpacked,
+             label: :repeated,
+             name: :attachments,
+             tag: 6,
+             type: {:message, Soulless.Game.Lq.RewardSlot}
+           }}
+        end
+
+        def field_def("attachments") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "attachments",
+             kind: :unpacked,
+             label: :repeated,
+             name: :attachments,
+             tag: 6,
+             type: {:message, Soulless.Game.Lq.RewardSlot}
+           }}
+        end
+
+        []
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -479,17 +614,23 @@ defmodule Soulless.Game.Lq.ChestDataV2 do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:chest_id) do
+    def default(:mail_id) do
       {:ok, 0}
     end,
-    def default(:total_open_count) do
+    def default(:reference_id) do
       {:ok, 0}
     end,
-    def default(:face_black_count) do
+    def default(:create_time) do
       {:ok, 0}
     end,
-    def default(:ticket_face_black_count) do
+    def default(:expire_time) do
       {:ok, 0}
+    end,
+    def default(:take_attachment) do
+      {:ok, 0}
+    end,
+    def default(:attachments) do
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

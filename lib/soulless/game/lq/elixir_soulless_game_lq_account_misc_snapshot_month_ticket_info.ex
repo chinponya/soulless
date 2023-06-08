@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.Announcement do
+defmodule Soulless.Game.Lq.AccountMiscSnapshot.MonthTicketInfo do
   @moduledoc false
-  defstruct id: 0, title: "", content: "", header_image: "", __uf__: []
+  defstruct id: 0, end_time: 0, last_pay_time: 0, record_start_time: 0, history: [], __uf__: []
 
   (
     (
@@ -18,9 +18,10 @@ defmodule Soulless.Game.Lq.Announcement do
       def encode!(msg) do
         []
         |> encode_id(msg)
-        |> encode_title(msg)
-        |> encode_content(msg)
-        |> encode_header_image(msg)
+        |> encode_end_time(msg)
+        |> encode_last_pay_time(msg)
+        |> encode_record_start_time(msg)
+        |> encode_history(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -40,40 +41,68 @@ defmodule Soulless.Game.Lq.Announcement do
             reraise Protox.EncodingError.new(:id, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_title(acc, msg) do
+      defp encode_end_time(acc, msg) do
         try do
-          if msg.title == "" do
+          if msg.end_time == 0 do
             acc
           else
-            [acc, "\x12", Protox.Encode.encode_string(msg.title)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.end_time)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:end_time, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_content(acc, msg) do
+      defp encode_last_pay_time(acc, msg) do
         try do
-          if msg.content == "" do
+          if msg.last_pay_time == 0 do
             acc
           else
-            [acc, "\x1A", Protox.Encode.encode_string(msg.content)]
+            [acc, "\x18", Protox.Encode.encode_uint32(msg.last_pay_time)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:content, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:last_pay_time, "invalid field value"),
+                    __STACKTRACE__
         end
       end,
-      defp encode_header_image(acc, msg) do
+      defp encode_record_start_time(acc, msg) do
         try do
-          if msg.header_image == "" do
+          if msg.record_start_time == 0 do
             acc
           else
-            [acc, "\"", Protox.Encode.encode_string(msg.header_image)]
+            [acc, " ", Protox.Encode.encode_uint32(msg.record_start_time)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:header_image, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:record_start_time, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_history(acc, msg) do
+        try do
+          case msg.history do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "*",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:history, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -113,7 +142,7 @@ defmodule Soulless.Game.Lq.Announcement do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.Announcement))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.AccountMiscSnapshot.MonthTicketInfo))
         end
       )
     )
@@ -135,19 +164,25 @@ defmodule Soulless.Game.Lq.Announcement do
               {[id: value], rest}
 
             {2, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[title: delimited], rest}
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[end_time: value], rest}
 
             {3, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[content: delimited], rest}
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[last_pay_time: value], rest}
 
             {4, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[record_start_time: value], rest}
+
+            {5, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[header_image: delimited], rest}
+              {[history: msg.history ++ Protox.Decode.parse_repeated_uint32([], delimited)], rest}
+
+            {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[history: msg.history ++ [value]], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -182,7 +217,7 @@ defmodule Soulless.Game.Lq.Announcement do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.Announcement,
+        Soulless.Game.Lq.AccountMiscSnapshot.MonthTicketInfo,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -211,9 +246,10 @@ defmodule Soulless.Game.Lq.Announcement do
     def defs() do
       %{
         1 => {:id, {:scalar, 0}, :uint32},
-        2 => {:title, {:scalar, ""}, :string},
-        3 => {:content, {:scalar, ""}, :string},
-        4 => {:header_image, {:scalar, ""}, :string}
+        2 => {:end_time, {:scalar, 0}, :uint32},
+        3 => {:last_pay_time, {:scalar, 0}, :uint32},
+        4 => {:record_start_time, {:scalar, 0}, :uint32},
+        5 => {:history, :packed, :uint32}
       }
     end
 
@@ -223,10 +259,11 @@ defmodule Soulless.Game.Lq.Announcement do
           }
     def defs_by_name() do
       %{
-        content: {3, {:scalar, ""}, :string},
-        header_image: {4, {:scalar, ""}, :string},
+        end_time: {2, {:scalar, 0}, :uint32},
+        history: {5, :packed, :uint32},
         id: {1, {:scalar, 0}, :uint32},
-        title: {2, {:scalar, ""}, :string}
+        last_pay_time: {3, {:scalar, 0}, :uint32},
+        record_start_time: {4, {:scalar, 0}, :uint32}
       }
     end
   )
@@ -246,30 +283,39 @@ defmodule Soulless.Game.Lq.Announcement do
         },
         %{
           __struct__: Protox.Field,
-          json_name: "title",
-          kind: {:scalar, ""},
+          json_name: "endTime",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :title,
+          name: :end_time,
           tag: 2,
-          type: :string
+          type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "content",
-          kind: {:scalar, ""},
+          json_name: "lastPayTime",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :content,
+          name: :last_pay_time,
           tag: 3,
-          type: :string
+          type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "headerImage",
-          kind: {:scalar, ""},
+          json_name: "recordStartTime",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :header_image,
+          name: :record_start_time,
           tag: 4,
-          type: :string
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "history",
+          kind: :packed,
+          label: :repeated,
+          name: :history,
+          tag: 5,
+          type: :uint32
         }
       ]
     end
@@ -306,102 +352,153 @@ defmodule Soulless.Game.Lq.Announcement do
         []
       ),
       (
-        def field_def(:title) do
+        def field_def(:end_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "title",
-             kind: {:scalar, ""},
+             json_name: "endTime",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :title,
+             name: :end_time,
              tag: 2,
-             type: :string
+             type: :uint32
            }}
         end
 
-        def field_def("title") do
+        def field_def("endTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "title",
-             kind: {:scalar, ""},
+             json_name: "endTime",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :title,
+             name: :end_time,
              tag: 2,
-             type: :string
+             type: :uint32
+           }}
+        end
+
+        def field_def("end_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "endTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :end_time,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:last_pay_time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lastPayTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :last_pay_time,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("lastPayTime") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lastPayTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :last_pay_time,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("last_pay_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lastPayTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :last_pay_time,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:record_start_time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "recordStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :record_start_time,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+
+        def field_def("recordStartTime") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "recordStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :record_start_time,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+
+        def field_def("record_start_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "recordStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :record_start_time,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:history) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "history",
+             kind: :packed,
+             label: :repeated,
+             name: :history,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("history") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "history",
+             kind: :packed,
+             label: :repeated,
+             name: :history,
+             tag: 5,
+             type: :uint32
            }}
         end
 
         []
-      ),
-      (
-        def field_def(:content) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "content",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :content,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        def field_def("content") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "content",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :content,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        []
-      ),
-      (
-        def field_def(:header_image) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
-
-        def field_def("headerImage") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
-
-        def field_def("header_image") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -445,14 +542,17 @@ defmodule Soulless.Game.Lq.Announcement do
     def default(:id) do
       {:ok, 0}
     end,
-    def default(:title) do
-      {:ok, ""}
+    def default(:end_time) do
+      {:ok, 0}
     end,
-    def default(:content) do
-      {:ok, ""}
+    def default(:last_pay_time) do
+      {:ok, 0}
     end,
-    def default(:header_image) do
-      {:ok, ""}
+    def default(:record_start_time) do
+      {:ok, 0}
+    end,
+    def default(:history) do
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

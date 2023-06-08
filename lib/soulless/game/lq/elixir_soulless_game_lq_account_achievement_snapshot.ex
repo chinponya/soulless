@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.Announcement do
+defmodule Soulless.Game.Lq.AccountAchievementSnapshot do
   @moduledoc false
-  defstruct id: 0, title: "", content: "", header_image: "", __uf__: []
+  defstruct achievements: [], rewarded_group: nil, version: nil, __uf__: []
 
   (
     (
@@ -17,10 +17,9 @@ defmodule Soulless.Game.Lq.Announcement do
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
         []
-        |> encode_id(msg)
-        |> encode_title(msg)
-        |> encode_content(msg)
-        |> encode_header_image(msg)
+        |> encode_achievements(msg)
+        |> encode_rewarded_group(msg)
+        |> encode_version(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -28,52 +27,48 @@ defmodule Soulless.Game.Lq.Announcement do
     []
 
     [
-      defp encode_id(acc, msg) do
+      defp encode_achievements(acc, msg) do
         try do
-          if msg.id == 0 do
-            acc
-          else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.id)]
+          case msg.achievements do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\n", Protox.Encode.encode_message(value)]
+                end)
+              ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:achievements, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_title(acc, msg) do
+      defp encode_rewarded_group(acc, msg) do
         try do
-          if msg.title == "" do
+          if msg.rewarded_group == nil do
             acc
           else
-            [acc, "\x12", Protox.Encode.encode_string(msg.title)]
+            [acc, "\x12", Protox.Encode.encode_message(msg.rewarded_group)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:title, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:rewarded_group, "invalid field value"),
+                    __STACKTRACE__
         end
       end,
-      defp encode_content(acc, msg) do
+      defp encode_version(acc, msg) do
         try do
-          if msg.content == "" do
+          if msg.version == nil do
             acc
           else
-            [acc, "\x1A", Protox.Encode.encode_string(msg.content)]
+            [acc, "\x1A", Protox.Encode.encode_message(msg.version)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:content, "invalid field value"), __STACKTRACE__
-        end
-      end,
-      defp encode_header_image(acc, msg) do
-        try do
-          if msg.header_image == "" do
-            acc
-          else
-            [acc, "\"", Protox.Encode.encode_string(msg.header_image)]
-          end
-        rescue
-          ArgumentError ->
-            reraise Protox.EncodingError.new(:header_image, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:version, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -113,7 +108,7 @@ defmodule Soulless.Game.Lq.Announcement do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.Announcement))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.AccountAchievementSnapshot))
         end
       )
     )
@@ -131,23 +126,41 @@ defmodule Soulless.Game.Lq.Announcement do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[id: value], rest}
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 achievements:
+                   msg.achievements ++ [Soulless.Game.Lq.AchievementProgress.decode!(delimited)]
+               ], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[title: delimited], rest}
+
+              {[
+                 rewarded_group:
+                   Protox.MergeMessage.merge(
+                     msg.rewarded_group,
+                     Soulless.Game.Lq.AccountAchievementSnapshot.RewardedGroupSnapshot.decode!(
+                       delimited
+                     )
+                   )
+               ], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[content: delimited], rest}
 
-            {4, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[header_image: delimited], rest}
+              {[
+                 version:
+                   Protox.MergeMessage.merge(
+                     msg.version,
+                     Soulless.Game.Lq.AccountAchievementSnapshot.AchievementVersion.decode!(
+                       delimited
+                     )
+                   )
+               ], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -182,7 +195,7 @@ defmodule Soulless.Game.Lq.Announcement do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.Announcement,
+        Soulless.Game.Lq.AccountAchievementSnapshot,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -210,10 +223,13 @@ defmodule Soulless.Game.Lq.Announcement do
           }
     def defs() do
       %{
-        1 => {:id, {:scalar, 0}, :uint32},
-        2 => {:title, {:scalar, ""}, :string},
-        3 => {:content, {:scalar, ""}, :string},
-        4 => {:header_image, {:scalar, ""}, :string}
+        1 => {:achievements, :unpacked, {:message, Soulless.Game.Lq.AchievementProgress}},
+        2 =>
+          {:rewarded_group, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountAchievementSnapshot.RewardedGroupSnapshot}},
+        3 =>
+          {:version, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountAchievementSnapshot.AchievementVersion}}
       }
     end
 
@@ -223,10 +239,13 @@ defmodule Soulless.Game.Lq.Announcement do
           }
     def defs_by_name() do
       %{
-        content: {3, {:scalar, ""}, :string},
-        header_image: {4, {:scalar, ""}, :string},
-        id: {1, {:scalar, 0}, :uint32},
-        title: {2, {:scalar, ""}, :string}
+        achievements: {1, :unpacked, {:message, Soulless.Game.Lq.AchievementProgress}},
+        rewarded_group:
+          {2, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountAchievementSnapshot.RewardedGroupSnapshot}},
+        version:
+          {3, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountAchievementSnapshot.AchievementVersion}}
       }
     end
   )
@@ -237,39 +256,30 @@ defmodule Soulless.Game.Lq.Announcement do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "id",
-          kind: {:scalar, 0},
-          label: :optional,
-          name: :id,
+          json_name: "achievements",
+          kind: :unpacked,
+          label: :repeated,
+          name: :achievements,
           tag: 1,
-          type: :uint32
+          type: {:message, Soulless.Game.Lq.AchievementProgress}
         },
         %{
           __struct__: Protox.Field,
-          json_name: "title",
-          kind: {:scalar, ""},
+          json_name: "rewardedGroup",
+          kind: {:scalar, nil},
           label: :optional,
-          name: :title,
+          name: :rewarded_group,
           tag: 2,
-          type: :string
+          type: {:message, Soulless.Game.Lq.AccountAchievementSnapshot.RewardedGroupSnapshot}
         },
         %{
           __struct__: Protox.Field,
-          json_name: "content",
-          kind: {:scalar, ""},
+          json_name: "version",
+          kind: {:scalar, nil},
           label: :optional,
-          name: :content,
+          name: :version,
           tag: 3,
-          type: :string
-        },
-        %{
-          __struct__: Protox.Field,
-          json_name: "headerImage",
-          kind: {:scalar, ""},
-          label: :optional,
-          name: :header_image,
-          tag: 4,
-          type: :string
+          type: {:message, Soulless.Game.Lq.AccountAchievementSnapshot.AchievementVersion}
         }
       ]
     end
@@ -277,131 +287,102 @@ defmodule Soulless.Game.Lq.Announcement do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:id) do
+        def field_def(:achievements) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "id",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :id,
+             json_name: "achievements",
+             kind: :unpacked,
+             label: :repeated,
+             name: :achievements,
              tag: 1,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.AchievementProgress}
            }}
         end
 
-        def field_def("id") do
+        def field_def("achievements") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "id",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :id,
+             json_name: "achievements",
+             kind: :unpacked,
+             label: :repeated,
+             name: :achievements,
              tag: 1,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.AchievementProgress}
            }}
         end
 
         []
       ),
       (
-        def field_def(:title) do
+        def field_def(:rewarded_group) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "title",
-             kind: {:scalar, ""},
+             json_name: "rewardedGroup",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :title,
+             name: :rewarded_group,
              tag: 2,
-             type: :string
+             type: {:message, Soulless.Game.Lq.AccountAchievementSnapshot.RewardedGroupSnapshot}
            }}
         end
 
-        def field_def("title") do
+        def field_def("rewardedGroup") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "title",
-             kind: {:scalar, ""},
+             json_name: "rewardedGroup",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :title,
+             name: :rewarded_group,
              tag: 2,
-             type: :string
+             type: {:message, Soulless.Game.Lq.AccountAchievementSnapshot.RewardedGroupSnapshot}
+           }}
+        end
+
+        def field_def("rewarded_group") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewardedGroup",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :rewarded_group,
+             tag: 2,
+             type: {:message, Soulless.Game.Lq.AccountAchievementSnapshot.RewardedGroupSnapshot}
+           }}
+        end
+      ),
+      (
+        def field_def(:version) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "version",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :version,
+             tag: 3,
+             type: {:message, Soulless.Game.Lq.AccountAchievementSnapshot.AchievementVersion}
+           }}
+        end
+
+        def field_def("version") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "version",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :version,
+             tag: 3,
+             type: {:message, Soulless.Game.Lq.AccountAchievementSnapshot.AchievementVersion}
            }}
         end
 
         []
-      ),
-      (
-        def field_def(:content) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "content",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :content,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        def field_def("content") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "content",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :content,
-             tag: 3,
-             type: :string
-           }}
-        end
-
-        []
-      ),
-      (
-        def field_def(:header_image) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
-
-        def field_def("headerImage") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
-
-        def field_def("header_image") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "headerImage",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :header_image,
-             tag: 4,
-             type: :string
-           }}
-        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -442,17 +423,14 @@ defmodule Soulless.Game.Lq.Announcement do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:id) do
-      {:ok, 0}
+    def default(:achievements) do
+      {:error, :no_default_value}
     end,
-    def default(:title) do
-      {:ok, ""}
+    def default(:rewarded_group) do
+      {:ok, nil}
     end,
-    def default(:content) do
-      {:ok, ""}
-    end,
-    def default(:header_image) do
-      {:ok, ""}
+    def default(:version) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

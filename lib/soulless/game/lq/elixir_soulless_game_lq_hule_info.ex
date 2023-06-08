@@ -22,6 +22,9 @@ defmodule Soulless.Game.Lq.HuleInfo do
             point_sum: 0,
             dadian: 0,
             baopai: 0,
+            baopai_seats: [],
+            lines: [],
+            tianming_bonus: 0,
             __uf__: []
 
   (
@@ -59,6 +62,9 @@ defmodule Soulless.Game.Lq.HuleInfo do
         |> encode_point_sum(msg)
         |> encode_dadian(msg)
         |> encode_baopai(msg)
+        |> encode_baopai_seats(msg)
+        |> encode_lines(msg)
+        |> encode_tianming_bonus(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -354,6 +360,64 @@ defmodule Soulless.Game.Lq.HuleInfo do
           ArgumentError ->
             reraise Protox.EncodingError.new(:baopai, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_baopai_seats(acc, msg) do
+        try do
+          case msg.baopai_seats do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "\xB2\x01",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:baopai_seats, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_lines(acc, msg) do
+        try do
+          case msg.lines do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xBA\x01", Protox.Encode.encode_string(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:lines, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_tianming_bonus(acc, msg) do
+        try do
+          if msg.tianming_bonus == 0 do
+            acc
+          else
+            [acc, "\xC0\x01", Protox.Encode.encode_uint32(msg.tianming_bonus)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:tianming_bonus, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -500,6 +564,28 @@ defmodule Soulless.Game.Lq.HuleInfo do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[baopai: value], rest}
 
+            {22, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 baopai_seats:
+                   msg.baopai_seats ++ Protox.Decode.parse_repeated_uint32([], delimited)
+               ], rest}
+
+            {22, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[baopai_seats: msg.baopai_seats ++ [value]], rest}
+
+            {23, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[lines: msg.lines ++ [delimited]], rest}
+
+            {24, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[tianming_bonus: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -581,7 +667,10 @@ defmodule Soulless.Game.Lq.HuleInfo do
         18 => {:title_id, {:scalar, 0}, :uint32},
         19 => {:point_sum, {:scalar, 0}, :uint32},
         20 => {:dadian, {:scalar, 0}, :uint32},
-        21 => {:baopai, {:scalar, 0}, :uint32}
+        21 => {:baopai, {:scalar, 0}, :uint32},
+        22 => {:baopai_seats, :packed, :uint32},
+        23 => {:lines, :unpacked, :string},
+        24 => {:tianming_bonus, {:scalar, 0}, :uint32}
       }
     end
 
@@ -592,6 +681,7 @@ defmodule Soulless.Game.Lq.HuleInfo do
     def defs_by_name() do
       %{
         baopai: {21, {:scalar, 0}, :uint32},
+        baopai_seats: {22, :packed, :uint32},
         count: {11, {:scalar, 0}, :uint32},
         dadian: {20, {:scalar, 0}, :uint32},
         doras: {8, :unpacked, :string},
@@ -600,6 +690,7 @@ defmodule Soulless.Game.Lq.HuleInfo do
         hand: {1, :unpacked, :string},
         hu_tile: {3, {:scalar, ""}, :string},
         li_doras: {9, :unpacked, :string},
+        lines: {23, :unpacked, :string},
         liqi: {7, {:scalar, false}, :bool},
         ming: {2, :unpacked, :string},
         point_rong: {15, {:scalar, 0}, :uint32},
@@ -608,6 +699,7 @@ defmodule Soulless.Game.Lq.HuleInfo do
         point_zimo_xian: {17, {:scalar, 0}, :uint32},
         qinjia: {6, {:scalar, false}, :bool},
         seat: {4, {:scalar, 0}, :uint32},
+        tianming_bonus: {24, {:scalar, 0}, :uint32},
         title: {14, {:scalar, ""}, :string},
         title_id: {18, {:scalar, 0}, :uint32},
         yiman: {10, {:scalar, false}, :bool},
@@ -807,6 +899,33 @@ defmodule Soulless.Game.Lq.HuleInfo do
           label: :optional,
           name: :baopai,
           tag: 21,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "baopaiSeats",
+          kind: :packed,
+          label: :repeated,
+          name: :baopai_seats,
+          tag: 22,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "lines",
+          kind: :unpacked,
+          label: :repeated,
+          name: :lines,
+          tag: 23,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "tianmingBonus",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :tianming_bonus,
+          tag: 24,
           type: :uint32
         }
       ]
@@ -1500,6 +1619,115 @@ defmodule Soulless.Game.Lq.HuleInfo do
 
         []
       ),
+      (
+        def field_def(:baopai_seats) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "baopaiSeats",
+             kind: :packed,
+             label: :repeated,
+             name: :baopai_seats,
+             tag: 22,
+             type: :uint32
+           }}
+        end
+
+        def field_def("baopaiSeats") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "baopaiSeats",
+             kind: :packed,
+             label: :repeated,
+             name: :baopai_seats,
+             tag: 22,
+             type: :uint32
+           }}
+        end
+
+        def field_def("baopai_seats") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "baopaiSeats",
+             kind: :packed,
+             label: :repeated,
+             name: :baopai_seats,
+             tag: 22,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:lines) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lines",
+             kind: :unpacked,
+             label: :repeated,
+             name: :lines,
+             tag: 23,
+             type: :string
+           }}
+        end
+
+        def field_def("lines") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lines",
+             kind: :unpacked,
+             label: :repeated,
+             name: :lines,
+             tag: 23,
+             type: :string
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:tianming_bonus) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tianmingBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tianming_bonus,
+             tag: 24,
+             type: :uint32
+           }}
+        end
+
+        def field_def("tianmingBonus") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tianmingBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tianming_bonus,
+             tag: 24,
+             type: :uint32
+           }}
+        end
+
+        def field_def("tianming_bonus") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tianmingBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tianming_bonus,
+             tag: 24,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1600,6 +1828,15 @@ defmodule Soulless.Game.Lq.HuleInfo do
       {:ok, 0}
     end,
     def default(:baopai) do
+      {:ok, 0}
+    end,
+    def default(:baopai_seats) do
+      {:error, :no_default_value}
+    end,
+    def default(:lines) do
+      {:error, :no_default_value}
+    end,
+    def default(:tianming_bonus) do
       {:ok, 0}
     end,
     def default(_) do
