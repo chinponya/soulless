@@ -14,6 +14,7 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
             hidden_zones: "",
             emoji_switch: false,
             player_roster_type: 0,
+            disable_broadcast: 0,
             __uf__: []
 
   (
@@ -43,6 +44,7 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
         |> encode_hidden_zones(msg)
         |> encode_emoji_switch(msg)
         |> encode_player_roster_type(msg)
+        |> encode_disable_broadcast(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -208,6 +210,19 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
             reraise Protox.EncodingError.new(:player_roster_type, "invalid field value"),
                     __STACKTRACE__
         end
+      end,
+      defp encode_disable_broadcast(acc, msg) do
+        try do
+          if msg.disable_broadcast == 0 do
+            acc
+          else
+            [acc, "p", Protox.Encode.encode_uint32(msg.disable_broadcast)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:disable_broadcast, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -326,6 +341,10 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[player_roster_type: value], rest}
 
+            {14, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[disable_broadcast: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -400,7 +419,8 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
         10 => {:banned_zones, {:scalar, ""}, :string},
         11 => {:hidden_zones, {:scalar, ""}, :string},
         12 => {:emoji_switch, {:scalar, false}, :bool},
-        13 => {:player_roster_type, {:scalar, 0}, :uint32}
+        13 => {:player_roster_type, {:scalar, 0}, :uint32},
+        14 => {:disable_broadcast, {:scalar, 0}, :uint32}
       }
     end
 
@@ -415,6 +435,7 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
         banned_zones: {10, {:scalar, ""}, :string},
         contest_name: {1, {:scalar, ""}, :string},
         contest_type: {9, {:scalar, 0}, :uint32},
+        disable_broadcast: {14, {:scalar, 0}, :uint32},
         emoji_switch: {12, {:scalar, false}, :bool},
         finish_time: {3, {:scalar, 0}, :uint32},
         game_rule_setting: {6, {:scalar, nil}, {:message, Soulless.Tourney.Lq.GameRuleSetting}},
@@ -546,6 +567,15 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
           label: :optional,
           name: :player_roster_type,
           tag: 13,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "disableBroadcast",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :disable_broadcast,
+          tag: 14,
           type: :uint32
         }
       ]
@@ -1062,6 +1092,46 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
            }}
         end
       ),
+      (
+        def field_def(:disable_broadcast) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableBroadcast",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_broadcast,
+             tag: 14,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disableBroadcast") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableBroadcast",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_broadcast,
+             tag: 14,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disable_broadcast") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableBroadcast",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_broadcast,
+             tag: 14,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1138,6 +1208,9 @@ defmodule Soulless.Tourney.Lq.ReqUpdateContestGameRule do
       {:ok, false}
     end,
     def default(:player_roster_type) do
+      {:ok, 0}
+    end,
+    def default(:disable_broadcast) do
       {:ok, 0}
     end,
     def default(_) do

@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
   @moduledoc false
-  defstruct notice: nil, __uf__: []
+  defstruct notice: [], __uf__: []
 
   (
     (
@@ -25,10 +25,17 @@ defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
     [
       defp encode_notice(acc, msg) do
         try do
-          if msg.notice == nil do
-            acc
-          else
-            [acc, "\n", Protox.Encode.encode_message(msg.notice)]
+          case msg.notice do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\n", Protox.Encode.encode_message(value)]
+                end)
+              ]
           end
         rescue
           ArgumentError ->
@@ -93,13 +100,8 @@ defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
-              {[
-                 notice:
-                   Protox.MergeMessage.merge(
-                     msg.notice,
-                     Soulless.Tourney.Lq.RollingNotice.decode!(delimited)
-                   )
-               ], rest}
+              {[notice: msg.notice ++ [Soulless.Tourney.Lq.RollingNotice.decode!(delimited)]],
+               rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -161,7 +163,7 @@ defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:notice, {:scalar, nil}, {:message, Soulless.Tourney.Lq.RollingNotice}}}
+      %{1 => {:notice, :unpacked, {:message, Soulless.Tourney.Lq.RollingNotice}}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -169,7 +171,7 @@ defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{notice: {1, {:scalar, nil}, {:message, Soulless.Tourney.Lq.RollingNotice}}}
+      %{notice: {1, :unpacked, {:message, Soulless.Tourney.Lq.RollingNotice}}}
     end
   )
 
@@ -180,8 +182,8 @@ defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
         %{
           __struct__: Protox.Field,
           json_name: "notice",
-          kind: {:scalar, nil},
-          label: :optional,
+          kind: :unpacked,
+          label: :repeated,
           name: :notice,
           tag: 1,
           type: {:message, Soulless.Tourney.Lq.RollingNotice}
@@ -197,8 +199,8 @@ defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
            %{
              __struct__: Protox.Field,
              json_name: "notice",
-             kind: {:scalar, nil},
-             label: :optional,
+             kind: :unpacked,
+             label: :repeated,
              name: :notice,
              tag: 1,
              type: {:message, Soulless.Tourney.Lq.RollingNotice}
@@ -210,8 +212,8 @@ defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
            %{
              __struct__: Protox.Field,
              json_name: "notice",
-             kind: {:scalar, nil},
-             label: :optional,
+             kind: :unpacked,
+             label: :repeated,
              name: :notice,
              tag: 1,
              type: {:message, Soulless.Tourney.Lq.RollingNotice}
@@ -260,7 +262,7 @@ defmodule Soulless.Tourney.Lq.NotifyRollingNotice do
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
     def default(:notice) do
-      {:ok, nil}
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

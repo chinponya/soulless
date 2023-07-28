@@ -28,6 +28,7 @@ defmodule Soulless.Tourney.Lq.Account do
             challenge_levels: [],
             achievement_count: [],
             frozen_state: 0,
+            loading_image: [],
             __uf__: []
 
   (
@@ -71,6 +72,7 @@ defmodule Soulless.Tourney.Lq.Account do
         |> encode_challenge_levels(msg)
         |> encode_achievement_count(msg)
         |> encode_frozen_state(msg)
+        |> encode_loading_image(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -434,6 +436,33 @@ defmodule Soulless.Tourney.Lq.Account do
           ArgumentError ->
             reraise Protox.EncodingError.new(:frozen_state, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_loading_image(acc, msg) do
+        try do
+          case msg.loading_image do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "\xF2\x01",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:loading_image, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -649,6 +678,19 @@ defmodule Soulless.Tourney.Lq.Account do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[frozen_state: value], rest}
 
+            {30, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 loading_image:
+                   msg.loading_image ++ Protox.Decode.parse_repeated_uint32([], delimited)
+               ], rest}
+
+            {30, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[loading_image: msg.loading_image ++ [value]], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -742,7 +784,8 @@ defmodule Soulless.Tourney.Lq.Account do
         28 =>
           {:achievement_count, :unpacked,
            {:message, Soulless.Tourney.Lq.Account.AchievementCount}},
-        29 => {:frozen_state, {:scalar, 0}, :uint32}
+        29 => {:frozen_state, {:scalar, 0}, :uint32},
+        30 => {:loading_image, :packed, :uint32}
       }
     end
 
@@ -767,6 +810,7 @@ defmodule Soulless.Tourney.Lq.Account do
         gold: {11, {:scalar, 0}, :uint32},
         level: {21, {:scalar, nil}, {:message, Soulless.Tourney.Lq.AccountLevel}},
         level3: {22, {:scalar, nil}, {:message, Soulless.Tourney.Lq.AccountLevel}},
+        loading_image: {30, :packed, :uint32},
         login_time: {3, {:scalar, 0}, :uint32},
         logout_time: {4, {:scalar, 0}, :uint32},
         nickname: {2, {:scalar, ""}, :string},
@@ -1031,6 +1075,15 @@ defmodule Soulless.Tourney.Lq.Account do
           label: :optional,
           name: :frozen_state,
           tag: 29,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "loadingImage",
+          kind: :packed,
+          label: :repeated,
+          name: :loading_image,
+          tag: 30,
           type: :uint32
         }
       ]
@@ -1986,6 +2039,46 @@ defmodule Soulless.Tourney.Lq.Account do
            }}
         end
       ),
+      (
+        def field_def(:loading_image) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "loadingImage",
+             kind: :packed,
+             label: :repeated,
+             name: :loading_image,
+             tag: 30,
+             type: :uint32
+           }}
+        end
+
+        def field_def("loadingImage") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "loadingImage",
+             kind: :packed,
+             label: :repeated,
+             name: :loading_image,
+             tag: 30,
+             type: :uint32
+           }}
+        end
+
+        def field_def("loading_image") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "loadingImage",
+             kind: :packed,
+             label: :repeated,
+             name: :loading_image,
+             tag: 30,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -2105,6 +2198,9 @@ defmodule Soulless.Tourney.Lq.Account do
     end,
     def default(:frozen_state) do
       {:ok, 0}
+    end,
+    def default(:loading_image) do
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

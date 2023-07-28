@@ -7,6 +7,7 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
             goods_click_text: "",
             maintain: nil,
             enable_for_frozen_account: false,
+            extra_data: "",
             __uf__: []
 
   (
@@ -29,6 +30,7 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
         |> encode_goods_click_text(msg)
         |> encode_maintain(msg)
         |> encode_enable_for_frozen_account(msg)
+        |> encode_extra_data(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -109,6 +111,18 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
           ArgumentError ->
             reraise Protox.EncodingError.new(:enable_for_frozen_account, "invalid field value"),
                     __STACKTRACE__
+        end
+      end,
+      defp encode_extra_data(acc, msg) do
+        try do
+          if msg.extra_data == "" do
+            acc
+          else
+            [acc, ":", Protox.Encode.encode_string(msg.extra_data)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:extra_data, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -199,6 +213,11 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
               {value, rest} = Protox.Decode.parse_bool(bytes)
               {[enable_for_frozen_account: value], rest}
 
+            {7, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[extra_data: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -267,7 +286,8 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
         5 =>
           {:maintain, {:scalar, nil},
            {:message, Soulless.Tourney.Lq.PaymentSettingV2.PaymentMaintain}},
-        6 => {:enable_for_frozen_account, {:scalar, false}, :bool}
+        6 => {:enable_for_frozen_account, {:scalar, false}, :bool},
+        7 => {:extra_data, {:scalar, ""}, :string}
       }
     end
 
@@ -278,6 +298,7 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
     def defs_by_name() do
       %{
         enable_for_frozen_account: {6, {:scalar, false}, :bool},
+        extra_data: {7, {:scalar, ""}, :string},
         goods_click_action: {3, {:scalar, 0}, :uint32},
         goods_click_text: {4, {:scalar, ""}, :string},
         is_show: {2, {:scalar, false}, :bool},
@@ -345,6 +366,15 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
           name: :enable_for_frozen_account,
           tag: 6,
           type: :bool
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "extraData",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :extra_data,
+          tag: 7,
+          type: :string
         }
       ]
     end
@@ -569,6 +599,46 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
            }}
         end
       ),
+      (
+        def field_def(:extra_data) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "extraData",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :extra_data,
+             tag: 7,
+             type: :string
+           }}
+        end
+
+        def field_def("extraData") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "extraData",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :extra_data,
+             tag: 7,
+             type: :string
+           }}
+        end
+
+        def field_def("extra_data") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "extraData",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :extra_data,
+             tag: 7,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -625,6 +695,9 @@ defmodule Soulless.Tourney.Lq.PaymentSettingV2.PaymentSettingUnit do
     end,
     def default(:enable_for_frozen_account) do
       {:ok, false}
+    end,
+    def default(:extra_data) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}

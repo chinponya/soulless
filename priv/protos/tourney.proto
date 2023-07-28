@@ -21,6 +21,7 @@ service CustomizedContestManagerApi {
   rpc searchAccountByNickname (ReqSearchAccountByNickname) returns (ResSearchAccountByNickname);
   rpc searchAccountByEid (ReqSearchAccountByEid) returns (ResSearchAccountByEid);
   rpc fetchContestPlayer (ReqCommon) returns (ResFetchCustomizedContestPlayer);
+  rpc fetchContestMatchingPlayer (ReqCommon) returns (ResFetchCustomizedContestPlayer);
   rpc updateContestPlayer (ReqUpdateCustomizedContestPlayer) returns (ResCommon);
   rpc startManageGame (ReqCommon) returns (ResStartManageGame);
   rpc stopManageGame (ReqCommon) returns (ResCommon);
@@ -45,7 +46,7 @@ service CustomizedContestManagerApi {
   rpc addContestObserver (ReqAddContestObserver) returns (ResAddContestObserver);
   rpc removeContestObserver (ReqRemoveContestObserver) returns (ResCommon);
   rpc fetchContestChatHistory (ReqCommon) returns (ResFetchContestChatHistory);
-  rpc clearChatHistory (ReqClearChatHistory) returns (ResCommon);
+  rpc clearChatHistory (ReqCommon) returns (ResCommon);
 }
 
 message CustomizedContest {
@@ -68,6 +69,7 @@ message CustomizedContest {
   uint32 observer_switch = 17;
   uint32 emoji_switch = 18;
   uint32 player_roster_type = 19;
+  uint32 disable_broadcast = 20;
 }
 
 message ContestGameInfo {
@@ -201,6 +203,7 @@ message ReqUpdateContestGameRule {
   string hidden_zones = 11;
   bool emoji_switch = 12;
   uint32 player_roster_type = 13;
+  uint32 disable_broadcast = 14;
 }
 
 message ReqSearchAccountByNickname {
@@ -565,6 +568,8 @@ message AccountLevel {
 message ViewSlot {
   uint32 slot = 1;
   uint32 item_id = 2;
+  uint32 type = 3;
+  repeated uint32 item_id_list = 4;
 }
 
 message Account {
@@ -595,6 +600,7 @@ message Account {
   repeated ChallengeLevel challenge_levels = 27;
   repeated AchievementCount achievement_count = 28;
   uint32 frozen_state = 29;
+  repeated uint32 loading_image = 30;
   message PlatformDiamond {
     uint32 id = 1;
     uint32 count = 2;
@@ -777,6 +783,7 @@ message GameMode {
 message GameTestingEnvironmentSet {
   uint32 paixing = 1;
   uint32 left_count = 2;
+  uint32 field_spell_var = 3;
 }
 
 message GameDetailRule {
@@ -831,7 +838,18 @@ message GameDetailRule {
   uint32 huansanzhang = 49;
   uint32 chuanma = 50;
   uint32 reveal_discard = 51;
+  uint32 field_spell_mode = 52;
+  uint32 zhanxing = 53;
+  uint32 tianming_mode = 54;
   bool disable_leijiyiman = 60;
+  uint32 disable_double_yakuman = 62;
+  uint32 disable_composite_yakuman = 63;
+  uint32 enable_shiti = 64;
+  uint32 enable_nontsumo_liqi = 65;
+  uint32 disable_double_wind_four_fu = 66;
+  uint32 disable_angang_guoshi = 67;
+  uint32 enable_renhe = 68;
+  uint32 enable_baopai_extend_settings = 69;
 }
 
 message Room {
@@ -945,6 +963,7 @@ message Mail {
   uint32 reference_id = 9;
   repeated I18nContext title_i18n = 10;
   repeated I18nContext content_i18n = 11;
+  uint32 template_id = 12;
 }
 
 message AchievementProgress {
@@ -1063,6 +1082,8 @@ message ClientDeviceInfo {
   string sale_platform = 7;
   string hardware_vendor = 8;
   string model_number = 9;
+  uint32 screen_width = 10;
+  uint32 screen_height = 11;
 }
 
 message ClientVersionInfo {
@@ -1081,6 +1102,7 @@ message Announcement {
   uint32 id = 1;
   string title = 2;
   string content = 3;
+  string header_image = 4;
 }
 
 message TaskProgress {
@@ -1110,6 +1132,7 @@ message RPGActivity {
   RPGState current_state = 7;
   RPGState last_show_state = 8;
   repeated uint32 received_rewards = 9;
+  uint32 last_show_id = 10;
 }
 
 message ActivityArenaData {
@@ -1165,6 +1188,10 @@ message AccountActivityUpdate {
   repeated lq.MineActivityData mine_data = 1;
   repeated lq.RPGActivity rpg_data = 2;
   repeated ActivityFeedData feed_data = 3;
+  repeated lq.ActivitySpotData spot_data = 4;
+  repeated lq.ActivityFriendGiftData friend_gift_data = 5;
+  repeated lq.ActivityUpgradeData upgrade_data = 6;
+  repeated lq.ActivityGachaUpdateData gacha_data = 7;
 }
 
 message ActivityFeedData {
@@ -1186,6 +1213,67 @@ message ActivityFeedData {
     uint32 from_account_id = 4;
     uint32 time = 5;
     uint32 received = 6;
+  }
+
+}
+
+message ActivityFriendGiftData {
+  uint32 activity_id = 1;
+  uint32 max_inbox_id = 2;
+  CountWithTimeData receive_data = 3;
+  CountWithTimeData send_data = 4;
+  repeated GiftBoxData gift_inbox = 5;
+  message CountWithTimeData {
+    uint32 count = 1;
+    uint32 last_update_time = 2;
+    repeated uint32 send_friend_id = 3;
+  }
+
+  message GiftBoxData {
+    uint32 id = 1;
+    uint32 item_id = 2;
+    uint32 count = 3;
+    uint32 from_account_id = 4;
+    uint32 time = 5;
+    uint32 received = 6;
+  }
+
+}
+
+message ActivityUpgradeData {
+  uint32 activity_id = 1;
+  repeated LevelGroup groups = 2;
+  uint32 received_level = 3;
+  message LevelGroup {
+    uint32 group_id = 1;
+    uint32 level = 2;
+  }
+
+}
+
+message GachaRecord {
+  uint32 id = 1;
+  uint32 count = 2;
+}
+
+message ActivityGachaData {
+  uint32 activity_id = 1;
+  repeated GachaRecord gained = 2;
+}
+
+message ActivityGachaUpdateData {
+  uint32 activity_id = 1;
+  repeated GachaRecord gained = 2;
+  uint32 remain_count = 3;
+}
+
+message ActivitySpotData {
+  uint32 activity_id = 1;
+  repeated SpotData spots = 3;
+  message SpotData {
+    uint32 unique_id = 1;
+    uint32 rewarded = 2;
+    repeated uint32 unlocked_ending = 3;
   }
 
 }
@@ -1361,6 +1449,7 @@ message PaymentSettingV2 {
     string goods_click_text = 4;
     PaymentMaintain maintain = 5;
     bool enable_for_frozen_account = 6;
+    string extra_data = 7;
   }
 
 }
@@ -1400,6 +1489,7 @@ message ChestDataV2 {
   uint32 chest_id = 1;
   uint32 total_open_count = 2;
   uint32 face_black_count = 3;
+  uint32 ticket_face_black_count = 4;
 }
 
 message FaithData {
@@ -1457,6 +1547,7 @@ message CustomizedContestDetail {
   uint32 observer_switch = 13;
   uint32 emoji_switch = 14;
   uint32 contest_type = 15;
+  uint32 disable_broadcast = 16;
 }
 
 message CustomizedContestPlayerReport {
@@ -1677,6 +1768,19 @@ message ContestDetailRule {
   bool disable_multi_yukaman = 40;
   uint32 guyi_mode = 41;
   bool disable_leijiyiman = 42;
+  uint32 dora3_mode = 43;
+  uint32 xuezhandaodi = 44;
+  uint32 huansanzhang = 45;
+  uint32 chuanma = 46;
+  uint32 disable_double_yakuman = 62;
+  uint32 disable_composite_yakuman = 63;
+  uint32 enable_shiti = 64;
+  uint32 enable_nontsumo_liqi = 65;
+  uint32 disable_double_wind_four_fu = 66;
+  uint32 disable_angang_guoshi = 67;
+  uint32 enable_renhe = 68;
+  uint32 enable_baopai_extend_settings = 69;
+  uint32 fanfu = 70;
 }
 
 message ContestDetailRuleV2 {
@@ -1739,6 +1843,7 @@ message RecordHuleInfo {
   bool is_jue_zhang = 19;
   uint32 xun = 20;
   uint32 ting_type = 21;
+  uint32 ting_mian = 22;
   message RecordFanInfo {
     uint32 val = 1;
     uint32 id = 2;
@@ -1808,6 +1913,140 @@ message RecordRoundInfo {
 
 message RecordAnalysisedData {
   repeated RecordRoundInfo round_infos = 1;
+}
+
+message VoteData {
+  uint32 activity_id = 1;
+  uint32 vote = 2;
+  uint32 count = 3;
+}
+
+message ActivityBuffData {
+  uint32 buff_id = 1;
+  uint32 level = 5;
+}
+
+message AccountResourceSnapshot {
+  repeated BagItemSnapshot bag_item = 1;
+  repeated CurrencySnapshot currency = 2;
+  TitleSnapshot title = 3;
+  UsedTitleSnapshot used_title = 4;
+  message BagItemSnapshot {
+    uint32 resource_id = 1;
+    uint32 resource_count = 2;
+    uint32 resource_version = 3;
+  }
+
+  message CurrencySnapshot {
+    uint32 currency_id = 1;
+    uint32 currency_count = 2;
+  }
+
+  message TitleSnapshot {
+    repeated uint32 title_list = 1;
+  }
+
+  message UsedTitleSnapshot {
+    uint32 title_id = 1;
+  }
+
+}
+
+message AccountCharacterSnapshot {
+  repeated uint32 created_characters = 1;
+  repeated Character removed_characters = 2;
+  repeated Character modified_characters = 3;
+  MainCharacterSnapshot main_character = 4;
+  SkinsSnapshot skins = 5;
+  HiddenCharacter hidden_characters = 6;
+  message MainCharacterSnapshot {
+    uint32 character_id = 1;
+  }
+
+  message SkinsSnapshot {
+    repeated uint32 skin_list = 1;
+  }
+
+  message HiddenCharacter {
+    repeated uint32 hidden_list = 1;
+  }
+
+}
+
+message AccountMailRecord {
+  repeated uint32 created_mails = 1;
+  repeated MailSnapshot removed_mails = 2;
+  repeated MailSnapshot modified_mails = 3;
+  message MailSnapshot {
+    uint32 mail_id = 1;
+    uint32 reference_id = 2;
+    uint32 create_time = 3;
+    uint32 expire_time = 4;
+    uint32 take_attachment = 5;
+    repeated RewardSlot attachments = 6;
+  }
+
+}
+
+message AccountAchievementSnapshot {
+  repeated AchievementProgress achievements = 1;
+  RewardedGroupSnapshot rewarded_group = 2;
+  AchievementVersion version = 3;
+  message RewardedGroupSnapshot {
+    uint32 rewarded_id = 1;
+  }
+
+  message AchievementVersion {
+    uint32 version = 1;
+  }
+
+}
+
+message AccountMiscSnapshot {
+  FaithData faith_data = 1;
+  AccountVIPRewardSnapshot vip_reward_gained = 2;
+  AccountVIP vip = 3;
+  ShopInfo shop_info = 4;
+  AccountMonthTicketSnapshot month_ticket = 5;
+  message AccountVIPRewardSnapshot {
+    repeated uint32 rewarded = 1;
+  }
+
+  message MonthTicketInfo {
+    uint32 id = 1;
+    uint32 end_time = 2;
+    uint32 last_pay_time = 3;
+    uint32 record_start_time = 4;
+    repeated uint32 history = 5;
+  }
+
+  message AccountMonthTicketSnapshot {
+    repeated MonthTicketInfo tickets = 1;
+  }
+
+  message AccountVIP {
+    uint32 vip = 1;
+  }
+
+}
+
+message AccountGiftCodeRecord {
+  repeated string used_gift_code = 1;
+}
+
+message AccSn {
+  AccountResourceSnapshot resource = 1;
+  AccountCharacterSnapshot character = 2;
+  AccountMailRecord mail = 3;
+  AccountAchievementSnapshot achievement = 4;
+  AccountMiscSnapshot misc = 5;
+  AccountGiftCodeRecord gift_code = 6;
+}
+
+message AccSnDa {
+  uint32 account_id = 1;
+  uint32 time = 2;
+  Wrapper snapshot = 3;
 }
 
 message NotifyCaptcha {
@@ -1988,7 +2227,7 @@ message NotifyNewComment {
 }
 
 message NotifyRollingNotice {
-  RollingNotice notice = 1;
+  repeated RollingNotice notice = 1;
 }
 
 message NotifyGiftSendRefresh {
@@ -2061,6 +2300,9 @@ message NotifyAFKResult {
   string game_uuid = 3;
 }
 
+message NotifyLoginQueueFinished {
+}
+
 message NotifyGameFinishRewardV2 {
   uint32 mode_id = 1;
   LevelChange level_change = 2;
@@ -2122,4 +2364,3 @@ message NotifyLeaderboardPointV2 {
   }
 
 }
-

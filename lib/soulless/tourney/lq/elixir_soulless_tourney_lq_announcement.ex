@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Tourney.Lq.Announcement do
   @moduledoc false
-  defstruct id: 0, title: "", content: "", __uf__: []
+  defstruct id: 0, title: "", content: "", header_image: "", __uf__: []
 
   (
     (
@@ -20,6 +20,7 @@ defmodule Soulless.Tourney.Lq.Announcement do
         |> encode_id(msg)
         |> encode_title(msg)
         |> encode_content(msg)
+        |> encode_header_image(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -61,6 +62,18 @@ defmodule Soulless.Tourney.Lq.Announcement do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:content, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_header_image(acc, msg) do
+        try do
+          if msg.header_image == "" do
+            acc
+          else
+            [acc, "\"", Protox.Encode.encode_string(msg.header_image)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:header_image, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -131,6 +144,11 @@ defmodule Soulless.Tourney.Lq.Announcement do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[content: delimited], rest}
 
+            {4, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[header_image: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -194,7 +212,8 @@ defmodule Soulless.Tourney.Lq.Announcement do
       %{
         1 => {:id, {:scalar, 0}, :uint32},
         2 => {:title, {:scalar, ""}, :string},
-        3 => {:content, {:scalar, ""}, :string}
+        3 => {:content, {:scalar, ""}, :string},
+        4 => {:header_image, {:scalar, ""}, :string}
       }
     end
 
@@ -205,6 +224,7 @@ defmodule Soulless.Tourney.Lq.Announcement do
     def defs_by_name() do
       %{
         content: {3, {:scalar, ""}, :string},
+        header_image: {4, {:scalar, ""}, :string},
         id: {1, {:scalar, 0}, :uint32},
         title: {2, {:scalar, ""}, :string}
       }
@@ -240,6 +260,15 @@ defmodule Soulless.Tourney.Lq.Announcement do
           label: :optional,
           name: :content,
           tag: 3,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "headerImage",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :header_image,
+          tag: 4,
           type: :string
         }
       ]
@@ -334,6 +363,46 @@ defmodule Soulless.Tourney.Lq.Announcement do
 
         []
       ),
+      (
+        def field_def(:header_image) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "headerImage",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :header_image,
+             tag: 4,
+             type: :string
+           }}
+        end
+
+        def field_def("headerImage") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "headerImage",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :header_image,
+             tag: 4,
+             type: :string
+           }}
+        end
+
+        def field_def("header_image") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "headerImage",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :header_image,
+             tag: 4,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -380,6 +449,9 @@ defmodule Soulless.Tourney.Lq.Announcement do
       {:ok, ""}
     end,
     def default(:content) do
+      {:ok, ""}
+    end,
+    def default(:header_image) do
       {:ok, ""}
     end,
     def default(_) do

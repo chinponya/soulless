@@ -1,7 +1,13 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.TaskProgress do
   @moduledoc false
-  defstruct id: 0, counter: 0, achieved: false, rewarded: false, failed: false, __uf__: []
+  defstruct id: 0,
+            counter: 0,
+            achieved: false,
+            rewarded: false,
+            failed: false,
+            rewarded_time: 0,
+            __uf__: []
 
   (
     (
@@ -22,6 +28,7 @@ defmodule Soulless.Game.Lq.TaskProgress do
         |> encode_achieved(msg)
         |> encode_rewarded(msg)
         |> encode_failed(msg)
+        |> encode_rewarded_time(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -87,6 +94,19 @@ defmodule Soulless.Game.Lq.TaskProgress do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:failed, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_rewarded_time(acc, msg) do
+        try do
+          if msg.rewarded_time == 0 do
+            acc
+          else
+            [acc, "0", Protox.Encode.encode_uint32(msg.rewarded_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:rewarded_time, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -163,6 +183,10 @@ defmodule Soulless.Game.Lq.TaskProgress do
               {value, rest} = Protox.Decode.parse_bool(bytes)
               {[failed: value], rest}
 
+            {6, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[rewarded_time: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -228,7 +252,8 @@ defmodule Soulless.Game.Lq.TaskProgress do
         2 => {:counter, {:scalar, 0}, :uint32},
         3 => {:achieved, {:scalar, false}, :bool},
         4 => {:rewarded, {:scalar, false}, :bool},
-        5 => {:failed, {:scalar, false}, :bool}
+        5 => {:failed, {:scalar, false}, :bool},
+        6 => {:rewarded_time, {:scalar, 0}, :uint32}
       }
     end
 
@@ -242,7 +267,8 @@ defmodule Soulless.Game.Lq.TaskProgress do
         counter: {2, {:scalar, 0}, :uint32},
         failed: {5, {:scalar, false}, :bool},
         id: {1, {:scalar, 0}, :uint32},
-        rewarded: {4, {:scalar, false}, :bool}
+        rewarded: {4, {:scalar, false}, :bool},
+        rewarded_time: {6, {:scalar, 0}, :uint32}
       }
     end
   )
@@ -295,6 +321,15 @@ defmodule Soulless.Game.Lq.TaskProgress do
           name: :failed,
           tag: 5,
           type: :bool
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "rewardedTime",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :rewarded_time,
+          tag: 6,
+          type: :uint32
         }
       ]
     end
@@ -446,6 +481,46 @@ defmodule Soulless.Game.Lq.TaskProgress do
 
         []
       ),
+      (
+        def field_def(:rewarded_time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewardedTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :rewarded_time,
+             tag: 6,
+             type: :uint32
+           }}
+        end
+
+        def field_def("rewardedTime") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewardedTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :rewarded_time,
+             tag: 6,
+             type: :uint32
+           }}
+        end
+
+        def field_def("rewarded_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "rewardedTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :rewarded_time,
+             tag: 6,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -499,6 +574,9 @@ defmodule Soulless.Game.Lq.TaskProgress do
     end,
     def default(:failed) do
       {:ok, false}
+    end,
+    def default(:rewarded_time) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

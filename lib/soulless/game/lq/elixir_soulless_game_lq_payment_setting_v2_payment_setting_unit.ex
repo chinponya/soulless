@@ -8,6 +8,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
             maintain: nil,
             enable_for_frozen_account: false,
             extra_data: "",
+            enabled_channel: [],
             __uf__: []
 
   (
@@ -31,6 +32,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
         |> encode_maintain(msg)
         |> encode_enable_for_frozen_account(msg)
         |> encode_extra_data(msg)
+        |> encode_enabled_channel(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -123,6 +125,26 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:extra_data, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_enabled_channel(acc, msg) do
+        try do
+          case msg.enabled_channel do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "B", Protox.Encode.encode_string(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:enabled_channel, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -218,6 +240,11 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[extra_data: delimited], rest}
 
+            {8, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[enabled_channel: msg.enabled_channel ++ [delimited]], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -287,7 +314,8 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
           {:maintain, {:scalar, nil},
            {:message, Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain}},
         6 => {:enable_for_frozen_account, {:scalar, false}, :bool},
-        7 => {:extra_data, {:scalar, ""}, :string}
+        7 => {:extra_data, {:scalar, ""}, :string},
+        8 => {:enabled_channel, :unpacked, :string}
       }
     end
 
@@ -298,6 +326,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
     def defs_by_name() do
       %{
         enable_for_frozen_account: {6, {:scalar, false}, :bool},
+        enabled_channel: {8, :unpacked, :string},
         extra_data: {7, {:scalar, ""}, :string},
         goods_click_action: {3, {:scalar, 0}, :uint32},
         goods_click_text: {4, {:scalar, ""}, :string},
@@ -374,6 +403,15 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
           label: :optional,
           name: :extra_data,
           tag: 7,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "enabledChannel",
+          kind: :unpacked,
+          label: :repeated,
+          name: :enabled_channel,
+          tag: 8,
           type: :string
         }
       ]
@@ -639,6 +677,46 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
            }}
         end
       ),
+      (
+        def field_def(:enabled_channel) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enabledChannel",
+             kind: :unpacked,
+             label: :repeated,
+             name: :enabled_channel,
+             tag: 8,
+             type: :string
+           }}
+        end
+
+        def field_def("enabledChannel") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enabledChannel",
+             kind: :unpacked,
+             label: :repeated,
+             name: :enabled_channel,
+             tag: 8,
+             type: :string
+           }}
+        end
+
+        def field_def("enabled_channel") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enabledChannel",
+             kind: :unpacked,
+             label: :repeated,
+             name: :enabled_channel,
+             tag: 8,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -698,6 +776,9 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
     end,
     def default(:extra_data) do
       {:ok, ""}
+    end,
+    def default(:enabled_channel) do
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

@@ -20,6 +20,7 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
             observer_switch: 0,
             emoji_switch: 0,
             player_roster_type: 0,
+            disable_broadcast: 0,
             __uf__: []
 
   (
@@ -55,6 +56,7 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
         |> encode_observer_switch(msg)
         |> encode_emoji_switch(msg)
         |> encode_player_roster_type(msg)
+        |> encode_disable_broadcast(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -320,6 +322,19 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
             reraise Protox.EncodingError.new(:player_roster_type, "invalid field value"),
                     __STACKTRACE__
         end
+      end,
+      defp encode_disable_broadcast(acc, msg) do
+        try do
+          if msg.disable_broadcast == 0 do
+            acc
+          else
+            [acc, "\xA0\x01", Protox.Encode.encode_uint32(msg.disable_broadcast)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:disable_broadcast, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -470,6 +485,10 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[player_roster_type: value], rest}
 
+            {20, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[disable_broadcast: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -549,7 +568,8 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
         16 => {:banned_zones, :packed, :uint32},
         17 => {:observer_switch, {:scalar, 0}, :uint32},
         18 => {:emoji_switch, {:scalar, 0}, :uint32},
-        19 => {:player_roster_type, {:scalar, 0}, :uint32}
+        19 => {:player_roster_type, {:scalar, 0}, :uint32},
+        20 => {:disable_broadcast, {:scalar, 0}, :uint32}
       }
     end
 
@@ -568,6 +588,7 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
         create_time: {6, {:scalar, 0}, :uint32},
         creator_id: {2, {:scalar, 0}, :uint32},
         deadline: {11, {:scalar, 0}, :uint32},
+        disable_broadcast: {20, {:scalar, 0}, :uint32},
         emoji_switch: {18, {:scalar, 0}, :uint32},
         finish_time: {8, {:scalar, 0}, :uint32},
         hidden_zones: {15, :packed, :uint32},
@@ -755,6 +776,15 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
           label: :optional,
           name: :player_roster_type,
           tag: 19,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "disableBroadcast",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :disable_broadcast,
+          tag: 20,
           type: :uint32
         }
       ]
@@ -1489,6 +1519,46 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
            }}
         end
       ),
+      (
+        def field_def(:disable_broadcast) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableBroadcast",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_broadcast,
+             tag: 20,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disableBroadcast") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableBroadcast",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_broadcast,
+             tag: 20,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disable_broadcast") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableBroadcast",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_broadcast,
+             tag: 20,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1583,6 +1653,9 @@ defmodule Soulless.Tourney.Lq.CustomizedContest do
       {:ok, 0}
     end,
     def default(:player_roster_type) do
+      {:ok, 0}
+    end,
+    def default(:disable_broadcast) do
       {:ok, 0}
     end,
     def default(_) do

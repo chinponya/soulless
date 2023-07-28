@@ -52,7 +52,18 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
             huansanzhang: 0,
             chuanma: 0,
             reveal_discard: 0,
+            field_spell_mode: 0,
+            zhanxing: 0,
+            tianming_mode: 0,
             disable_leijiyiman: false,
+            disable_double_yakuman: 0,
+            disable_composite_yakuman: 0,
+            enable_shiti: 0,
+            enable_nontsumo_liqi: 0,
+            disable_double_wind_four_fu: 0,
+            disable_angang_guoshi: 0,
+            enable_renhe: 0,
+            enable_baopai_extend_settings: 0,
             __uf__: []
 
   (
@@ -120,7 +131,18 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
         |> encode_huansanzhang(msg)
         |> encode_chuanma(msg)
         |> encode_reveal_discard(msg)
+        |> encode_field_spell_mode(msg)
+        |> encode_zhanxing(msg)
+        |> encode_tianming_mode(msg)
         |> encode_disable_leijiyiman(msg)
+        |> encode_disable_double_yakuman(msg)
+        |> encode_disable_composite_yakuman(msg)
+        |> encode_enable_shiti(msg)
+        |> encode_enable_nontsumo_liqi(msg)
+        |> encode_disable_double_wind_four_fu(msg)
+        |> encode_disable_angang_guoshi(msg)
+        |> encode_enable_renhe(msg)
+        |> encode_enable_baopai_extend_settings(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -766,6 +788,44 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
                     __STACKTRACE__
         end
       end,
+      defp encode_field_spell_mode(acc, msg) do
+        try do
+          if msg.field_spell_mode == 0 do
+            acc
+          else
+            [acc, "\xA0\x03", Protox.Encode.encode_uint32(msg.field_spell_mode)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:field_spell_mode, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_zhanxing(acc, msg) do
+        try do
+          if msg.zhanxing == 0 do
+            acc
+          else
+            [acc, "\xA8\x03", Protox.Encode.encode_uint32(msg.zhanxing)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:zhanxing, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_tianming_mode(acc, msg) do
+        try do
+          if msg.tianming_mode == 0 do
+            acc
+          else
+            [acc, "\xB0\x03", Protox.Encode.encode_uint32(msg.tianming_mode)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:tianming_mode, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
       defp encode_disable_leijiyiman(acc, msg) do
         try do
           if msg.disable_leijiyiman == false do
@@ -776,6 +836,111 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:disable_leijiyiman, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_disable_double_yakuman(acc, msg) do
+        try do
+          if msg.disable_double_yakuman == 0 do
+            acc
+          else
+            [acc, "\xF0\x03", Protox.Encode.encode_uint32(msg.disable_double_yakuman)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:disable_double_yakuman, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_disable_composite_yakuman(acc, msg) do
+        try do
+          if msg.disable_composite_yakuman == 0 do
+            acc
+          else
+            [acc, "\xF8\x03", Protox.Encode.encode_uint32(msg.disable_composite_yakuman)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:disable_composite_yakuman, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_enable_shiti(acc, msg) do
+        try do
+          if msg.enable_shiti == 0 do
+            acc
+          else
+            [acc, "\x80\x04", Protox.Encode.encode_uint32(msg.enable_shiti)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:enable_shiti, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_enable_nontsumo_liqi(acc, msg) do
+        try do
+          if msg.enable_nontsumo_liqi == 0 do
+            acc
+          else
+            [acc, "\x88\x04", Protox.Encode.encode_uint32(msg.enable_nontsumo_liqi)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:enable_nontsumo_liqi, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_disable_double_wind_four_fu(acc, msg) do
+        try do
+          if msg.disable_double_wind_four_fu == 0 do
+            acc
+          else
+            [acc, "\x90\x04", Protox.Encode.encode_uint32(msg.disable_double_wind_four_fu)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:disable_double_wind_four_fu, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_disable_angang_guoshi(acc, msg) do
+        try do
+          if msg.disable_angang_guoshi == 0 do
+            acc
+          else
+            [acc, "\x98\x04", Protox.Encode.encode_uint32(msg.disable_angang_guoshi)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:disable_angang_guoshi, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_enable_renhe(acc, msg) do
+        try do
+          if msg.enable_renhe == 0 do
+            acc
+          else
+            [acc, "\xA0\x04", Protox.Encode.encode_uint32(msg.enable_renhe)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:enable_renhe, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_enable_baopai_extend_settings(acc, msg) do
+        try do
+          if msg.enable_baopai_extend_settings == 0 do
+            acc
+          else
+            [acc, "\xA8\x04", Protox.Encode.encode_uint32(msg.enable_baopai_extend_settings)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(
+                      :enable_baopai_extend_settings,
+                      "invalid field value"
+                    ),
                     __STACKTRACE__
         end
       end
@@ -1037,9 +1202,53 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[reveal_discard: value], rest}
 
+            {52, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[field_spell_mode: value], rest}
+
+            {53, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[zhanxing: value], rest}
+
+            {54, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[tianming_mode: value], rest}
+
             {60, _, bytes} ->
               {value, rest} = Protox.Decode.parse_bool(bytes)
               {[disable_leijiyiman: value], rest}
+
+            {62, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[disable_double_yakuman: value], rest}
+
+            {63, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[disable_composite_yakuman: value], rest}
+
+            {64, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[enable_shiti: value], rest}
+
+            {65, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[enable_nontsumo_liqi: value], rest}
+
+            {66, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[disable_double_wind_four_fu: value], rest}
+
+            {67, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[disable_angang_guoshi: value], rest}
+
+            {68, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[enable_renhe: value], rest}
+
+            {69, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[enable_baopai_extend_settings: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -1114,6 +1323,8 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
         45 => {:jiuchao_mode, {:scalar, 0}, :uint32},
         48 => {:xuezhandaodi, {:scalar, 0}, :uint32},
         26 => {:have_toutiao, {:scalar, false}, :bool},
+        69 => {:enable_baopai_extend_settings, {:scalar, 0}, :uint32},
+        63 => {:disable_composite_yakuman, {:scalar, 0}, :uint32},
         46 => {:muyu_mode, {:scalar, 0}, :uint32},
         31 => {:have_yifa, {:scalar, false}, :bool},
         11 => {:noting_fafu_1, {:scalar, 0}, :uint32},
@@ -1123,7 +1334,9 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
         34 => {:shunweima_2, {:scalar, 0}, :int32},
         25 => {:have_sanjiahele, {:scalar, false}, :bool},
         28 => {:have_helezhongju, {:scalar, false}, :bool},
+        64 => {:enable_shiti, {:scalar, 0}, :uint32},
         6 => {:fandian, {:scalar, 0}, :uint32},
+        68 => {:enable_renhe, {:scalar, 0}, :uint32},
         51 => {:reveal_discard, {:scalar, 0}, :uint32},
         38 => {:ai_level, {:scalar, 0}, :uint32},
         13 => {:noting_fafu_3, {:scalar, 0}, :uint32},
@@ -1140,18 +1353,25 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
         3 => {:dora_count, {:scalar, 0}, :uint32},
         17 => {:have_gang_biao_dora, {:scalar, false}, :bool},
         22 => {:have_sigangsanle, {:scalar, false}, :bool},
+        52 => {:field_spell_mode, {:scalar, 0}, :uint32},
         21 => {:have_sifenglianda, {:scalar, false}, :bool},
         4 => {:shiduan, {:scalar, 0}, :uint32},
         36 => {:shunweima_4, {:scalar, 0}, :int32},
+        53 => {:zhanxing, {:scalar, 0}, :uint32},
         50 => {:chuanma, {:scalar, 0}, :uint32},
+        66 => {:disable_double_wind_four_fu, {:scalar, 0}, :uint32},
         24 => {:have_jiuzhongjiupai, {:scalar, false}, :bool},
         10 => {:changbang_value, {:scalar, 0}, :uint32},
         35 => {:shunweima_3, {:scalar, 0}, :int32},
+        62 => {:disable_double_yakuman, {:scalar, 0}, :uint32},
         49 => {:huansanzhang, {:scalar, 0}, :uint32},
         27 => {:have_helelianzhuang, {:scalar, false}, :bool},
         42 => {:guyi_mode, {:scalar, 0}, :uint32},
         19 => {:have_li_dora, {:scalar, false}, :bool},
+        67 => {:disable_angang_guoshi, {:scalar, 0}, :uint32},
+        65 => {:enable_nontsumo_liqi, {:scalar, 0}, :uint32},
         5 => {:init_point, {:scalar, 0}, :uint32},
+        54 => {:tianming_mode, {:scalar, 0}, :uint32},
         18 => {:ming_dora_immediately_open, {:scalar, false}, :bool},
         16 => {:have_biao_dora, {:scalar, false}, :bool}
       }
@@ -1163,58 +1383,69 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
           }
     def defs_by_name() do
       %{
-        time_fixed: {1, {:scalar, 0}, :uint32},
-        liqibang_value: {9, {:scalar, 0}, :uint32},
         have_tingpaizhongju: {30, {:scalar, false}, :bool},
-        tianbian_value: {8, {:scalar, 0}, :uint32},
-        muyu_mode: {46, {:scalar, 0}, :uint32},
-        chuanma: {50, {:scalar, 0}, :uint32},
-        shunweima_3: {35, {:scalar, 0}, :int32},
-        ming_dora_immediately_open: {18, {:scalar, false}, :bool},
-        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
-        have_gang_li_dora: {20, {:scalar, false}, :bool},
-        have_toutiao: {26, {:scalar, false}, :bool},
-        noting_fafu_1: {11, {:scalar, 0}, :uint32},
-        begin_open_mode: {44, {:scalar, 0}, :uint32},
-        noting_fafu_2: {12, {:scalar, 0}, :uint32},
-        have_qieshangmanguan: {15, {:scalar, false}, :bool},
-        noting_fafu_3: {13, {:scalar, 0}, :uint32},
-        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
-        have_gang_biao_dora: {17, {:scalar, false}, :bool},
-        have_nanruxiru: {32, {:scalar, false}, :bool},
-        xuezhandaodi: {48, {:scalar, 0}, :uint32},
-        init_point: {5, {:scalar, 0}, :uint32},
-        have_liujumanguan: {14, {:scalar, false}, :bool},
-        guyi_mode: {42, {:scalar, 0}, :uint32},
+        shiduan: {4, {:scalar, 0}, :uint32},
         have_biao_dora: {16, {:scalar, false}, :bool},
-        dora_count: {3, {:scalar, 0}, :uint32},
-        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
-        have_li_dora: {19, {:scalar, false}, :bool},
-        have_sijializhi: {23, {:scalar, false}, :bool},
+        shunweima_3: {35, {:scalar, 0}, :int32},
+        tianming_mode: {54, {:scalar, 0}, :uint32},
+        field_spell_mode: {52, {:scalar, 0}, :uint32},
+        have_gang_biao_dora: {17, {:scalar, false}, :bool},
         shunweima_2: {34, {:scalar, 0}, :int32},
-        open_hand: {47, {:scalar, 0}, :uint32},
-        fandian: {6, {:scalar, 0}, :uint32},
+        zhanxing: {53, {:scalar, 0}, :uint32},
+        have_sijializhi: {23, {:scalar, false}, :bool},
+        guyi_mode: {42, {:scalar, 0}, :uint32},
+        noting_fafu_2: {12, {:scalar, 0}, :uint32},
+        have_sigangsanle: {22, {:scalar, false}, :bool},
+        bianjietishi: {37, {:scalar, false}, :bool},
+        have_gang_li_dora: {20, {:scalar, false}, :bool},
         have_helezhongju: {28, {:scalar, false}, :bool},
+        can_jifei: {7, {:scalar, false}, :bool},
+        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
+        disable_multi_yukaman: {40, {:scalar, false}, :bool},
+        disable_double_wind_four_fu: {66, {:scalar, 0}, :uint32},
+        enable_nontsumo_liqi: {65, {:scalar, 0}, :uint32},
+        liqibang_value: {9, {:scalar, 0}, :uint32},
+        have_toutiao: {26, {:scalar, false}, :bool},
+        time_fixed: {1, {:scalar, 0}, :uint32},
+        changbang_value: {10, {:scalar, 0}, :uint32},
+        disable_angang_guoshi: {67, {:scalar, 0}, :uint32},
+        tianbian_value: {8, {:scalar, 0}, :uint32},
+        disable_double_yakuman: {62, {:scalar, 0}, :uint32},
+        have_sanjiahele: {25, {:scalar, false}, :bool},
+        have_nanruxiru: {32, {:scalar, false}, :bool},
+        open_hand: {47, {:scalar, 0}, :uint32},
+        reveal_discard: {51, {:scalar, 0}, :uint32},
+        ai_level: {38, {:scalar, 0}, :uint32},
+        disable_leijiyiman: {60, {:scalar, false}, :bool},
+        jiuchao_mode: {45, {:scalar, 0}, :uint32},
+        shunweima_4: {36, {:scalar, 0}, :int32},
+        begin_open_mode: {44, {:scalar, 0}, :uint32},
+        dora3_mode: {43, {:scalar, 0}, :uint32},
+        have_li_dora: {19, {:scalar, false}, :bool},
+        xuezhandaodi: {48, {:scalar, 0}, :uint32},
+        enable_renhe: {68, {:scalar, 0}, :uint32},
+        muyu_mode: {46, {:scalar, 0}, :uint32},
+        fanfu: {41, {:scalar, 0}, :uint32},
+        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
         time_add: {2, {:scalar, 0}, :uint32},
         have_yifa: {31, {:scalar, false}, :bool},
-        disable_leijiyiman: {60, {:scalar, false}, :bool},
+        init_point: {5, {:scalar, 0}, :uint32},
+        ming_dora_immediately_open: {18, {:scalar, false}, :bool},
         have_zimosun: {39, {:scalar, false}, :bool},
-        shunweima_4: {36, {:scalar, 0}, :int32},
-        reveal_discard: {51, {:scalar, 0}, :uint32},
-        fanfu: {41, {:scalar, 0}, :uint32},
-        bianjietishi: {37, {:scalar, false}, :bool},
-        have_helelianzhuang: {27, {:scalar, false}, :bool},
-        can_jifei: {7, {:scalar, false}, :bool},
-        have_sifenglianda: {21, {:scalar, false}, :bool},
-        changbang_value: {10, {:scalar, 0}, :uint32},
-        have_sigangsanle: {22, {:scalar, false}, :bool},
-        dora3_mode: {43, {:scalar, 0}, :uint32},
-        disable_multi_yukaman: {40, {:scalar, false}, :bool},
-        shiduan: {4, {:scalar, 0}, :uint32},
-        have_sanjiahele: {25, {:scalar, false}, :bool},
-        jiuchao_mode: {45, {:scalar, 0}, :uint32},
         huansanzhang: {49, {:scalar, 0}, :uint32},
-        ai_level: {38, {:scalar, 0}, :uint32}
+        have_qieshangmanguan: {15, {:scalar, false}, :bool},
+        disable_composite_yakuman: {63, {:scalar, 0}, :uint32},
+        enable_baopai_extend_settings: {69, {:scalar, 0}, :uint32},
+        have_helelianzhuang: {27, {:scalar, false}, :bool},
+        fandian: {6, {:scalar, 0}, :uint32},
+        chuanma: {50, {:scalar, 0}, :uint32},
+        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
+        have_liujumanguan: {14, {:scalar, false}, :bool},
+        noting_fafu_3: {13, {:scalar, 0}, :uint32},
+        enable_shiti: {64, {:scalar, 0}, :uint32},
+        noting_fafu_1: {11, {:scalar, 0}, :uint32},
+        dora_count: {3, {:scalar, 0}, :uint32},
+        have_sifenglianda: {21, {:scalar, false}, :bool}
       }
     end
   )
@@ -1684,12 +1915,111 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
         },
         %{
           __struct__: Protox.Field,
+          json_name: "fieldSpellMode",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :field_spell_mode,
+          tag: 52,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "zhanxing",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :zhanxing,
+          tag: 53,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "tianmingMode",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :tianming_mode,
+          tag: 54,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
           json_name: "disableLeijiyiman",
           kind: {:scalar, false},
           label: :optional,
           name: :disable_leijiyiman,
           tag: 60,
           type: :bool
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "disableDoubleYakuman",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :disable_double_yakuman,
+          tag: 62,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "disableCompositeYakuman",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :disable_composite_yakuman,
+          tag: 63,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "enableShiti",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :enable_shiti,
+          tag: 64,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "enableNontsumoLiqi",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :enable_nontsumo_liqi,
+          tag: 65,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "disableDoubleWindFourFu",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :disable_double_wind_four_fu,
+          tag: 66,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "disableAngangGuoshi",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :disable_angang_guoshi,
+          tag: 67,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "enableRenhe",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :enable_renhe,
+          tag: 68,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "enableBaopaiExtendSettings",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :enable_baopai_extend_settings,
+          tag: 69,
+          type: :uint32
         }
       ]
     end
@@ -3649,6 +3979,115 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
         end
       ),
       (
+        def field_def(:field_spell_mode) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpellMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell_mode,
+             tag: 52,
+             type: :uint32
+           }}
+        end
+
+        def field_def("fieldSpellMode") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpellMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell_mode,
+             tag: 52,
+             type: :uint32
+           }}
+        end
+
+        def field_def("field_spell_mode") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "fieldSpellMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :field_spell_mode,
+             tag: 52,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:zhanxing) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "zhanxing",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :zhanxing,
+             tag: 53,
+             type: :uint32
+           }}
+        end
+
+        def field_def("zhanxing") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "zhanxing",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :zhanxing,
+             tag: 53,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:tianming_mode) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tianmingMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tianming_mode,
+             tag: 54,
+             type: :uint32
+           }}
+        end
+
+        def field_def("tianmingMode") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tianmingMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tianming_mode,
+             tag: 54,
+             type: :uint32
+           }}
+        end
+
+        def field_def("tianming_mode") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "tianmingMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :tianming_mode,
+             tag: 54,
+             type: :uint32
+           }}
+        end
+      ),
+      (
         def field_def(:disable_leijiyiman) do
           {:ok,
            %{
@@ -3685,6 +4124,326 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
              name: :disable_leijiyiman,
              tag: 60,
              type: :bool
+           }}
+        end
+      ),
+      (
+        def field_def(:disable_double_yakuman) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableDoubleYakuman",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_double_yakuman,
+             tag: 62,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disableDoubleYakuman") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableDoubleYakuman",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_double_yakuman,
+             tag: 62,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disable_double_yakuman") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableDoubleYakuman",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_double_yakuman,
+             tag: 62,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:disable_composite_yakuman) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableCompositeYakuman",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_composite_yakuman,
+             tag: 63,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disableCompositeYakuman") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableCompositeYakuman",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_composite_yakuman,
+             tag: 63,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disable_composite_yakuman") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableCompositeYakuman",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_composite_yakuman,
+             tag: 63,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:enable_shiti) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableShiti",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_shiti,
+             tag: 64,
+             type: :uint32
+           }}
+        end
+
+        def field_def("enableShiti") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableShiti",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_shiti,
+             tag: 64,
+             type: :uint32
+           }}
+        end
+
+        def field_def("enable_shiti") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableShiti",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_shiti,
+             tag: 64,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:enable_nontsumo_liqi) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableNontsumoLiqi",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_nontsumo_liqi,
+             tag: 65,
+             type: :uint32
+           }}
+        end
+
+        def field_def("enableNontsumoLiqi") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableNontsumoLiqi",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_nontsumo_liqi,
+             tag: 65,
+             type: :uint32
+           }}
+        end
+
+        def field_def("enable_nontsumo_liqi") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableNontsumoLiqi",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_nontsumo_liqi,
+             tag: 65,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:disable_double_wind_four_fu) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableDoubleWindFourFu",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_double_wind_four_fu,
+             tag: 66,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disableDoubleWindFourFu") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableDoubleWindFourFu",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_double_wind_four_fu,
+             tag: 66,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disable_double_wind_four_fu") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableDoubleWindFourFu",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_double_wind_four_fu,
+             tag: 66,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:disable_angang_guoshi) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableAngangGuoshi",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_angang_guoshi,
+             tag: 67,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disableAngangGuoshi") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableAngangGuoshi",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_angang_guoshi,
+             tag: 67,
+             type: :uint32
+           }}
+        end
+
+        def field_def("disable_angang_guoshi") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "disableAngangGuoshi",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :disable_angang_guoshi,
+             tag: 67,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:enable_renhe) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableRenhe",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_renhe,
+             tag: 68,
+             type: :uint32
+           }}
+        end
+
+        def field_def("enableRenhe") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableRenhe",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_renhe,
+             tag: 68,
+             type: :uint32
+           }}
+        end
+
+        def field_def("enable_renhe") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableRenhe",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_renhe,
+             tag: 68,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:enable_baopai_extend_settings) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableBaopaiExtendSettings",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_baopai_extend_settings,
+             tag: 69,
+             type: :uint32
+           }}
+        end
+
+        def field_def("enableBaopaiExtendSettings") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableBaopaiExtendSettings",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_baopai_extend_settings,
+             tag: 69,
+             type: :uint32
+           }}
+        end
+
+        def field_def("enable_baopai_extend_settings") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "enableBaopaiExtendSettings",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :enable_baopai_extend_settings,
+             tag: 69,
+             type: :uint32
            }}
         end
       ),
@@ -3880,8 +4639,41 @@ defmodule Soulless.Tourney.Lq.GameDetailRule do
     def default(:reveal_discard) do
       {:ok, 0}
     end,
+    def default(:field_spell_mode) do
+      {:ok, 0}
+    end,
+    def default(:zhanxing) do
+      {:ok, 0}
+    end,
+    def default(:tianming_mode) do
+      {:ok, 0}
+    end,
     def default(:disable_leijiyiman) do
       {:ok, false}
+    end,
+    def default(:disable_double_yakuman) do
+      {:ok, 0}
+    end,
+    def default(:disable_composite_yakuman) do
+      {:ok, 0}
+    end,
+    def default(:enable_shiti) do
+      {:ok, 0}
+    end,
+    def default(:enable_nontsumo_liqi) do
+      {:ok, 0}
+    end,
+    def default(:disable_double_wind_four_fu) do
+      {:ok, 0}
+    end,
+    def default(:disable_angang_guoshi) do
+      {:ok, 0}
+    end,
+    def default(:enable_renhe) do
+      {:ok, 0}
+    end,
+    def default(:enable_baopai_extend_settings) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

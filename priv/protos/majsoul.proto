@@ -961,6 +961,7 @@ message TaskProgress {
   bool achieved = 3;
   bool rewarded = 4;
   bool failed = 5;
+  uint32 rewarded_time = 6;
 }
 
 message GameConfig {
@@ -1300,6 +1301,7 @@ message PaymentSettingV2 {
     PaymentMaintain maintain = 5;
     bool enable_for_frozen_account = 6;
     string extra_data = 7;
+    repeated string enabled_channel = 8;
   }
 
 }
@@ -1858,6 +1860,7 @@ message AccountMiscSnapshot {
   AccountVIP vip = 3;
   ShopInfo shop_info = 4;
   AccountMonthTicketSnapshot month_ticket = 5;
+  repeated AccountRechargeInfo recharged = 6;
   message AccountVIPRewardSnapshot {
     repeated uint32 rewarded = 1;
   }
@@ -1876,6 +1879,11 @@ message AccountMiscSnapshot {
 
   message AccountVIP {
     uint32 vip = 1;
+  }
+
+  message AccountRechargeInfo {
+    uint32 level = 1;
+    uint32 recharge_time = 2;
   }
 
 }
@@ -2063,6 +2071,7 @@ service Lobby {
   rpc createJPSoftbankOrder (ReqCreateJPSoftbankOrder) returns (ResCreateJPSoftbankOrder);
   rpc createJPPayPayOrder (ReqCreateJPPayPayOrder) returns (ResCreateJPPayPayOrder);
   rpc fetchJPCommonCreditCardOrder (ReqFetchJPCommonCreditCardOrder) returns (ResFetchJPCommonCreditCardOrder);
+  rpc createJPGMOOrder (ReqCreateJPGMOOrder) returns (ResCreateJPGMOOrder);
   rpc createENPaypalOrder (ReqCreateENPaypalOrder) returns (ResCreateENPaypalOrder);
   rpc createENMasterCardOrder (ReqCreateENMasterCardOrder) returns (ResCreateENMasterCardOrder);
   rpc createENVisaOrder (ReqCreateENVisaOrder) returns (ResCreateENVisaOrder);
@@ -2185,6 +2194,7 @@ service Lobby {
   rpc fetchActivityInterval (ReqCommon) returns (ResFetchActivityInterval);
   rpc fetchRecentFriend (ReqCommon) returns (ResFetchrecentFriend);
   rpc openGacha (ReqOpenGacha) returns (ResOpenGacha);
+  rpc taskRequest (ReqTaskRequest) returns (ResCommon);
 }
 
 message ResConnectionInfo {
@@ -3199,6 +3209,20 @@ message ReqFetchJPCommonCreditCardOrder {
 
 message ResFetchJPCommonCreditCardOrder {
   Error error = 1;
+}
+
+message ReqCreateJPGMOOrder {
+  uint32 goods_id = 1;
+  uint32 client_type = 2;
+  uint32 account_id = 3;
+  string return_url = 4;
+  string access_token = 5;
+  string client_version_string = 6;
+}
+
+message ResCreateJPGMOOrder {
+  Error error = 1;
+  string order_id = 2;
 }
 
 message ReqCreateYostarOrder {
@@ -4612,6 +4636,10 @@ message ResOpenGacha {
   repeated ExecuteReward reward_items = 3;
   repeated ExecuteReward sp_reward_items = 4;
   uint32 remain_count = 5;
+}
+
+message ReqTaskRequest {
+  repeated uint32 params = 1;
 }
 
 message ActionMJStart {

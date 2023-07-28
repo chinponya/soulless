@@ -6,6 +6,7 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
             vip: nil,
             shop_info: nil,
             month_ticket: nil,
+            recharged: [],
             __uf__: []
 
   (
@@ -27,6 +28,7 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
         |> encode_vip(msg)
         |> encode_shop_info(msg)
         |> encode_month_ticket(msg)
+        |> encode_recharged(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -93,6 +95,25 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:month_ticket, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_recharged(acc, msg) do
+        try do
+          case msg.recharged do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "2", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:recharged, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -213,6 +234,16 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
                    )
                ], rest}
 
+            {6, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 recharged:
+                   msg.recharged ++
+                     [Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.decode!(delimited)]
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -282,7 +313,10 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
         4 => {:shop_info, {:scalar, nil}, {:message, Soulless.Game.Lq.ShopInfo}},
         5 =>
           {:month_ticket, {:scalar, nil},
-           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshot}}
+           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshot}},
+        6 =>
+          {:recharged, :unpacked,
+           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}}
       }
     end
 
@@ -296,6 +330,8 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
         month_ticket:
           {5, {:scalar, nil},
            {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshot}},
+        recharged:
+          {6, :unpacked, {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}},
         shop_info: {4, {:scalar, nil}, {:message, Soulless.Game.Lq.ShopInfo}},
         vip: {3, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountVIP}},
         vip_reward_gained:
@@ -353,6 +389,15 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
           name: :month_ticket,
           tag: 5,
           type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshot}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "recharged",
+          kind: :unpacked,
+          label: :repeated,
+          name: :recharged,
+          tag: 6,
+          type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}
         }
       ]
     end
@@ -548,6 +593,35 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
            }}
         end
       ),
+      (
+        def field_def(:recharged) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "recharged",
+             kind: :unpacked,
+             label: :repeated,
+             name: :recharged,
+             tag: 6,
+             type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}
+           }}
+        end
+
+        def field_def("recharged") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "recharged",
+             kind: :unpacked,
+             label: :repeated,
+             name: :recharged,
+             tag: 6,
+             type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -601,6 +675,9 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
     end,
     def default(:month_ticket) do
       {:ok, nil}
+    end,
+    def default(:recharged) do
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

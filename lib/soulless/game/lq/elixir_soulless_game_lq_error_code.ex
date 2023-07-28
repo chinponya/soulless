@@ -95,6 +95,15 @@ defmodule Soulless.Game.Lq.ErrorCode do
         end
       ),
       (
+        def encode(:SERVER_MAINTENANCE) do
+          103
+        end
+
+        def encode("SERVER_MAINTENANCE") do
+          103
+        end
+      ),
+      (
         def encode(:CONFIG_NOT_FOUND) do
           104
         end
@@ -155,6 +164,15 @@ defmodule Soulless.Game.Lq.ErrorCode do
 
         def encode("OAUTH2_FAILED") do
           110
+        end
+      ),
+      (
+        def encode(:OAUTH2_ALREADY_SIGNUP) do
+          111
+        end
+
+        def encode("OAUTH2_ALREADY_SIGNUP") do
+          111
         end
       ),
       (
@@ -1335,6 +1353,96 @@ defmodule Soulless.Game.Lq.ErrorCode do
         def encode("CONTEST_AUTO_MATCHING") do
           2521
         end
+      ),
+      (
+        def encode(:CONTEST_IS_IN_QUEUE) do
+          2522
+        end
+
+        def encode("CONTEST_IS_IN_QUEUE") do
+          2522
+        end
+      ),
+      (
+        def encode(:CONTEST_NO_AUTH) do
+          2523
+        end
+
+        def encode("CONTEST_NO_AUTH") do
+          2523
+        end
+      ),
+      (
+        def encode(:CONTEST_BANNED_ZONE) do
+          2524
+        end
+
+        def encode("CONTEST_BANNED_ZONE") do
+          2524
+        end
+      ),
+      (
+        def encode(:CONTEST_DISABLE_CREATE) do
+          2525
+        end
+
+        def encode("CONTEST_DISABLE_CREATE") do
+          2525
+        end
+      ),
+      (
+        def encode(:CONTEST_DISABLE_EDIT_NAME) do
+          2526
+        end
+
+        def encode("CONTEST_DISABLE_EDIT_NAME") do
+          2526
+        end
+      ),
+      (
+        def encode(:CONTEST_DISABLE_EDIT_NOTICE) do
+          2527
+        end
+
+        def encode("CONTEST_DISABLE_EDIT_NOTICE") do
+          2527
+        end
+      ),
+      (
+        def encode(:CONTEST_DISABLE_CHAT) do
+          2528
+        end
+
+        def encode("CONTEST_DISABLE_CHAT") do
+          2528
+        end
+      ),
+      (
+        def encode(:CONTEST_NOT_SUPPORT_OB) do
+          2529
+        end
+
+        def encode("CONTEST_NOT_SUPPORT_OB") do
+          2529
+        end
+      ),
+      (
+        def encode(:CONTEST_BLACK_LIST) do
+          2530
+        end
+
+        def encode("CONTEST_BLACK_LIST") do
+          2530
+        end
+      ),
+      (
+        def encode(:CONTEST_CREATE_COUNT_LIMIT) do
+          2531
+        end
+
+        def encode("CONTEST_CREATE_COUNT_LIMIT") do
+          2531
+        end
       )
     ]
 
@@ -1437,6 +1545,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       def decode(2519) do
         :CONTEST_GAME_COUNT_LIMIT
       end,
+      def decode(2530) do
+        :CONTEST_BLACK_LIST
+      end,
       def decode(1971) do
         :PAYMENT_ALI_TYPE_UNSUP
       end,
@@ -1449,6 +1560,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       def decode(2513) do
         :CONTEST_NOT_CREATOR
       end,
+      def decode(2522) do
+        :CONTEST_IS_IN_QUEUE
+      end,
       def decode(2505) do
         :CONTEST_MGR_NOT_LOGIN
       end,
@@ -1460,6 +1574,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       end,
       def decode(119) do
         :PHONE_SEND_FAILED
+      end,
+      def decode(2531) do
+        :CONTEST_CREATE_COUNT_LIMIT
       end,
       def decode(4) do
         :NOT_DEVELOPMENT_MODE
@@ -1482,6 +1599,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       def decode(1403) do
         :SEARCH_TIMEOUT
       end,
+      def decode(111) do
+        :OAUTH2_ALREADY_SIGNUP
+      end,
       def decode(2008) do
         :COMMENT_NO_PRIV_DELETE
       end,
@@ -1490,6 +1610,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       end,
       def decode(1006) do
         :ACC_NOT_EXIST
+      end,
+      def decode(2527) do
+        :CONTEST_DISABLE_EDIT_NOTICE
       end,
       def decode(1207) do
         :GAME_CAN_NOT_MANUAL_TER
@@ -1557,6 +1680,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       def decode(2203) do
         :CHARACTER_GIFT_COUNT_MAX
       end,
+      def decode(103) do
+        :SERVER_MAINTENANCE
+      end,
       def decode(2508) do
         :CONTEST_ALREADY_END
       end,
@@ -1617,6 +1743,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       def decode(1101) do
         :ROOM_IS_FULL
       end,
+      def decode(2528) do
+        :CONTEST_DISABLE_CHAT
+      end,
       def decode(2005) do
         :COMMENT_FORBID
       end,
@@ -1652,6 +1781,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       end,
       def decode(504) do
         :RESOURCE_UNIQUE
+      end,
+      def decode(2524) do
+        :CONTEST_BANNED_ZONE
       end,
       def decode(1105) do
         :ROOM_ALREADY_JOIN
@@ -1701,6 +1833,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       def decode(1612) do
         :TASK_DAILY_NO_REFRESH
       end,
+      def decode(2525) do
+        :CONTEST_DISABLE_CREATE
+      end,
       def decode(1015) do
         :ACC_NEED_NICKNAME_ITEM
       end,
@@ -1712,6 +1847,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       end,
       def decode(2001) do
         :REVIVE_COIN_TIME
+      end,
+      def decode(2529) do
+        :CONTEST_NOT_SUPPORT_OB
       end,
       def decode(1903) do
         :PAYMENT_PLATFORM
@@ -1746,6 +1884,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       def decode(1501) do
         :BAG_NO_ITEM
       end,
+      def decode(2526) do
+        :CONTEST_DISABLE_EDIT_NAME
+      end,
       def decode(1306) do
         :MATCH_MODE_NOT_OPEN
       end,
@@ -1760,6 +1901,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
       end,
       def decode(2516) do
         :CONTEST_BAN_CREATE
+      end,
+      def decode(2523) do
+        :CONTEST_NO_AUTH
       end,
       def decode(1108) do
         :ROOM_KICK_SELF
@@ -1803,6 +1947,7 @@ defmodule Soulless.Game.Lq.ErrorCode do
         {6, :METHOD_NOT_FOUND},
         {101, :EMPTY_INPUT},
         {102, :INVALID_INPUT},
+        {103, :SERVER_MAINTENANCE},
         {104, :CONFIG_NOT_FOUND},
         {105, :GIFT_CODE_NOT_VALID},
         {106, :GIFT_CODE_ALREADY_USED},
@@ -1810,6 +1955,7 @@ defmodule Soulless.Game.Lq.ErrorCode do
         {108, :UNSUPPORT_OAUTH2},
         {109, :OAUTH2_EXPIRED},
         {110, :OAUTH2_FAILED},
+        {111, :OAUTH2_ALREADY_SIGNUP},
         {112, :GIFT_CODE_PROCESSING},
         {113, :GIFT_CODE_DURATION},
         {114, :GIFT_CODE_DISCARDED},
@@ -1940,7 +2086,17 @@ defmodule Soulless.Game.Lq.ErrorCode do
         {2518, :CONTEST_LEVEL_LIMIT},
         {2519, :CONTEST_GAME_COUNT_LIMIT},
         {2520, :CONTEST_PROLONG_LIMIT},
-        {2521, :CONTEST_AUTO_MATCHING}
+        {2521, :CONTEST_AUTO_MATCHING},
+        {2522, :CONTEST_IS_IN_QUEUE},
+        {2523, :CONTEST_NO_AUTH},
+        {2524, :CONTEST_BANNED_ZONE},
+        {2525, :CONTEST_DISABLE_CREATE},
+        {2526, :CONTEST_DISABLE_EDIT_NAME},
+        {2527, :CONTEST_DISABLE_EDIT_NOTICE},
+        {2528, :CONTEST_DISABLE_CHAT},
+        {2529, :CONTEST_NOT_SUPPORT_OB},
+        {2530, :CONTEST_BLACK_LIST},
+        {2531, :CONTEST_CREATE_COUNT_LIMIT}
       ]
     end
 
@@ -1974,6 +2130,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
         def has_constant?(:INVALID_INPUT) do
           true
         end,
+        def has_constant?(:SERVER_MAINTENANCE) do
+          true
+        end,
         def has_constant?(:CONFIG_NOT_FOUND) do
           true
         end,
@@ -1993,6 +2152,9 @@ defmodule Soulless.Game.Lq.ErrorCode do
           true
         end,
         def has_constant?(:OAUTH2_FAILED) do
+          true
+        end,
+        def has_constant?(:OAUTH2_ALREADY_SIGNUP) do
           true
         end,
         def has_constant?(:GIFT_CODE_PROCESSING) do
@@ -2386,6 +2548,36 @@ defmodule Soulless.Game.Lq.ErrorCode do
           true
         end,
         def has_constant?(:CONTEST_AUTO_MATCHING) do
+          true
+        end,
+        def has_constant?(:CONTEST_IS_IN_QUEUE) do
+          true
+        end,
+        def has_constant?(:CONTEST_NO_AUTH) do
+          true
+        end,
+        def has_constant?(:CONTEST_BANNED_ZONE) do
+          true
+        end,
+        def has_constant?(:CONTEST_DISABLE_CREATE) do
+          true
+        end,
+        def has_constant?(:CONTEST_DISABLE_EDIT_NAME) do
+          true
+        end,
+        def has_constant?(:CONTEST_DISABLE_EDIT_NOTICE) do
+          true
+        end,
+        def has_constant?(:CONTEST_DISABLE_CHAT) do
+          true
+        end,
+        def has_constant?(:CONTEST_NOT_SUPPORT_OB) do
+          true
+        end,
+        def has_constant?(:CONTEST_BLACK_LIST) do
+          true
+        end,
+        def has_constant?(:CONTEST_CREATE_COUNT_LIMIT) do
           true
         end
       ]

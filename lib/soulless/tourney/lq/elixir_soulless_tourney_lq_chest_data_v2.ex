@@ -1,7 +1,11 @@
 # credo:disable-for-this-file
 defmodule Soulless.Tourney.Lq.ChestDataV2 do
   @moduledoc false
-  defstruct chest_id: 0, total_open_count: 0, face_black_count: 0, __uf__: []
+  defstruct chest_id: 0,
+            total_open_count: 0,
+            face_black_count: 0,
+            ticket_face_black_count: 0,
+            __uf__: []
 
   (
     (
@@ -20,6 +24,7 @@ defmodule Soulless.Tourney.Lq.ChestDataV2 do
         |> encode_chest_id(msg)
         |> encode_total_open_count(msg)
         |> encode_face_black_count(msg)
+        |> encode_ticket_face_black_count(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -62,6 +67,19 @@ defmodule Soulless.Tourney.Lq.ChestDataV2 do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:face_black_count, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_ticket_face_black_count(acc, msg) do
+        try do
+          if msg.ticket_face_black_count == 0 do
+            acc
+          else
+            [acc, " ", Protox.Encode.encode_uint32(msg.ticket_face_black_count)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:ticket_face_black_count, "invalid field value"),
                     __STACKTRACE__
         end
       end
@@ -131,6 +149,10 @@ defmodule Soulless.Tourney.Lq.ChestDataV2 do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[face_black_count: value], rest}
 
+            {4, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[ticket_face_black_count: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -194,7 +216,8 @@ defmodule Soulless.Tourney.Lq.ChestDataV2 do
       %{
         1 => {:chest_id, {:scalar, 0}, :uint32},
         2 => {:total_open_count, {:scalar, 0}, :uint32},
-        3 => {:face_black_count, {:scalar, 0}, :uint32}
+        3 => {:face_black_count, {:scalar, 0}, :uint32},
+        4 => {:ticket_face_black_count, {:scalar, 0}, :uint32}
       }
     end
 
@@ -206,6 +229,7 @@ defmodule Soulless.Tourney.Lq.ChestDataV2 do
       %{
         chest_id: {1, {:scalar, 0}, :uint32},
         face_black_count: {3, {:scalar, 0}, :uint32},
+        ticket_face_black_count: {4, {:scalar, 0}, :uint32},
         total_open_count: {2, {:scalar, 0}, :uint32}
       }
     end
@@ -240,6 +264,15 @@ defmodule Soulless.Tourney.Lq.ChestDataV2 do
           label: :optional,
           name: :face_black_count,
           tag: 3,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "ticketFaceBlackCount",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :ticket_face_black_count,
+          tag: 4,
           type: :uint32
         }
       ]
@@ -367,6 +400,46 @@ defmodule Soulless.Tourney.Lq.ChestDataV2 do
            }}
         end
       ),
+      (
+        def field_def(:ticket_face_black_count) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "ticketFaceBlackCount",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :ticket_face_black_count,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+
+        def field_def("ticketFaceBlackCount") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "ticketFaceBlackCount",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :ticket_face_black_count,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+
+        def field_def("ticket_face_black_count") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "ticketFaceBlackCount",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :ticket_face_black_count,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -413,6 +486,9 @@ defmodule Soulless.Tourney.Lq.ChestDataV2 do
       {:ok, 0}
     end,
     def default(:face_black_count) do
+      {:ok, 0}
+    end,
+    def default(:ticket_face_black_count) do
       {:ok, 0}
     end,
     def default(_) do

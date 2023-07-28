@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Tourney.Lq.ViewSlot do
   @moduledoc false
-  defstruct slot: 0, item_id: 0, __uf__: []
+  defstruct slot: 0, item_id: 0, type: 0, item_id_list: [], __uf__: []
 
   (
     (
@@ -16,7 +16,12 @@ defmodule Soulless.Tourney.Lq.ViewSlot do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_slot(msg) |> encode_item_id(msg) |> encode_unknown_fields(msg)
+        []
+        |> encode_slot(msg)
+        |> encode_item_id(msg)
+        |> encode_type(msg)
+        |> encode_item_id_list(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
@@ -45,6 +50,44 @@ defmodule Soulless.Tourney.Lq.ViewSlot do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:item_id, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_type(acc, msg) do
+        try do
+          if msg.type == 0 do
+            acc
+          else
+            [acc, "\x18", Protox.Encode.encode_uint32(msg.type)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:type, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_item_id_list(acc, msg) do
+        try do
+          case msg.item_id_list do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "\"",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:item_id_list, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -109,6 +152,23 @@ defmodule Soulless.Tourney.Lq.ViewSlot do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[item_id: value], rest}
 
+            {3, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[type: value], rest}
+
+            {4, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 item_id_list:
+                   msg.item_id_list ++ Protox.Decode.parse_repeated_uint32([], delimited)
+               ], rest}
+
+            {4, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[item_id_list: msg.item_id_list ++ [value]], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -169,7 +229,12 @@ defmodule Soulless.Tourney.Lq.ViewSlot do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:slot, {:scalar, 0}, :uint32}, 2 => {:item_id, {:scalar, 0}, :uint32}}
+      %{
+        1 => {:slot, {:scalar, 0}, :uint32},
+        2 => {:item_id, {:scalar, 0}, :uint32},
+        3 => {:type, {:scalar, 0}, :uint32},
+        4 => {:item_id_list, :packed, :uint32}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -177,7 +242,12 @@ defmodule Soulless.Tourney.Lq.ViewSlot do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{item_id: {2, {:scalar, 0}, :uint32}, slot: {1, {:scalar, 0}, :uint32}}
+      %{
+        item_id: {2, {:scalar, 0}, :uint32},
+        item_id_list: {4, :packed, :uint32},
+        slot: {1, {:scalar, 0}, :uint32},
+        type: {3, {:scalar, 0}, :uint32}
+      }
     end
   )
 
@@ -201,6 +271,24 @@ defmodule Soulless.Tourney.Lq.ViewSlot do
           label: :optional,
           name: :item_id,
           tag: 2,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "type",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :type,
+          tag: 3,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "itemIdList",
+          kind: :packed,
+          label: :repeated,
+          name: :item_id_list,
+          tag: 4,
           type: :uint32
         }
       ]
@@ -277,6 +365,75 @@ defmodule Soulless.Tourney.Lq.ViewSlot do
            }}
         end
       ),
+      (
+        def field_def(:type) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "type",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :type,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("type") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "type",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :type,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:item_id_list) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "itemIdList",
+             kind: :packed,
+             label: :repeated,
+             name: :item_id_list,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+
+        def field_def("itemIdList") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "itemIdList",
+             kind: :packed,
+             label: :repeated,
+             name: :item_id_list,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+
+        def field_def("item_id_list") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "itemIdList",
+             kind: :packed,
+             label: :repeated,
+             name: :item_id_list,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -321,6 +478,12 @@ defmodule Soulless.Tourney.Lq.ViewSlot do
     end,
     def default(:item_id) do
       {:ok, 0}
+    end,
+    def default(:type) do
+      {:ok, 0}
+    end,
+    def default(:item_id_list) do
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

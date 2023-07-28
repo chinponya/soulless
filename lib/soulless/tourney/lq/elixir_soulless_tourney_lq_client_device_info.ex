@@ -10,6 +10,8 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
             sale_platform: "",
             hardware_vendor: "",
             model_number: "",
+            screen_width: 0,
+            screen_height: 0,
             __uf__: []
 
   (
@@ -35,6 +37,8 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
         |> encode_sale_platform(msg)
         |> encode_hardware_vendor(msg)
         |> encode_model_number(msg)
+        |> encode_screen_width(msg)
+        |> encode_screen_height(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -151,6 +155,31 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
           ArgumentError ->
             reraise Protox.EncodingError.new(:model_number, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_screen_width(acc, msg) do
+        try do
+          if msg.screen_width == 0 do
+            acc
+          else
+            [acc, "P", Protox.Encode.encode_uint32(msg.screen_width)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:screen_width, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_screen_height(acc, msg) do
+        try do
+          if msg.screen_height == 0 do
+            acc
+          else
+            [acc, "X", Protox.Encode.encode_uint32(msg.screen_height)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:screen_height, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -250,6 +279,14 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[model_number: delimited], rest}
 
+            {10, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[screen_width: value], rest}
+
+            {11, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[screen_height: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -319,7 +356,9 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
         6 => {:software, {:scalar, ""}, :string},
         7 => {:sale_platform, {:scalar, ""}, :string},
         8 => {:hardware_vendor, {:scalar, ""}, :string},
-        9 => {:model_number, {:scalar, ""}, :string}
+        9 => {:model_number, {:scalar, ""}, :string},
+        10 => {:screen_width, {:scalar, 0}, :uint32},
+        11 => {:screen_height, {:scalar, 0}, :uint32}
       }
     end
 
@@ -337,6 +376,8 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
         os_version: {4, {:scalar, ""}, :string},
         platform: {1, {:scalar, ""}, :string},
         sale_platform: {7, {:scalar, ""}, :string},
+        screen_height: {11, {:scalar, 0}, :uint32},
+        screen_width: {10, {:scalar, 0}, :uint32},
         software: {6, {:scalar, ""}, :string}
       }
     end
@@ -426,6 +467,24 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
           name: :model_number,
           tag: 9,
           type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "screenWidth",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :screen_width,
+          tag: 10,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "screenHeight",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :screen_height,
+          tag: 11,
+          type: :uint32
         }
       ]
     end
@@ -748,6 +807,86 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
            }}
         end
       ),
+      (
+        def field_def(:screen_width) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "screenWidth",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :screen_width,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+
+        def field_def("screenWidth") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "screenWidth",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :screen_width,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+
+        def field_def("screen_width") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "screenWidth",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :screen_width,
+             tag: 10,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:screen_height) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "screenHeight",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :screen_height,
+             tag: 11,
+             type: :uint32
+           }}
+        end
+
+        def field_def("screenHeight") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "screenHeight",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :screen_height,
+             tag: 11,
+             type: :uint32
+           }}
+        end
+
+        def field_def("screen_height") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "screenHeight",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :screen_height,
+             tag: 11,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -813,6 +952,12 @@ defmodule Soulless.Tourney.Lq.ClientDeviceInfo do
     end,
     def default(:model_number) do
       {:ok, ""}
+    end,
+    def default(:screen_width) do
+      {:ok, 0}
+    end,
+    def default(:screen_height) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}
