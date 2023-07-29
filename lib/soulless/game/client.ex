@@ -33,14 +33,15 @@ defmodule Soulless.Game.Client do
       end
 
       @impl true
-      def handle_info(:spawn_child, %{region: region, reconnect_after: reconnect_after} = state) do
+      def handle_info(:spawn_child, state) do
         with {:ok, %{endpoint_url: endpoint_url, passport_url: passport_url, version: version}} <-
-               Soulless.Game.Auth.endpoint(region),
+               Soulless.Game.Auth.endpoint(state.region),
              {:ok, child_pid} <-
                Soulless.Websocket.Client.start_link(
                  endpoint_url: endpoint_url,
                  parent_pid: self(),
-                 protocol_module: Soulless.Game.Lq,
+                 parse: &Soulless.Protocol.GamePacket.parse/2,
+                 serialize: &Soulless.Protocol.GamePacket.serialize/2,
                  name: Module.concat([__MODULE__, Child])
                ) do
           Logger.info("#{__MODULE__} Spawned child #{inspect(child_pid)}")
@@ -54,10 +55,10 @@ defmodule Soulless.Game.Client do
         else
           {:error, :maintenance} ->
             Logger.warn(
-              "#{__MODULE__} Server is under maintenance. Retrying in #{reconnect_after / 1000}s"
+              "#{__MODULE__} Server is under maintenance. Retrying in #{state.reconnect_after / 1000}s"
             )
 
-            Process.send_after(self(), :spawn_child, reconnect_after)
+            Process.send_after(self(), :spawn_child, state.reconnect_after)
             {:noreply, state}
 
           {:error, reason} ->
@@ -66,24 +67,25 @@ defmodule Soulless.Game.Client do
       end
 
       @impl true
-      def handle_cast(
-            :ready,
-            %{
-              uid: uid,
-              access_token: access_token,
-              token_kind: token_kind,
-              passport_url: passport_url,
-              version: version,
-              child_pid: child_pid
-            } = state
-          ) do
+      def handle_cast(:ready, state) do
         login_result =
-          case token_kind do
+          case state.token_kind do
             :permanent ->
-              Soulless.Game.Client.full_login(uid, access_token, passport_url, version, child_pid)
+              Soulless.Game.Client.full_login(
+                state.uid,
+                state.access_token,
+                state.passport_url,
+                state.version,
+                state.child_pid
+              )
 
             :transient ->
-              Soulless.Game.Client.partial_login(uid, access_token, version, child_pid)
+              Soulless.Game.Client.partial_login(
+                state.uid,
+                state.access_token,
+                state.version,
+                state.child_pid
+              )
           end
 
         case login_result do
@@ -131,14 +133,14 @@ defmodule Soulless.Game.Client do
       end
 
       @impl true
-      def handle_cast({:send, _, _, _} = payload, %{child_pid: child_pid} = state) do
-        GenServer.cast(child_pid, payload)
+      def handle_cast({:send, _} = payload, state) do
+        GenServer.cast(state.child_pid, payload)
         {:noreply, state}
       end
 
       @impl true
-      def handle_call({:send, _, _, _} = payload, from, %{child_pid: child_pid} = state) do
-        send(child_pid, {:"$gen_call", from, payload})
+      def handle_call({:send, _} = payload, from, state) do
+        send(state.child_pid, {:"$gen_call", from, payload})
         {:noreply, state}
       end
 
@@ -184,9 +186,7 @@ defmodule Soulless.Game.Client do
 
     with {:ok, passport} <- Soulless.Auth.get_passport(passport_url, uid, access_token),
          {:ok, login_response} <- ws_login(child_pid, uid, version, passport["accessToken"]) do
-      {:ok, login_response.account}
-    else
-      error -> error
+      {:ok, login_response.body.account}
     end
   end
 
@@ -194,9 +194,7 @@ defmodule Soulless.Game.Client do
     Logger.debug("#{__MODULE__} Logging in with UID #{uid}")
 
     with {:ok, login_response} <- ws_login(child_pid, uid, version, access_token) do
-      {:ok, login_response.account}
-    else
-      error -> error
+      {:ok, login_response.body.account}
     end
   end
 
@@ -217,9 +215,9 @@ defmodule Soulless.Game.Client do
       |> Soulless.Game.Service.Lobby.oauth2_auth()
       |> Soulless.RPC.fetch(pid)
 
-    case is_nil(response.error) || response.error.code do
+    case is_nil(response.body.error) || response.body.error.code do
       true ->
-        {:ok, response.access_token}
+        {:ok, response.body.access_token}
 
       error_code ->
         Logger.error("#{__MODULE__} Fetching Oauth2 token failed. Received: #{inspect(response)}")
@@ -258,7 +256,7 @@ defmodule Soulless.Game.Client do
       |> Soulless.Game.Service.Lobby.oauth2_login()
       |> Soulless.RPC.fetch(pid)
 
-    if response.account do
+    if response.body.account do
       {:ok, response}
     else
       Logger.error("#{__MODULE__} Oauth2 login failed. Received: #{inspect(response)}")

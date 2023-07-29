@@ -13,10 +13,10 @@ defmodule Soulless.Protocol.TourneyPacket do
     field(:body, struct())
   end
 
-  @spec serialize(__MODULE__.t()) :: nonempty_binary()
-  def serialize(message) do
+  @spec serialize(__MODULE__.t(), GenericPacket.cache()) :: {nonempty_binary(), GenericPacket.cache()}
+  def serialize(message, module_cache) do
     generic_packet_message = %{message | __struct__: GenericPacket}
-    GenericPacket.serialize(__MODULE__, generic_packet_message)
+    GenericPacket.serialize(__MODULE__, generic_packet_message, module_cache)
   end
 
   @spec parse(binary(), GenericPacket.cache()) ::
@@ -60,6 +60,6 @@ defmodule Soulless.Protocol.TourneyPacket do
 
   @impl GenericPacket
   def post_body_decode(body) do
-    body
+    {:ok, body}
   end
 end

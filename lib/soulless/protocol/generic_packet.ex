@@ -3,8 +3,12 @@ defmodule Soulless.Protocol.GenericPacket do
 
   @type kind :: :notice | :request | :response
   @type kind_or_unknown :: :notice | :request | :response | :unknown
-  @type cache :: %{non_neg_integer() => atom()}
+  @type rpc :: [
+          request_module: lq_module :: module(),
+          response_module: lq_module :: module()
+        ]
   @type rpc_name :: String.t()
+  @type cache :: %{non_neg_integer() => module() | rpc()}
 
   @callback wrap_and_encode(rpc_name(), body :: binary()) :: binary()
 
@@ -14,13 +18,7 @@ defmodule Soulless.Protocol.GenericPacket do
   @callback get_type_by_identifier(rpc_name()) ::
               {:ok, lq_module :: module()} | {:error, String.t()}
 
-  @callback get_rpc_by_identifier(rpc_name()) ::
-              {:ok,
-               [
-                 request_module: lq_module :: module(),
-                 response_module: lq_module :: module()
-               ]}
-              | {:error, error :: String.t()}
+  @callback get_rpc_by_identifier(rpc_name()) :: {:ok, rpc} | {:error, error :: String.t()}
 
   @callback pre_body_encode(body :: struct()) :: struct()
 
@@ -40,14 +38,36 @@ defmodule Soulless.Protocol.GenericPacket do
     field(:body, binary())
   end
 
-  @spec serialize(module(), __MODULE__.t()) :: nonempty_binary()
-  def serialize(callback_module, message) do
+  @spec serialize(module(), __MODULE__.t(), cache()) :: {nonempty_binary(), cache()}
+  def serialize(callback_module, message, module_cache) do
     kind =
       case message.kind do
         :notice -> 1
         :request -> 2
         :response -> 3
         _ -> raise "invalid message kind"
+      end
+
+    to_cache =
+      case message.kind do
+        :notice ->
+          callback_module.get_type_by_identifier(message.rpc)
+
+        :request ->
+          callback_module.get_rpc_by_identifier(message.rpc)
+
+        :response ->
+          if is_nil(message.rpc) do
+            Map.fetch(module_cache, message.request_id)
+          else
+            callback_module.get_rpc_by_identifier(message.rpc)
+          end
+      end
+
+    new_module_cache =
+      case to_cache do
+        {:ok, to_cache_value} -> Map.put(module_cache, message.request_id, to_cache_value)
+        _ -> module_cache
       end
 
     module = message.body.__struct__
@@ -60,13 +80,16 @@ defmodule Soulless.Protocol.GenericPacket do
 
     wrapper = callback_module.wrap_and_encode(message.rpc, body)
 
-    case message.kind do
-      :notice ->
-        <<kind::size(8), wrapper::binary>>
+    binary =
+      case message.kind do
+        :notice ->
+          <<kind::size(8), wrapper::binary>>
 
-      _ ->
-        <<kind::size(8), message.request_id::little-size(16), wrapper::binary>>
-    end
+        _ ->
+          <<kind::size(8), message.request_id::little-size(16), wrapper::binary>>
+      end
+
+    {binary, new_module_cache}
   end
 
   @spec parse(module(), binary(), cache()) ::
@@ -177,7 +200,7 @@ defmodule Soulless.Protocol.GenericPacket do
   @spec unwrap_request_packet(module(), non_neg_integer(), Wrapper.t(), cache()) ::
           {:ok, {struct(), rpc_name(), cache()}} | {:error, String.t()}
   defp unwrap_request_packet(callback_module, request_id, wrapper, module_cache) do
-    with {:ok, modules} <- callback_module.get_type_by_identifier(wrapper.name),
+    with {:ok, modules} <- callback_module.get_rpc_by_identifier(wrapper.name),
          {:ok, body} <- modules[:request_module].decode(wrapper.data) do
       modules_with_rpc = Keyword.put(modules, :rpc, wrapper.name)
       new_module_cache = Map.put(module_cache, request_id, modules_with_rpc)

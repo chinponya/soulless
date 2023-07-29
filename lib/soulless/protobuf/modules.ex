@@ -21,8 +21,8 @@ defmodule Soulless.Protobuf.Modules do
         into: %{} do
       {:custom, request_module_name} = rpc[:request_type]
       {:custom, response_module_name} = rpc[:return_type]
-      request_module = Module.concat([module_prefix, request_module_name])
-      response_module = Module.concat([module_prefix, response_module_name])
+      request_module = Module.safe_concat([module_prefix, request_module_name])
+      response_module = Module.safe_concat([module_prefix, response_module_name])
 
       value = [request_module: request_module, response_module: response_module]
       key = ".#{package}.#{element[:name]}.#{rpc[:function]}"

@@ -2,34 +2,24 @@ defmodule Soulless.Websocket.Client do
   use WebSockex
   require Logger
 
-  # Wire message types
-  @notice 1
-  @request 2
-  @response 3
-
   def start_link(opts) do
     user_agent = Keyword.get(opts, :user_agent, Soulless.HTTP.default_user_agent())
+    parse = Keyword.fetch!(opts, :parse)
+    serialize = Keyword.fetch!(opts, :serialize)
 
-    user_agent = opts[:user_agent] || default_user_agent
+    state = %{
+      next_request_id: 1,
+      pending_requests: %{},
+      module_cache: %{},
+      parent_pid: opts[:parent_pid],
+      parse: parse,
+      serialize: serialize
+    }
 
-    case opts[:protocol_module].get_type_by_identifier(".lq.Wrapper") do
-      {:ok, wrapper_module} ->
-        state = %{
-          next_request_id: 1,
-          pending_requests: %{},
-          parent_pid: opts[:parent_pid],
-          protocol_module: opts[:protocol_module],
-          wrapper_module: wrapper_module
-        }
-
-        WebSockex.start_link(opts[:endpoint_url], __MODULE__, state,
-          name: opts[:name],
-          extra_headers: [{"User-Agent", user_agent}]
-        )
-
-      error ->
-        error
-    end
+    WebSockex.start_link(opts[:endpoint_url], __MODULE__, state,
+      name: opts[:name],
+      extra_headers: [{"User-Agent", user_agent}]
+    )
   end
 
   # Websocket callbacks
@@ -66,83 +56,54 @@ defmodule Soulless.Websocket.Client do
     {:reply, :ping, update_heartbeat(state)}
   end
 
-  def handle_call({:send, _, _, _} = message, from, state) do
+  def handle_call({:send, _} = message, from, state) do
     handle_request(message, from, state)
   end
 
   @impl true
-  def handle_cast({:send, _, _, _} = message, state) do
+  def handle_cast({:send, _} = message, state) do
     handle_request(message, nil, state)
   end
 
-  defp handle_request(
-         {:send, message, namespace, decoder_mod},
-         from,
-         %{next_request_id: next_request_id, wrapper_module: wrapper_module} = state
-       ) do
-    wrapper =
-      wrapper_module.__struct__(name: namespace, data: :binary.list_to_bin(message))
-      |> wrapper_module.encode!()
-      |> :binary.list_to_bin()
+  defp handle_request({:send, packet}, from, state) do
+    {raw_packet, module_cache} =
+      packet
+      |> Map.put(:request_id, state.next_request_id)
+      |> state.serialize.(state.module_cache)
 
-    message = <<@request, next_request_id::little-size(16)>> <> wrapper
+    pending_requests = Map.put(state.pending_requests, state.next_request_id, from)
 
-    {:reply, {:binary, message},
-     state
-     |> increment_request_id()
-     |> put_request(next_request_id, namespace, decoder_mod, from)}
+    new_state =
+      state
+      |> increment_request_id()
+      |> Map.put(:module_cache, module_cache)
+      |> Map.put(:pending_requests, pending_requests)
+
+    {:reply, {:binary, raw_packet}, new_state}
   end
 
-  # Handle response
   @impl true
-  def handle_frame(
-        {:binary, <<@response::size(8), message::binary>>},
-        %{parent_pid: parent_pid, wrapper_module: wrapper_module} = state
-      ) do
-    <<req_id::little-size(16), wrapper::binary>> = message
+  def handle_frame({:binary, raw_packet}, state) do
+    with {:ok, {packet, module_cache}} <-
+           state.parse.(raw_packet, state.module_cache) do
+      {from, pending_requests} = Map.pop(state.pending_requests, packet.request_id)
 
-    with {updated_state, {_namespace, decoder_mod, from}} <- pop_request(state, req_id),
-         {:ok, unwrapped} <- wrapper_module.decode(wrapper),
-         {:ok, message} <- decoder_mod.decode(unwrapped.data) do
       if is_nil(from) do
-        GenServer.cast(parent_pid, {:response, message})
+        GenServer.cast(state.parent_pid, {packet.kind, packet})
       else
-        GenServer.reply(from, message)
+        GenServer.reply(from, packet)
       end
 
-      {:ok, updated_state}
+      new_state =
+        state
+        |> Map.put(:module_cache, module_cache)
+        |> Map.put(:pending_requests, pending_requests)
+
+      {:ok, new_state}
     else
       {:error, reason} ->
-        Logger.warn(
-          "#{__MODULE__} Could not decode a message for with ID #{req_id}: #{inspect(reason)}"
-        )
+        Logger.warn("#{__MODULE__} Could not decode packet: #{inspect(reason)}")
 
-        {:ok, state}
-
-      _ ->
-        Logger.warn("#{__MODULE__} Received an unknown message with ID #{req_id}")
-        {:ok, state}
-    end
-  end
-
-  # Handle notice
-  @impl true
-  def handle_frame(
-        {:binary, <<@notice::size(8), message::binary>>},
-        %{
-          parent_pid: parent_pid,
-          wrapper_module: wrapper_module,
-          protocol_module: protocol_module
-        } = state
-      ) do
-    with {:ok, wrapper} <- wrapper_module.decode(message),
-         {:ok, notice_mod} <- protocol_module.get_rpc_by_identifier(wrapper.name),
-         {:ok, notice} <- notice_mod.decode(wrapper.data) do
-      :ok = GenServer.cast(parent_pid, {:notice, notice})
-      {:ok, state}
-    else
-      {:error, reason} ->
-        Logger.error("#{__MODULE__} Could not decode notice: #{inspect(reason)}")
         {:ok, state}
     end
   end
@@ -194,22 +155,5 @@ defmodule Soulless.Websocket.Client do
     Map.update(state, :next_request_id, 0, fn next_request_id ->
       next_request_id + 1
     end)
-  end
-
-  defp put_request(state, request_id, namespace, decoder_mod, from) do
-    Map.update(
-      state,
-      :pending_requests,
-      %{},
-      fn pending_requests ->
-        Map.put(pending_requests, request_id, {namespace, decoder_mod, from})
-      end
-    )
-  end
-
-  defp pop_request(%{pending_requests: pending_requests} = state, request_id) do
-    {contents, updated_requests} = Map.pop(pending_requests, request_id)
-    updated_state = Map.put(state, :pending_requests, updated_requests)
-    {updated_state, contents}
   end
 end

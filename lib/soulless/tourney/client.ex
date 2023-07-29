@@ -36,14 +36,15 @@ defmodule Soulless.Tourney.Client do
       end
 
       @impl true
-      def handle_info(:spawn_child, %{region: region, reconnect_after: reconnect_after} = state) do
+      def handle_info(:spawn_child, state) do
         with {:ok, %{endpoint_url: endpoint_url, passport_url: passport_url}} <-
-               Soulless.Tourney.Auth.endpoint_url(region),
+               Soulless.Tourney.Auth.endpoint_url(state.region),
              {:ok, child_pid} <-
                Soulless.Websocket.Client.start_link(
                  endpoint_url: endpoint_url,
                  parent_pid: self(),
-                 protocol_module: Soulless.Tourney.Lq,
+                 parse: &Soulless.Protocol.TourneyPacket.parse/2,
+                 serialize: &Soulless.Protocol.TourneyPacket.serialize/2,
                  name: Module.concat([__MODULE__, Child])
                ) do
           Logger.info("#{__MODULE__} Spawned child #{inspect(child_pid)}")
@@ -60,20 +61,23 @@ defmodule Soulless.Tourney.Client do
       end
 
       @impl true
-      def handle_cast(
-            :ready,
-            %{
-              uid: uid,
-              access_token: access_token,
-              token_kind: token_kind,
-              passport_url: passport_url,
-              child_pid: child_pid
-            } = state
-          ) do
+      def handle_cast(:ready, state) do
         login_result =
-          case token_kind do
-            :permanent -> Soulless.Tourney.Client.full_login(uid, access_token, passport_url, child_pid)
-            :transient -> Soulless.Tourney.Client.partial_login(uid, access_token, child_pid)
+          case state.token_kind do
+            :permanent ->
+              Soulless.Tourney.Client.full_login(
+                state.uid,
+                state.access_token,
+                state.passport_url,
+                state.child_pid
+              )
+
+            :transient ->
+              Soulless.Tourney.Client.partial_login(
+                state.uid,
+                state.access_token,
+                state.child_pid
+              )
           end
 
         case login_result do
@@ -115,20 +119,20 @@ defmodule Soulless.Tourney.Client do
       end
 
       @impl true
-      def handle_cast(:ping, %{child_pid: child_pid} = state) do
-        WebSockex.send_frame(child_pid, :ping)
+      def handle_cast(:ping, state) do
+        WebSockex.send_frame(state.child_pid, :ping)
         {:noreply, state}
       end
 
       @impl true
-      def handle_cast({:send, _, _, _} = payload, %{child_pid: child_pid} = state) do
-        GenServer.cast(child_pid, payload)
+      def handle_cast({:send, _} = payload, state) do
+        GenServer.cast(state.child_pid, payload)
         {:noreply, state}
       end
 
       @impl true
-      def handle_call({:send, _, _, _} = payload, from, %{child_pid: child_pid} = state) do
-        send(child_pid, {:"$gen_call", from, payload})
+      def handle_call({:send, _} = payload, from, state) do
+        send(state.child_pid, {:"$gen_call", from, payload})
         {:noreply, state}
       end
 
@@ -178,7 +182,7 @@ defmodule Soulless.Tourney.Client do
            fetch_ws_oauth2_token(child_pid, passport["uid"], passport["accessToken"]),
          {:ok, login_response} <-
            ws_oauth2_login(child_pid, oauth2_token) do
-      {:ok, login_response.nickname}
+      {:ok, login_response.body.nickname}
     end
   end
 
@@ -186,7 +190,7 @@ defmodule Soulless.Tourney.Client do
     Logger.debug("#{__MODULE__} Logging in with UID #{uid}")
 
     with {:ok, login_response} <- ws_login(child_pid, uid, access_token) do
-      {:ok, login_response.nickname}
+      {:ok, login_response.body.nickname}
     end
   end
 
@@ -202,9 +206,9 @@ defmodule Soulless.Tourney.Client do
       |> Api.oauth2_auth_contest_manager()
       |> Soulless.RPC.fetch(child_pid)
 
-    case is_nil(response.error) || response.error.code do
+    case is_nil(response.body.error) || response.body.error.code do
       true ->
-        {:ok, response.access_token}
+        {:ok, response.body.access_token}
 
       _ ->
         Logger.error("#{__MODULE__} Fetching Oauth2 token failed. Received: #{inspect(response)}")
@@ -218,7 +222,7 @@ defmodule Soulless.Tourney.Client do
       |> Api.oauth2_login_contest_manager()
       |> Soulless.RPC.fetch(child_pid)
 
-    case is_nil(response.error) || response.error.code do
+    case is_nil(response.body.error) || response.body.error.code do
       true ->
         {:ok, response}
 

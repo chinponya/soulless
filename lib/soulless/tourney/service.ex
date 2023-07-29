@@ -1,7 +1,7 @@
 defmodule Soulless.Tourney.Service do
   @modules Soulless.Protobuf.Modules.generate_rpc_lookup_map(
              "priv/protos/tourney.proto",
-             Soulless.Game
+             Soulless.Tourney.Lq
            )
 
   def get_rpc_by_identifier(name) do
