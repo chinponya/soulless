@@ -11,4 +11,20 @@ defmodule Soulless.Auth do
       error -> error
     end
   end
+
+  def test_server_url(opts, is_websocket) do
+    address = Keyword.fetch!(opts, :address)
+    port = Keyword.fetch!(opts, :port)
+    ssl = Keyword.get(opts, :ssl, false)
+
+    scheme =
+      case {ssl, is_websocket} do
+        {true, true} -> "wss"
+        {false, true} -> "ws"
+        {true, false} -> "https"
+        {false, false} -> "http"
+      end
+
+    "#{scheme}://#{address}:#{port}"
+  end
 end

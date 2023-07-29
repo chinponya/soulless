@@ -1,11 +1,6 @@
 defmodule Soulless.Tourney.Auth do
   require Logger
 
-
-  def passport_url() do
-    "https://passport.mahjongsoul.com/user/login"
-  end
-
   def endpoint_url(:en = region) do
     with {:ok, config_response} <- HTTPoison.get(config_url(region)),
          {:ok, config_map} <- parse_config(config_response.body),
@@ -15,19 +10,40 @@ defmodule Soulless.Tourney.Auth do
          {:ok, servers_json} <- Jason.decode(servers_response.body),
          server_url <- List.first(servers_json["servers"]),
          false <- is_nil(server_url) do
-      {:ok, "wss://#{server_url}"}
+      {:ok, %{endpoint_url: "wss://#{server_url}", passport_url: passport_url(region)}}
     else
       true -> {:error, :not_found}
       error -> error
     end
   end
 
+  def endpoint_url({:custom, _opts} = region) do
+    {:ok, %{endpoint_url: socket_base_url(region), passport_url: passport_url(region)}}
+  end
+
   def endpoint_url(region) do
     raise "Region '#{String.to_atom(region)}' is not supported"
   end
 
+  def passport_url(:en) do
+    "https://passport.mahjongsoul.com/user/login"
+  end
+
+  def passport_url({:custom, _opts} = region) do
+    "#{base_url(region)}/user/login"
+  end
+
   defp base_url(:en) do
     "https://mahjongsoul.tournament.yo-star.com"
+  end
+
+  defp base_url({:custom, opts}) do
+    Soulless.Auth.test_server_url(opts, false)
+  end
+
+  defp socket_base_url({:custom, opts} = _region) do
+    url = Soulless.Auth.test_server_url(opts, true)
+    "#{url}/socket"
   end
 
   defp config_url(region) do
@@ -58,5 +74,4 @@ defmodule Soulless.Tourney.Auth do
       {:error, :not_found}
     end
   end
-
 end

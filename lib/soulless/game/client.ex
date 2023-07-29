@@ -96,9 +96,9 @@ defmodule Soulless.Game.Client do
              |> Map.put(:status, :ready)
              |> Map.put(:account, account)}
 
-          {:error, _reason} ->
+          {:error, reason} ->
             Logger.error("#{__MODULE__} login failed")
-            {:stop, :login_failed, state}
+            {:stop, reason, state}
         end
       end
 
