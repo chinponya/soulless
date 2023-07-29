@@ -3,6 +3,10 @@ defmodule Soulless.HTTP.Response do
 end
 
 defmodule Soulless.HTTP do
+  def default_user_agent() do
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+  end
+
   def get(url, headers \\ []) do
     request(:get, url, headers: headers)
   end
@@ -39,12 +43,17 @@ defmodule Soulless.HTTP do
 
     url = String.to_charlist(url)
     body = Keyword.get(opts, :body, nil)
+    default_headers = [{"user-agent", default_user_agent()}]
 
     headers =
       case Keyword.fetch(opts, :headers) do
-        {:ok, value} -> map_headers_to_charlist(value)
+        {:ok, value} -> value
         _ -> []
       end
+
+    headers =
+      merge_headers(headers, default_headers)
+      |> map_headers_to_charlist()
 
     content_type =
       case Keyword.fetch(opts, :content_type) do
@@ -105,5 +114,10 @@ defmodule Soulless.HTTP do
 
   defp maybe_map_body_to_binary(body) do
     :binary.list_to_bin(body)
+  end
+
+  defp merge_headers(headers1, headers2) do
+    Enum.concat(headers1, headers2)
+    |> Enum.uniq_by(fn {k, _} -> String.downcase(k) end)
   end
 end

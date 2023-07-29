@@ -8,8 +8,7 @@ defmodule Soulless.Websocket.Client do
   @response 3
 
   def start_link(opts) do
-    default_user_agent =
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"
+    user_agent = Keyword.get(opts, :user_agent, Soulless.HTTP.default_user_agent())
 
     user_agent = opts[:user_agent] || default_user_agent
 
