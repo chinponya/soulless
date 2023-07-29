@@ -9,12 +9,50 @@ defmodule Soulless.Protobuf.Modules do
     end
   end
 
+  def generate_rpc_lookup_map(file_path, namespace) do
+    file_contents = File.read!(file_path)
+    {:ok, parsed_proto, _, _, _, _} = Soulless.Protobuf.Parser.parse(file_contents)
+    package = Keyword.get(parsed_proto, :package)
+
+    parsed_proto
+    |> Stream.filter(fn {type, _} -> type == :service end)
+    |> Enum.flat_map(fn {_, service} ->
+      service[:procedures]
+      |> Enum.filter(fn {_, procedure} ->
+        # Keep only custom events
+        is_tuple(procedure[:request_type]) && is_tuple(procedure[:return_type])
+      end)
+      |> Enum.map(fn {_, procedure} ->
+        rpc = ".#{package}.#{service[:name]}.#{procedure[:function]}"
+
+        {
+          rpc,
+          [
+            rpc: rpc,
+            request:
+              Module.concat([
+                namespace,
+                upcase_first(package),
+                elem(procedure[:request_type], 1)
+              ]),
+            response:
+              Module.concat([
+                namespace,
+                upcase_first(package),
+                elem(procedure[:return_type], 1)
+              ])
+          ]
+        }
+      end)
+    end)
+    |> Map.new()
+  end
+
   def generate_module_lookup_map(file_path, namespace) do
     generate_module_names(file_path)
-    |> Enum.map(fn module_name ->
+    |> Map.new(fn module_name ->
       {".#{module_name}", Module.concat([namespace, upcase_first(module_name)])}
     end)
-    |> Enum.into(Map.new())
   end
 
   def generate_module_names(file_path) do
