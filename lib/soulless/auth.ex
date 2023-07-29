@@ -1,11 +1,12 @@
 defmodule Soulless.Auth do
   def get_passport(passport_url, uid, access_token) do
-    headers = [{"Content-type", "application/json"}, {"Accept", "application/json"}]
+    headers = [{"Accept", "application/json"}]
+    content_type = "application/json"
     body = Jason.encode!(%{uid: uid, token: access_token, deviceId: "web|#{uid}"})
 
-    with {:ok, response} <- HTTPoison.post(passport_url, body, headers),
+    with {:ok, response} <- Soulless.HTTP.post(passport_url, body, content_type, headers),
          {:ok, json} <- Jason.decode(response.body) do
-      json
+      {:ok, json}
     else
       {:error, %Jason.DecodeError{}} -> {:error, :ip_banned}
       error -> error

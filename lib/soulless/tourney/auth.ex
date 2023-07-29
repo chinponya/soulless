@@ -2,11 +2,11 @@ defmodule Soulless.Tourney.Auth do
   require Logger
 
   def endpoint_url(:en = region) do
-    with {:ok, config_response} <- HTTPoison.get(config_url(region)),
+    with {:ok, config_response} <- Soulless.HTTP.get(config_url(region)),
          {:ok, config_map} <- parse_config(config_response.body),
          mj_dhs_lb <- config_map["MJ_DHS_LB"],
          false <- is_nil(mj_dhs_lb),
-         {:ok, servers_response} <- HTTPoison.get(server_list_url(mj_dhs_lb)),
+         {:ok, servers_response} <- Soulless.HTTP.get(server_list_url(mj_dhs_lb)),
          {:ok, servers_json} <- Jason.decode(servers_response.body),
          server_url <- List.first(servers_json["servers"]),
          false <- is_nil(server_url) do

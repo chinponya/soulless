@@ -34,7 +34,7 @@ defmodule Soulless.Game.Auth do
   end
 
   def version(region) do
-    with {:ok, version_response} <- HTTPoison.get(version_url(region)) do
+    with {:ok, version_response} <- Soulless.HTTP.get(version_url(region)) do
       Jason.decode(version_response.body)
     else
       error -> error
@@ -42,7 +42,7 @@ defmodule Soulless.Game.Auth do
   end
 
   def config(region, version) do
-    with {:ok, config_response} <- HTTPoison.get(config_url(region, version)) do
+    with {:ok, config_response} <- Soulless.HTTP.get(config_url(region, version)) do
       Jason.decode(config_response.body)
     else
       error -> error
@@ -54,7 +54,7 @@ defmodule Soulless.Game.Auth do
   end
 
   def server_list(server_list_url) when is_binary(server_list_url) do
-    with {:ok, servers_response} <- HTTPoison.get(server_list_url),
+    with {:ok, servers_response} <- Soulless.HTTP.get(server_list_url),
          {:ok, servers_json} <- Jason.decode(servers_response.body),
          {:maintenance, false} <- {:maintenance, Map.has_key?(servers_json, "maintenance")} do
       {:ok, servers_json}

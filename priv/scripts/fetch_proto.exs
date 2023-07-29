@@ -1,10 +1,10 @@
 defmodule FetchProto do
   def run([output_file]) do
-    version_response = HTTPoison.get!(version_url())
+    version_response = Soulless.HTTP.get!(version_url())
     version = Jason.decode!(version_response.body)["version"]
-    res_response = HTTPoison.get!(res_url(version))
+    res_response = Soulless.HTTP.get!(res_url(version))
     liqi_version = Jason.decode!(res_response.body)["res"]["res/proto/liqi.json"]["prefix"]
-    liqi_response = HTTPoison.get!(liqi_url(liqi_version))
+    liqi_response = Soulless.HTTP.get!(liqi_url(liqi_version))
 
     File.write!(output_file, liqi_response.body)
     IO.puts("Downloaded proto version #{liqi_version} to '#{output_file}'")

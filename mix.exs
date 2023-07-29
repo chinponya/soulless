@@ -22,7 +22,7 @@ defmodule Soulless.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :inets, :ssl]
     ]
   end
 
@@ -56,7 +56,7 @@ defmodule Soulless.MixProject do
     [
       {:protox, "~> 1.6"},
       {:websockex, "~> 0.4.3"},
-      {:httpoison, "~> 1.8"},
+      {:castore, "~> 1.0"},
       {:jason, "~> 1.2"},
       {:uuid, "~> 1.1"},
       {:nimble_parsec, "~> 1.1"},
