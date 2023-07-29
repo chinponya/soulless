@@ -4,12 +4,12 @@ defmodule Soulless.Game.Service do
              Soulless.Game
            )
 
-  def get_module_by_identifier(name) do
+  def get_rpc_by_identifier(name) do
     Soulless.Protobuf.Modules.get_module_by_identifier(name, @modules)
   end
 
-  def get_module_by_identifier!(name) do
-    {:ok, module} = get_module_by_identifier(name)
-    module
+  def get_rpc_by_identifier!(name) do
+    {:ok, rpc} = get_rpc_by_identifier(name)
+    rpc
   end
 end

@@ -54,6 +54,7 @@ defmodule Soulless.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:typed_struct, "~> 0.3.0"},
       {:protox, "~> 1.6"},
       {:websockex, "~> 0.4.3"},
       {:castore, "~> 1.0"},

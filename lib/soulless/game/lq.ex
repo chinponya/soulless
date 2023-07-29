@@ -4,7 +4,7 @@ defmodule Soulless.Game.Lq do
              Soulless.Game
            )
 
-  def get_module_by_identifier(name) do
+  def get_type_by_identifier(name) do
     Soulless.Protobuf.Modules.get_module_by_identifier(name, @modules)
   end
 end

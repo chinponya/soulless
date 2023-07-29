@@ -13,7 +13,7 @@ defmodule Soulless.Websocket.Client do
 
     user_agent = opts[:user_agent] || default_user_agent
 
-    case opts[:protocol_module].get_module_by_identifier(".lq.Wrapper") do
+    case opts[:protocol_module].get_type_by_identifier(".lq.Wrapper") do
       {:ok, wrapper_module} ->
         state = %{
           next_request_id: 1,
@@ -137,7 +137,7 @@ defmodule Soulless.Websocket.Client do
         } = state
       ) do
     with {:ok, wrapper} <- wrapper_module.decode(message),
-         {:ok, notice_mod} <- protocol_module.get_module_by_identifier(wrapper.name),
+         {:ok, notice_mod} <- protocol_module.get_rpc_by_identifier(wrapper.name),
          {:ok, notice} <- notice_mod.decode(wrapper.data) do
       :ok = GenServer.cast(parent_pid, {:notice, notice})
       {:ok, state}
