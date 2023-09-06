@@ -1,12 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
+defmodule Soulless.Game.Lq.ActivitySimulationGameRecord do
   @moduledoc false
-  defstruct start_time: 0,
-            end_time: 0,
-            goods_click_action: 0,
-            goods_click_text: "",
-            enabled_channel: [],
-            __uf__: []
+  defstruct round: 0, seats: [], uuid: "", start_time: 0, scores: [], messages: [], __uf__: []
 
   (
     (
@@ -22,11 +17,12 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
         []
+        |> encode_round(msg)
+        |> encode_seats(msg)
+        |> encode_uuid(msg)
         |> encode_start_time(msg)
-        |> encode_end_time(msg)
-        |> encode_goods_click_action(msg)
-        |> encode_goods_click_text(msg)
-        |> encode_enabled_channel(msg)
+        |> encode_scores(msg)
+        |> encode_messages(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -34,59 +30,97 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
     []
 
     [
+      defp encode_round(acc, msg) do
+        try do
+          if msg.round == 0 do
+            acc
+          else
+            [acc, "\b", Protox.Encode.encode_uint32(msg.round)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:round, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_seats(acc, msg) do
+        try do
+          case msg.seats do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "\x12",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:seats, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_uuid(acc, msg) do
+        try do
+          if msg.uuid == "" do
+            acc
+          else
+            [acc, "\x1A", Protox.Encode.encode_string(msg.uuid)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:uuid, "invalid field value"), __STACKTRACE__
+        end
+      end,
       defp encode_start_time(acc, msg) do
         try do
           if msg.start_time == 0 do
             acc
           else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.start_time)]
+            [acc, " ", Protox.Encode.encode_uint32(msg.start_time)]
           end
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:start_time, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_end_time(acc, msg) do
+      defp encode_scores(acc, msg) do
         try do
-          if msg.end_time == 0 do
-            acc
-          else
-            [acc, "\x10", Protox.Encode.encode_uint32(msg.end_time)]
+          case msg.scores do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "*",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_int32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:end_time, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:scores, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_goods_click_action(acc, msg) do
+      defp encode_messages(acc, msg) do
         try do
-          if msg.goods_click_action == 0 do
-            acc
-          else
-            [acc, "\x18", Protox.Encode.encode_uint32(msg.goods_click_action)]
-          end
-        rescue
-          ArgumentError ->
-            reraise Protox.EncodingError.new(:goods_click_action, "invalid field value"),
-                    __STACKTRACE__
-        end
-      end,
-      defp encode_goods_click_text(acc, msg) do
-        try do
-          if msg.goods_click_text == "" do
-            acc
-          else
-            [acc, "\"", Protox.Encode.encode_string(msg.goods_click_text)]
-          end
-        rescue
-          ArgumentError ->
-            reraise Protox.EncodingError.new(:goods_click_text, "invalid field value"),
-                    __STACKTRACE__
-        end
-      end,
-      defp encode_enabled_channel(acc, msg) do
-        try do
-          case msg.enabled_channel do
+          case msg.messages do
             [] ->
               acc
 
@@ -94,14 +128,13 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
               [
                 acc,
                 Enum.reduce(values, [], fn value, acc ->
-                  [acc, "*", Protox.Encode.encode_string(value)]
+                  [acc, "2", Protox.Encode.encode_message(value)]
                 end)
               ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:enabled_channel, "invalid field value"),
-                    __STACKTRACE__
+            reraise Protox.EncodingError.new(:messages, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -141,7 +174,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ActivitySimulationGameRecord))
         end
       )
     )
@@ -160,25 +193,44 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
 
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[start_time: value], rest}
+              {[round: value], rest}
+
+            {2, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[seats: msg.seats ++ Protox.Decode.parse_repeated_uint32([], delimited)], rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[end_time: value], rest}
+              {[seats: msg.seats ++ [value]], rest}
 
             {3, _, bytes} ->
-              {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[goods_click_action: value], rest}
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[uuid: delimited], rest}
 
             {4, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[start_time: value], rest}
+
+            {5, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[goods_click_text: delimited], rest}
+              {[scores: msg.scores ++ Protox.Decode.parse_repeated_int32([], delimited)], rest}
 
             {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_int32(bytes)
+              {[scores: msg.scores ++ [value]], rest}
+
+            {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[enabled_channel: msg.enabled_channel ++ [delimited]], rest}
+
+              {[
+                 messages:
+                   msg.messages ++
+                     [Soulless.Game.Lq.ActivitySimulationGameRecordMessage.decode!(delimited)]
+               ], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -213,7 +265,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain,
+        Soulless.Game.Lq.ActivitySimulationGameRecord,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -241,11 +293,13 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
           }
     def defs() do
       %{
-        1 => {:start_time, {:scalar, 0}, :uint32},
-        2 => {:end_time, {:scalar, 0}, :uint32},
-        3 => {:goods_click_action, {:scalar, 0}, :uint32},
-        4 => {:goods_click_text, {:scalar, ""}, :string},
-        5 => {:enabled_channel, :unpacked, :string}
+        1 => {:round, {:scalar, 0}, :uint32},
+        2 => {:seats, :packed, :uint32},
+        3 => {:uuid, {:scalar, ""}, :string},
+        4 => {:start_time, {:scalar, 0}, :uint32},
+        5 => {:scores, :packed, :int32},
+        6 =>
+          {:messages, :unpacked, {:message, Soulless.Game.Lq.ActivitySimulationGameRecordMessage}}
       }
     end
 
@@ -255,11 +309,13 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
           }
     def defs_by_name() do
       %{
-        enabled_channel: {5, :unpacked, :string},
-        end_time: {2, {:scalar, 0}, :uint32},
-        goods_click_action: {3, {:scalar, 0}, :uint32},
-        goods_click_text: {4, {:scalar, ""}, :string},
-        start_time: {1, {:scalar, 0}, :uint32}
+        messages:
+          {6, :unpacked, {:message, Soulless.Game.Lq.ActivitySimulationGameRecordMessage}},
+        round: {1, {:scalar, 0}, :uint32},
+        scores: {5, :packed, :int32},
+        seats: {2, :packed, :uint32},
+        start_time: {4, {:scalar, 0}, :uint32},
+        uuid: {3, {:scalar, ""}, :string}
       }
     end
   )
@@ -270,54 +326,150 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "startTime",
+          json_name: "round",
           kind: {:scalar, 0},
           label: :optional,
-          name: :start_time,
+          name: :round,
           tag: 1,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "endTime",
-          kind: {:scalar, 0},
-          label: :optional,
-          name: :end_time,
+          json_name: "seats",
+          kind: :packed,
+          label: :repeated,
+          name: :seats,
           tag: 2,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "goodsClickAction",
+          json_name: "uuid",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :uuid,
+          tag: 3,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "startTime",
           kind: {:scalar, 0},
           label: :optional,
-          name: :goods_click_action,
-          tag: 3,
+          name: :start_time,
+          tag: 4,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "goodsClickText",
-          kind: {:scalar, ""},
-          label: :optional,
-          name: :goods_click_text,
-          tag: 4,
-          type: :string
+          json_name: "scores",
+          kind: :packed,
+          label: :repeated,
+          name: :scores,
+          tag: 5,
+          type: :int32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "enabledChannel",
+          json_name: "messages",
           kind: :unpacked,
           label: :repeated,
-          name: :enabled_channel,
-          tag: 5,
-          type: :string
+          name: :messages,
+          tag: 6,
+          type: {:message, Soulless.Game.Lq.ActivitySimulationGameRecordMessage}
         }
       ]
     end
 
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
+      (
+        def field_def(:round) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "round",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :round,
+             tag: 1,
+             type: :uint32
+           }}
+        end
+
+        def field_def("round") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "round",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :round,
+             tag: 1,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:seats) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "seats",
+             kind: :packed,
+             label: :repeated,
+             name: :seats,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("seats") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "seats",
+             kind: :packed,
+             label: :repeated,
+             name: :seats,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:uuid) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "uuid",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :uuid,
+             tag: 3,
+             type: :string
+           }}
+        end
+
+        def field_def("uuid") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "uuid",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :uuid,
+             tag: 3,
+             type: :string
+           }}
+        end
+
+        []
+      ),
       (
         def field_def(:start_time) do
           {:ok,
@@ -327,7 +479,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
              kind: {:scalar, 0},
              label: :optional,
              name: :start_time,
-             tag: 1,
+             tag: 4,
              type: :uint32
            }}
         end
@@ -340,7 +492,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
              kind: {:scalar, 0},
              label: :optional,
              name: :start_time,
-             tag: 1,
+             tag: 4,
              type: :uint32
            }}
         end
@@ -353,170 +505,68 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
              kind: {:scalar, 0},
              label: :optional,
              name: :start_time,
-             tag: 1,
-             type: :uint32
-           }}
-        end
-      ),
-      (
-        def field_def(:end_time) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "endTime",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :end_time,
-             tag: 2,
-             type: :uint32
-           }}
-        end
-
-        def field_def("endTime") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "endTime",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :end_time,
-             tag: 2,
-             type: :uint32
-           }}
-        end
-
-        def field_def("end_time") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "endTime",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :end_time,
-             tag: 2,
-             type: :uint32
-           }}
-        end
-      ),
-      (
-        def field_def(:goods_click_action) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "goodsClickAction",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :goods_click_action,
-             tag: 3,
-             type: :uint32
-           }}
-        end
-
-        def field_def("goodsClickAction") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "goodsClickAction",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :goods_click_action,
-             tag: 3,
-             type: :uint32
-           }}
-        end
-
-        def field_def("goods_click_action") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "goodsClickAction",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :goods_click_action,
-             tag: 3,
-             type: :uint32
-           }}
-        end
-      ),
-      (
-        def field_def(:goods_click_text) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "goodsClickText",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :goods_click_text,
              tag: 4,
-             type: :string
-           }}
-        end
-
-        def field_def("goodsClickText") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "goodsClickText",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :goods_click_text,
-             tag: 4,
-             type: :string
-           }}
-        end
-
-        def field_def("goods_click_text") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "goodsClickText",
-             kind: {:scalar, ""},
-             label: :optional,
-             name: :goods_click_text,
-             tag: 4,
-             type: :string
+             type: :uint32
            }}
         end
       ),
       (
-        def field_def(:enabled_channel) do
+        def field_def(:scores) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "enabledChannel",
+             json_name: "scores",
+             kind: :packed,
+             label: :repeated,
+             name: :scores,
+             tag: 5,
+             type: :int32
+           }}
+        end
+
+        def field_def("scores") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "scores",
+             kind: :packed,
+             label: :repeated,
+             name: :scores,
+             tag: 5,
+             type: :int32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:messages) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "messages",
              kind: :unpacked,
              label: :repeated,
-             name: :enabled_channel,
-             tag: 5,
-             type: :string
+             name: :messages,
+             tag: 6,
+             type: {:message, Soulless.Game.Lq.ActivitySimulationGameRecordMessage}
            }}
         end
 
-        def field_def("enabledChannel") do
+        def field_def("messages") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "enabledChannel",
+             json_name: "messages",
              kind: :unpacked,
              label: :repeated,
-             name: :enabled_channel,
-             tag: 5,
-             type: :string
+             name: :messages,
+             tag: 6,
+             type: {:message, Soulless.Game.Lq.ActivitySimulationGameRecordMessage}
            }}
         end
 
-        def field_def("enabled_channel") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "enabledChannel",
-             kind: :unpacked,
-             label: :repeated,
-             name: :enabled_channel,
-             tag: 5,
-             type: :string
-           }}
-        end
+        []
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -557,19 +607,22 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentMaintain do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
+    def default(:round) do
+      {:ok, 0}
+    end,
+    def default(:seats) do
+      {:error, :no_default_value}
+    end,
+    def default(:uuid) do
+      {:ok, ""}
+    end,
     def default(:start_time) do
       {:ok, 0}
     end,
-    def default(:end_time) do
-      {:ok, 0}
+    def default(:scores) do
+      {:error, :no_default_value}
     end,
-    def default(:goods_click_action) do
-      {:ok, 0}
-    end,
-    def default(:goods_click_text) do
-      {:ok, ""}
-    end,
-    def default(:enabled_channel) do
+    def default(:messages) do
       {:error, :no_default_value}
     end,
     def default(_) do
