@@ -20,6 +20,7 @@ defmodule Soulless.Game.Lq.ActionNewRound do
             ju_count: 0,
             field_spell: 0,
             sha256: "",
+            yongchang: nil,
             __uf__: []
 
   (
@@ -55,6 +56,7 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         |> encode_ju_count(msg)
         |> encode_field_spell(msg)
         |> encode_sha256(msg)
+        |> encode_yongchang(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -339,6 +341,18 @@ defmodule Soulless.Game.Lq.ActionNewRound do
           ArgumentError ->
             reraise Protox.EncodingError.new(:sha256, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_yongchang(acc, msg) do
+        try do
+          if msg.yongchang == nil do
+            acc
+          else
+            [acc, "\xA2\x01", Protox.Encode.encode_message(msg.yongchang)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:yongchang, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -507,6 +521,18 @@ defmodule Soulless.Game.Lq.ActionNewRound do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[sha256: delimited], rest}
 
+            {20, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 yongchang:
+                   Protox.MergeMessage.merge(
+                     msg.yongchang,
+                     Soulless.Game.Lq.YongchangInfo.decode!(delimited)
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -586,7 +612,8 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         16 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         17 => {:ju_count, {:scalar, 0}, :uint32},
         18 => {:field_spell, {:scalar, 0}, :uint32},
-        19 => {:sha256, {:scalar, ""}, :string}
+        19 => {:sha256, {:scalar, ""}, :string},
+        20 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}}
       }
     end
 
@@ -614,7 +641,8 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         sha256: {19, {:scalar, ""}, :string},
         tiles: {4, :unpacked, :string},
         tingpais0: {9, :unpacked, {:message, Soulless.Game.Lq.TingPaiDiscardInfo}},
-        tingpais1: {10, :unpacked, {:message, Soulless.Game.Lq.TingPaiInfo}}
+        tingpais1: {10, :unpacked, {:message, Soulless.Game.Lq.TingPaiInfo}},
+        yongchang: {20, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}}
       }
     end
   )
@@ -793,6 +821,15 @@ defmodule Soulless.Game.Lq.ActionNewRound do
           name: :sha256,
           tag: 19,
           type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "yongchang",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :yongchang,
+          tag: 20,
+          type: {:message, Soulless.Game.Lq.YongchangInfo}
         }
       ]
     end
@@ -1383,6 +1420,35 @@ defmodule Soulless.Game.Lq.ActionNewRound do
 
         []
       ),
+      (
+        def field_def(:yongchang) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchang",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :yongchang,
+             tag: 20,
+             type: {:message, Soulless.Game.Lq.YongchangInfo}
+           }}
+        end
+
+        def field_def("yongchang") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchang",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :yongchang,
+             tag: 20,
+             type: {:message, Soulless.Game.Lq.YongchangInfo}
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1478,6 +1544,9 @@ defmodule Soulless.Game.Lq.ActionNewRound do
     end,
     def default(:sha256) do
       {:ok, ""}
+    end,
+    def default(:yongchang) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

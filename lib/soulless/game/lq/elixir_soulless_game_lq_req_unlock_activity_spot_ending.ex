@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ResMonthTicketInfo do
+defmodule Soulless.Game.Lq.ReqUnlockActivitySpotEnding do
   @moduledoc false
-  defstruct month_ticket_info: nil, error: nil, __uf__: []
+  defstruct unique_id: 0, ending_id: 0, __uf__: []
 
   (
     (
@@ -16,36 +16,35 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_month_ticket_info(msg) |> encode_error(msg) |> encode_unknown_fields(msg)
+        [] |> encode_unique_id(msg) |> encode_ending_id(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_month_ticket_info(acc, msg) do
+      defp encode_unique_id(acc, msg) do
         try do
-          if msg.month_ticket_info == nil do
+          if msg.unique_id == 0 do
             acc
           else
-            [acc, "\n", Protox.Encode.encode_message(msg.month_ticket_info)]
+            [acc, "\b", Protox.Encode.encode_uint32(msg.unique_id)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:month_ticket_info, "invalid field value"),
-                    __STACKTRACE__
+            reraise Protox.EncodingError.new(:unique_id, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_error(acc, msg) do
+      defp encode_ending_id(acc, msg) do
         try do
-          if msg.error == nil do
+          if msg.ending_id == 0 do
             acc
           else
-            [acc, "\x12", Protox.Encode.encode_message(msg.error)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.ending_id)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:ending_id, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -85,7 +84,7 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ResMonthTicketInfo))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ReqUnlockActivitySpotEnding))
         end
       )
     )
@@ -103,25 +102,12 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[
-                 month_ticket_info:
-                   Protox.MergeMessage.merge(
-                     msg.month_ticket_info,
-                     Soulless.Game.Lq.MonthTicketInfo.decode!(delimited)
-                   )
-               ], rest}
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[unique_id: value], rest}
 
             {2, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[
-                 error:
-                   Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
-               ], rest}
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[ending_id: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -156,7 +142,7 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ResMonthTicketInfo,
+        Soulless.Game.Lq.ReqUnlockActivitySpotEnding,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -183,10 +169,7 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{
-        1 => {:month_ticket_info, {:scalar, nil}, {:message, Soulless.Game.Lq.MonthTicketInfo}},
-        2 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}}
-      }
+      %{1 => {:unique_id, {:scalar, 0}, :uint32}, 2 => {:ending_id, {:scalar, 0}, :uint32}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -194,10 +177,7 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{
-        error: {2, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        month_ticket_info: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.MonthTicketInfo}}
-      }
+      %{ending_id: {2, {:scalar, 0}, :uint32}, unique_id: {1, {:scalar, 0}, :uint32}}
     end
   )
 
@@ -207,21 +187,21 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "monthTicketInfo",
-          kind: {:scalar, nil},
+          json_name: "uniqueId",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :month_ticket_info,
+          name: :unique_id,
           tag: 1,
-          type: {:message, Soulless.Game.Lq.MonthTicketInfo}
+          type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "error",
-          kind: {:scalar, nil},
+          json_name: "endingId",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :error,
+          name: :ending_id,
           tag: 2,
-          type: {:message, Soulless.Game.Lq.Error}
+          type: :uint32
         }
       ]
     end
@@ -229,73 +209,84 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:month_ticket_info) do
+        def field_def(:unique_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "monthTicketInfo",
-             kind: {:scalar, nil},
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :month_ticket_info,
+             name: :unique_id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.MonthTicketInfo}
+             type: :uint32
            }}
         end
 
-        def field_def("monthTicketInfo") do
+        def field_def("uniqueId") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "monthTicketInfo",
-             kind: {:scalar, nil},
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :month_ticket_info,
+             name: :unique_id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.MonthTicketInfo}
+             type: :uint32
            }}
         end
 
-        def field_def("month_ticket_info") do
+        def field_def("unique_id") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "monthTicketInfo",
-             kind: {:scalar, nil},
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :month_ticket_info,
+             name: :unique_id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.MonthTicketInfo}
+             type: :uint32
            }}
         end
       ),
       (
-        def field_def(:error) do
+        def field_def(:ending_id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "error",
-             kind: {:scalar, nil},
+             json_name: "endingId",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :error,
+             name: :ending_id,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.Error}
+             type: :uint32
            }}
         end
 
-        def field_def("error") do
+        def field_def("endingId") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "error",
-             kind: {:scalar, nil},
+             json_name: "endingId",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :error,
+             name: :ending_id,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.Error}
+             type: :uint32
            }}
         end
 
-        []
+        def field_def("ending_id") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "endingId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :ending_id,
+             tag: 2,
+             type: :uint32
+           }}
+        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -336,11 +327,11 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:month_ticket_info) do
-      {:ok, nil}
+    def default(:unique_id) do
+      {:ok, 0}
     end,
-    def default(:error) do
-      {:ok, nil}
+    def default(:ending_id) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

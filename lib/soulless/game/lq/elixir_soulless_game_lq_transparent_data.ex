@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ResMonthTicketInfo do
+defmodule Soulless.Game.Lq.TransparentData do
   @moduledoc false
-  defstruct month_ticket_info: nil, error: nil, __uf__: []
+  defstruct method: "", data: nil, session: "", remote: nil, __uf__: []
 
   (
     (
@@ -16,36 +16,64 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_month_ticket_info(msg) |> encode_error(msg) |> encode_unknown_fields(msg)
+        []
+        |> encode_method(msg)
+        |> encode_data(msg)
+        |> encode_session(msg)
+        |> encode_remote(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_month_ticket_info(acc, msg) do
+      defp encode_method(acc, msg) do
         try do
-          if msg.month_ticket_info == nil do
+          if msg.method == "" do
             acc
           else
-            [acc, "\n", Protox.Encode.encode_message(msg.month_ticket_info)]
+            [acc, "\n", Protox.Encode.encode_string(msg.method)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:month_ticket_info, "invalid field value"),
-                    __STACKTRACE__
+            reraise Protox.EncodingError.new(:method, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_error(acc, msg) do
+      defp encode_data(acc, msg) do
         try do
-          if msg.error == nil do
+          if msg.data == nil do
             acc
           else
-            [acc, "\x12", Protox.Encode.encode_message(msg.error)]
+            [acc, "\x12", Protox.Encode.encode_message(msg.data)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:data, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_session(acc, msg) do
+        try do
+          if msg.session == "" do
+            acc
+          else
+            [acc, "\x1A", Protox.Encode.encode_string(msg.session)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:session, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_remote(acc, msg) do
+        try do
+          if msg.remote == nil do
+            acc
+          else
+            [acc, "\"", Protox.Encode.encode_message(msg.remote)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:remote, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -85,7 +113,7 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ResMonthTicketInfo))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.TransparentData))
         end
       )
     )
@@ -105,22 +133,35 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[
-                 month_ticket_info:
-                   Protox.MergeMessage.merge(
-                     msg.month_ticket_info,
-                     Soulless.Game.Lq.MonthTicketInfo.decode!(delimited)
-                   )
-               ], rest}
+              {[method: delimited], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
               {[
-                 error:
-                   Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
+                 data:
+                   Protox.MergeMessage.merge(
+                     msg.data,
+                     Soulless.Game.Lq.Wrapper.decode!(delimited)
+                   )
+               ], rest}
+
+            {3, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[session: delimited], rest}
+
+            {4, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 remote:
+                   Protox.MergeMessage.merge(
+                     msg.remote,
+                     Soulless.Game.Lq.NetworkEndpoint.decode!(delimited)
+                   )
                ], rest}
 
             {tag, wire_type, rest} ->
@@ -156,7 +197,7 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ResMonthTicketInfo,
+        Soulless.Game.Lq.TransparentData,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -184,8 +225,10 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
           }
     def defs() do
       %{
-        1 => {:month_ticket_info, {:scalar, nil}, {:message, Soulless.Game.Lq.MonthTicketInfo}},
-        2 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}}
+        1 => {:method, {:scalar, ""}, :string},
+        2 => {:data, {:scalar, nil}, {:message, Soulless.Game.Lq.Wrapper}},
+        3 => {:session, {:scalar, ""}, :string},
+        4 => {:remote, {:scalar, nil}, {:message, Soulless.Game.Lq.NetworkEndpoint}}
       }
     end
 
@@ -195,8 +238,10 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
           }
     def defs_by_name() do
       %{
-        error: {2, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        month_ticket_info: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.MonthTicketInfo}}
+        data: {2, {:scalar, nil}, {:message, Soulless.Game.Lq.Wrapper}},
+        method: {1, {:scalar, ""}, :string},
+        remote: {4, {:scalar, nil}, {:message, Soulless.Game.Lq.NetworkEndpoint}},
+        session: {3, {:scalar, ""}, :string}
       }
     end
   )
@@ -207,21 +252,39 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "monthTicketInfo",
-          kind: {:scalar, nil},
+          json_name: "method",
+          kind: {:scalar, ""},
           label: :optional,
-          name: :month_ticket_info,
+          name: :method,
           tag: 1,
-          type: {:message, Soulless.Game.Lq.MonthTicketInfo}
+          type: :string
         },
         %{
           __struct__: Protox.Field,
-          json_name: "error",
+          json_name: "data",
           kind: {:scalar, nil},
           label: :optional,
-          name: :error,
+          name: :data,
           tag: 2,
-          type: {:message, Soulless.Game.Lq.Error}
+          type: {:message, Soulless.Game.Lq.Wrapper}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "session",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :session,
+          tag: 3,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "remote",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :remote,
+          tag: 4,
+          type: {:message, Soulless.Game.Lq.NetworkEndpoint}
         }
       ]
     end
@@ -229,69 +292,116 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:month_ticket_info) do
+        def field_def(:method) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "monthTicketInfo",
-             kind: {:scalar, nil},
+             json_name: "method",
+             kind: {:scalar, ""},
              label: :optional,
-             name: :month_ticket_info,
+             name: :method,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.MonthTicketInfo}
+             type: :string
            }}
         end
 
-        def field_def("monthTicketInfo") do
+        def field_def("method") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "monthTicketInfo",
-             kind: {:scalar, nil},
+             json_name: "method",
+             kind: {:scalar, ""},
              label: :optional,
-             name: :month_ticket_info,
+             name: :method,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.MonthTicketInfo}
+             type: :string
            }}
         end
 
-        def field_def("month_ticket_info") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "monthTicketInfo",
-             kind: {:scalar, nil},
-             label: :optional,
-             name: :month_ticket_info,
-             tag: 1,
-             type: {:message, Soulless.Game.Lq.MonthTicketInfo}
-           }}
-        end
+        []
       ),
       (
-        def field_def(:error) do
+        def field_def(:data) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "error",
+             json_name: "data",
              kind: {:scalar, nil},
              label: :optional,
-             name: :error,
+             name: :data,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.Error}
+             type: {:message, Soulless.Game.Lq.Wrapper}
            }}
         end
 
-        def field_def("error") do
+        def field_def("data") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "error",
+             json_name: "data",
              kind: {:scalar, nil},
              label: :optional,
-             name: :error,
+             name: :data,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.Error}
+             type: {:message, Soulless.Game.Lq.Wrapper}
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:session) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "session",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :session,
+             tag: 3,
+             type: :string
+           }}
+        end
+
+        def field_def("session") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "session",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :session,
+             tag: 3,
+             type: :string
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:remote) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "remote",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :remote,
+             tag: 4,
+             type: {:message, Soulless.Game.Lq.NetworkEndpoint}
+           }}
+        end
+
+        def field_def("remote") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "remote",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :remote,
+             tag: 4,
+             type: {:message, Soulless.Game.Lq.NetworkEndpoint}
            }}
         end
 
@@ -336,10 +446,16 @@ defmodule Soulless.Game.Lq.ResMonthTicketInfo do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:month_ticket_info) do
+    def default(:method) do
+      {:ok, ""}
+    end,
+    def default(:data) do
       {:ok, nil}
     end,
-    def default(:error) do
+    def default(:session) do
+      {:ok, ""}
+    end,
+    def default(:remote) do
       {:ok, nil}
     end,
     def default(_) do

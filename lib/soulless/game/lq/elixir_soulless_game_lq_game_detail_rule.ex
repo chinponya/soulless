@@ -64,6 +64,7 @@ defmodule Soulless.Game.Lq.GameDetailRule do
             disable_angang_guoshi: 0,
             enable_renhe: 0,
             enable_baopai_extend_settings: 0,
+            yongchang_mode: 0,
             __uf__: []
 
   (
@@ -143,6 +144,7 @@ defmodule Soulless.Game.Lq.GameDetailRule do
         |> encode_disable_angang_guoshi(msg)
         |> encode_enable_renhe(msg)
         |> encode_enable_baopai_extend_settings(msg)
+        |> encode_yongchang_mode(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -943,6 +945,19 @@ defmodule Soulless.Game.Lq.GameDetailRule do
                     ),
                     __STACKTRACE__
         end
+      end,
+      defp encode_yongchang_mode(acc, msg) do
+        try do
+          if msg.yongchang_mode == 0 do
+            acc
+          else
+            [acc, "\xB0\x04", Protox.Encode.encode_uint32(msg.yongchang_mode)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:yongchang_mode, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -1250,6 +1265,10 @@ defmodule Soulless.Game.Lq.GameDetailRule do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[enable_baopai_extend_settings: value], rest}
 
+            {70, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[yongchang_mode: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -1363,6 +1382,7 @@ defmodule Soulless.Game.Lq.GameDetailRule do
         24 => {:have_jiuzhongjiupai, {:scalar, false}, :bool},
         10 => {:changbang_value, {:scalar, 0}, :uint32},
         35 => {:shunweima_3, {:scalar, 0}, :int32},
+        70 => {:yongchang_mode, {:scalar, 0}, :uint32},
         62 => {:disable_double_yakuman, {:scalar, 0}, :uint32},
         49 => {:huansanzhang, {:scalar, 0}, :uint32},
         27 => {:have_helelianzhuang, {:scalar, false}, :bool},
@@ -1383,69 +1403,70 @@ defmodule Soulless.Game.Lq.GameDetailRule do
           }
     def defs_by_name() do
       %{
-        have_helezhongju: {28, {:scalar, false}, :bool},
-        disable_composite_yakuman: {63, {:scalar, 0}, :uint32},
-        have_sanjiahele: {25, {:scalar, false}, :bool},
-        have_sijializhi: {23, {:scalar, false}, :bool},
-        can_jifei: {7, {:scalar, false}, :bool},
-        xuezhandaodi: {48, {:scalar, 0}, :uint32},
-        disable_double_yakuman: {62, {:scalar, 0}, :uint32},
-        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
-        changbang_value: {10, {:scalar, 0}, :uint32},
-        init_point: {5, {:scalar, 0}, :uint32},
-        dora_count: {3, {:scalar, 0}, :uint32},
-        noting_fafu_3: {13, {:scalar, 0}, :uint32},
-        enable_renhe: {68, {:scalar, 0}, :uint32},
-        have_toutiao: {26, {:scalar, false}, :bool},
-        liqibang_value: {9, {:scalar, 0}, :uint32},
-        disable_angang_guoshi: {67, {:scalar, 0}, :uint32},
-        have_helelianzhuang: {27, {:scalar, false}, :bool},
-        have_sigangsanle: {22, {:scalar, false}, :bool},
-        have_li_dora: {19, {:scalar, false}, :bool},
-        have_biao_dora: {16, {:scalar, false}, :bool},
-        zhanxing: {53, {:scalar, 0}, :uint32},
-        begin_open_mode: {44, {:scalar, 0}, :uint32},
-        time_add: {2, {:scalar, 0}, :uint32},
-        ai_level: {38, {:scalar, 0}, :uint32},
-        noting_fafu_2: {12, {:scalar, 0}, :uint32},
-        guyi_mode: {42, {:scalar, 0}, :uint32},
-        disable_multi_yukaman: {40, {:scalar, false}, :bool},
-        enable_shiti: {64, {:scalar, 0}, :uint32},
-        enable_baopai_extend_settings: {69, {:scalar, 0}, :uint32},
-        ming_dora_immediately_open: {18, {:scalar, false}, :bool},
-        shiduan: {4, {:scalar, 0}, :uint32},
-        bianjietishi: {37, {:scalar, false}, :bool},
         huansanzhang: {49, {:scalar, 0}, :uint32},
-        enable_nontsumo_liqi: {65, {:scalar, 0}, :uint32},
-        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
-        have_qieshangmanguan: {15, {:scalar, false}, :bool},
+        changbang_value: {10, {:scalar, 0}, :uint32},
+        chuanma: {50, {:scalar, 0}, :uint32},
+        have_zimosun: {39, {:scalar, false}, :bool},
+        enable_renhe: {68, {:scalar, 0}, :uint32},
+        zhanxing: {53, {:scalar, 0}, :uint32},
+        can_jifei: {7, {:scalar, false}, :bool},
+        init_point: {5, {:scalar, 0}, :uint32},
+        have_tingpaizhongju: {30, {:scalar, false}, :bool},
         field_spell_mode: {52, {:scalar, 0}, :uint32},
+        ai_level: {38, {:scalar, 0}, :uint32},
+        fandian: {6, {:scalar, 0}, :uint32},
+        disable_composite_yakuman: {63, {:scalar, 0}, :uint32},
+        open_hand: {47, {:scalar, 0}, :uint32},
+        disable_double_yakuman: {62, {:scalar, 0}, :uint32},
+        begin_open_mode: {44, {:scalar, 0}, :uint32},
+        tianbian_value: {8, {:scalar, 0}, :uint32},
+        dora3_mode: {43, {:scalar, 0}, :uint32},
+        liqibang_value: {9, {:scalar, 0}, :uint32},
+        shiduan: {4, {:scalar, 0}, :uint32},
+        time_fixed: {1, {:scalar, 0}, :uint32},
+        shunweima_3: {35, {:scalar, 0}, :int32},
+        have_toutiao: {26, {:scalar, false}, :bool},
+        have_gang_li_dora: {20, {:scalar, false}, :bool},
+        have_jiuzhongjiupai: {24, {:scalar, false}, :bool},
+        yongchang_mode: {70, {:scalar, 0}, :uint32},
+        have_sigangsanle: {22, {:scalar, false}, :bool},
+        disable_multi_yukaman: {40, {:scalar, false}, :bool},
+        muyu_mode: {46, {:scalar, 0}, :uint32},
+        jiuchao_mode: {45, {:scalar, 0}, :uint32},
+        xuezhandaodi: {48, {:scalar, 0}, :uint32},
+        tianming_mode: {54, {:scalar, 0}, :uint32},
+        disable_double_wind_four_fu: {66, {:scalar, 0}, :uint32},
+        have_li_dora: {19, {:scalar, false}, :bool},
         have_yifa: {31, {:scalar, false}, :bool},
         fanfu: {41, {:scalar, 0}, :uint32},
-        have_gang_li_dora: {20, {:scalar, false}, :bool},
-        have_nanruxiru: {32, {:scalar, false}, :bool},
-        have_tingpaizhongju: {30, {:scalar, false}, :bool},
-        shunweima_3: {35, {:scalar, 0}, :int32},
-        have_sifenglianda: {21, {:scalar, false}, :bool},
-        fandian: {6, {:scalar, 0}, :uint32},
-        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
-        disable_leijiyiman: {60, {:scalar, false}, :bool},
-        have_liujumanguan: {14, {:scalar, false}, :bool},
-        muyu_mode: {46, {:scalar, 0}, :uint32},
-        shunweima_4: {36, {:scalar, 0}, :int32},
-        jiuchao_mode: {45, {:scalar, 0}, :uint32},
-        disable_double_wind_four_fu: {66, {:scalar, 0}, :uint32},
+        disable_angang_guoshi: {67, {:scalar, 0}, :uint32},
         noting_fafu_1: {11, {:scalar, 0}, :uint32},
-        tianming_mode: {54, {:scalar, 0}, :uint32},
-        time_fixed: {1, {:scalar, 0}, :uint32},
-        reveal_discard: {51, {:scalar, 0}, :uint32},
-        dora3_mode: {43, {:scalar, 0}, :uint32},
-        chuanma: {50, {:scalar, 0}, :uint32},
-        have_gang_biao_dora: {17, {:scalar, false}, :bool},
-        have_zimosun: {39, {:scalar, false}, :bool},
-        open_hand: {47, {:scalar, 0}, :uint32},
         shunweima_2: {34, {:scalar, 0}, :int32},
-        tianbian_value: {8, {:scalar, 0}, :uint32}
+        noting_fafu_3: {13, {:scalar, 0}, :uint32},
+        have_sijializhi: {23, {:scalar, false}, :bool},
+        disable_leijiyiman: {60, {:scalar, false}, :bool},
+        time_add: {2, {:scalar, 0}, :uint32},
+        have_liujumanguan: {14, {:scalar, false}, :bool},
+        noting_fafu_2: {12, {:scalar, 0}, :uint32},
+        enable_shiti: {64, {:scalar, 0}, :uint32},
+        have_gang_biao_dora: {17, {:scalar, false}, :bool},
+        dora_count: {3, {:scalar, 0}, :uint32},
+        have_qieshangmanguan: {15, {:scalar, false}, :bool},
+        bianjietishi: {37, {:scalar, false}, :bool},
+        have_helezhongju: {28, {:scalar, false}, :bool},
+        enable_baopai_extend_settings: {69, {:scalar, 0}, :uint32},
+        ming_dora_immediately_open: {18, {:scalar, false}, :bool},
+        have_helelianzhuang: {27, {:scalar, false}, :bool},
+        guyi_mode: {42, {:scalar, 0}, :uint32},
+        shunweima_4: {36, {:scalar, 0}, :int32},
+        jingsuanyuandian: {33, {:scalar, 0}, :uint32},
+        have_sanjiahele: {25, {:scalar, false}, :bool},
+        have_nanruxiru: {32, {:scalar, false}, :bool},
+        reveal_discard: {51, {:scalar, 0}, :uint32},
+        have_sifenglianda: {21, {:scalar, false}, :bool},
+        enable_nontsumo_liqi: {65, {:scalar, 0}, :uint32},
+        have_tingpailianzhuang: {29, {:scalar, false}, :bool},
+        have_biao_dora: {16, {:scalar, false}, :bool}
       }
     end
   )
@@ -2019,6 +2040,15 @@ defmodule Soulless.Game.Lq.GameDetailRule do
           label: :optional,
           name: :enable_baopai_extend_settings,
           tag: 69,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "yongchangMode",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :yongchang_mode,
+          tag: 70,
           type: :uint32
         }
       ]
@@ -4447,6 +4477,46 @@ defmodule Soulless.Game.Lq.GameDetailRule do
            }}
         end
       ),
+      (
+        def field_def(:yongchang_mode) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchangMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :yongchang_mode,
+             tag: 70,
+             type: :uint32
+           }}
+        end
+
+        def field_def("yongchangMode") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchangMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :yongchang_mode,
+             tag: 70,
+             type: :uint32
+           }}
+        end
+
+        def field_def("yongchang_mode") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchangMode",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :yongchang_mode,
+             tag: 70,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -4673,6 +4743,9 @@ defmodule Soulless.Game.Lq.GameDetailRule do
       {:ok, 0}
     end,
     def default(:enable_baopai_extend_settings) do
+      {:ok, 0}
+    end,
+    def default(:yongchang_mode) do
       {:ok, 0}
     end,
     def default(_) do

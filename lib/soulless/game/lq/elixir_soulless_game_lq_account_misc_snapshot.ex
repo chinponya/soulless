@@ -7,6 +7,7 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
             shop_info: nil,
             month_ticket: nil,
             recharged: [],
+            month_ticket_v2: nil,
             __uf__: []
 
   (
@@ -29,6 +30,7 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
         |> encode_shop_info(msg)
         |> encode_month_ticket(msg)
         |> encode_recharged(msg)
+        |> encode_month_ticket_v2(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -114,6 +116,19 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:recharged, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_month_ticket_v2(acc, msg) do
+        try do
+          if msg.month_ticket_v2 == nil do
+            acc
+          else
+            [acc, ":", Protox.Encode.encode_message(msg.month_ticket_v2)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:month_ticket_v2, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -244,6 +259,20 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
                      [Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.decode!(delimited)]
                ], rest}
 
+            {7, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 month_ticket_v2:
+                   Protox.MergeMessage.merge(
+                     msg.month_ticket_v2,
+                     Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2.decode!(
+                       delimited
+                     )
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -316,7 +345,10 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
            {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshot}},
         6 =>
           {:recharged, :unpacked,
-           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}}
+           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}},
+        7 =>
+          {:month_ticket_v2, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2}}
       }
     end
 
@@ -330,6 +362,9 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
         month_ticket:
           {5, {:scalar, nil},
            {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshot}},
+        month_ticket_v2:
+          {7, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2}},
         recharged:
           {6, :unpacked, {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}},
         shop_info: {4, {:scalar, nil}, {:message, Soulless.Game.Lq.ShopInfo}},
@@ -398,6 +433,15 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
           name: :recharged,
           tag: 6,
           type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "monthTicketV2",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :month_ticket_v2,
+          tag: 7,
+          type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2}
         }
       ]
     end
@@ -622,6 +666,46 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
 
         []
       ),
+      (
+        def field_def(:month_ticket_v2) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "monthTicketV2",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :month_ticket_v2,
+             tag: 7,
+             type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2}
+           }}
+        end
+
+        def field_def("monthTicketV2") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "monthTicketV2",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :month_ticket_v2,
+             tag: 7,
+             type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2}
+           }}
+        end
+
+        def field_def("month_ticket_v2") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "monthTicketV2",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :month_ticket_v2,
+             tag: 7,
+             type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -678,6 +762,9 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
     end,
     def default(:recharged) do
       {:error, :no_default_value}
+    end,
+    def default(:month_ticket_v2) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

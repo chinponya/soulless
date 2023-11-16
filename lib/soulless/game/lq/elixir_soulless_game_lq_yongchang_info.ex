@@ -1,7 +1,12 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
+defmodule Soulless.Game.Lq.YongchangInfo do
   @moduledoc false
-  defstruct unique_id: 0, rewarded: 0, unlocked_ending: [], unlocked: 0, __uf__: []
+  defstruct seat: 0,
+            moqie_count: 0,
+            moqie_bonus: 0,
+            shouqie_count: 0,
+            shouqie_bonus: 0,
+            __uf__: []
 
   (
     (
@@ -17,10 +22,11 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
         []
-        |> encode_unique_id(msg)
-        |> encode_rewarded(msg)
-        |> encode_unlocked_ending(msg)
-        |> encode_unlocked(msg)
+        |> encode_seat(msg)
+        |> encode_moqie_count(msg)
+        |> encode_moqie_bonus(msg)
+        |> encode_shouqie_count(msg)
+        |> encode_shouqie_bonus(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -28,67 +34,66 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
     []
 
     [
-      defp encode_unique_id(acc, msg) do
+      defp encode_seat(acc, msg) do
         try do
-          if msg.unique_id == 0 do
+          if msg.seat == 0 do
             acc
           else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.unique_id)]
+            [acc, "\b", Protox.Encode.encode_uint32(msg.seat)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:unique_id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:seat, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_rewarded(acc, msg) do
+      defp encode_moqie_count(acc, msg) do
         try do
-          if msg.rewarded == 0 do
+          if msg.moqie_count == 0 do
             acc
           else
-            [acc, "\x10", Protox.Encode.encode_uint32(msg.rewarded)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.moqie_count)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:rewarded, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:moqie_count, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_unlocked_ending(acc, msg) do
+      defp encode_moqie_bonus(acc, msg) do
         try do
-          case msg.unlocked_ending do
-            [] ->
-              acc
-
-            values ->
-              [
-                acc,
-                "\x1A",
-                (
-                  {bytes, len} =
-                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
-                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
-                      {[acc, value_bytes], len + byte_size(value_bytes)}
-                    end)
-
-                  [Protox.Varint.encode(len), bytes]
-                )
-              ]
+          if msg.moqie_bonus == 0 do
+            acc
+          else
+            [acc, "\x18", Protox.Encode.encode_uint32(msg.moqie_bonus)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:unlocked_ending, "invalid field value"),
+            reraise Protox.EncodingError.new(:moqie_bonus, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_shouqie_count(acc, msg) do
+        try do
+          if msg.shouqie_count == 0 do
+            acc
+          else
+            [acc, " ", Protox.Encode.encode_uint32(msg.shouqie_count)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:shouqie_count, "invalid field value"),
                     __STACKTRACE__
         end
       end,
-      defp encode_unlocked(acc, msg) do
+      defp encode_shouqie_bonus(acc, msg) do
         try do
-          if msg.unlocked == 0 do
+          if msg.shouqie_bonus == 0 do
             acc
           else
-            [acc, " ", Protox.Encode.encode_uint32(msg.unlocked)]
+            [acc, "(", Protox.Encode.encode_uint32(msg.shouqie_bonus)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:unlocked, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:shouqie_bonus, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -128,7 +133,7 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ActivitySpotData.SpotData))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.YongchangInfo))
         end
       )
     )
@@ -147,28 +152,23 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
 
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[unique_id: value], rest}
+              {[seat: value], rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[rewarded: value], rest}
-
-            {3, 2, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[
-                 unlocked_ending:
-                   msg.unlocked_ending ++ Protox.Decode.parse_repeated_uint32([], delimited)
-               ], rest}
+              {[moqie_count: value], rest}
 
             {3, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[unlocked_ending: msg.unlocked_ending ++ [value]], rest}
+              {[moqie_bonus: value], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[unlocked: value], rest}
+              {[shouqie_count: value], rest}
+
+            {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[shouqie_bonus: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -203,7 +203,7 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ActivitySpotData.SpotData,
+        Soulless.Game.Lq.YongchangInfo,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -231,10 +231,11 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
           }
     def defs() do
       %{
-        1 => {:unique_id, {:scalar, 0}, :uint32},
-        2 => {:rewarded, {:scalar, 0}, :uint32},
-        3 => {:unlocked_ending, :packed, :uint32},
-        4 => {:unlocked, {:scalar, 0}, :uint32}
+        1 => {:seat, {:scalar, 0}, :uint32},
+        2 => {:moqie_count, {:scalar, 0}, :uint32},
+        3 => {:moqie_bonus, {:scalar, 0}, :uint32},
+        4 => {:shouqie_count, {:scalar, 0}, :uint32},
+        5 => {:shouqie_bonus, {:scalar, 0}, :uint32}
       }
     end
 
@@ -244,10 +245,11 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
           }
     def defs_by_name() do
       %{
-        rewarded: {2, {:scalar, 0}, :uint32},
-        unique_id: {1, {:scalar, 0}, :uint32},
-        unlocked: {4, {:scalar, 0}, :uint32},
-        unlocked_ending: {3, :packed, :uint32}
+        moqie_bonus: {3, {:scalar, 0}, :uint32},
+        moqie_count: {2, {:scalar, 0}, :uint32},
+        seat: {1, {:scalar, 0}, :uint32},
+        shouqie_bonus: {5, {:scalar, 0}, :uint32},
+        shouqie_count: {4, {:scalar, 0}, :uint32}
       }
     end
   )
@@ -258,38 +260,47 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "uniqueId",
+          json_name: "seat",
           kind: {:scalar, 0},
           label: :optional,
-          name: :unique_id,
+          name: :seat,
           tag: 1,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "rewarded",
+          json_name: "moqieCount",
           kind: {:scalar, 0},
           label: :optional,
-          name: :rewarded,
+          name: :moqie_count,
           tag: 2,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "unlockedEnding",
-          kind: :packed,
-          label: :repeated,
-          name: :unlocked_ending,
+          json_name: "moqieBonus",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :moqie_bonus,
           tag: 3,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "unlocked",
+          json_name: "shouqieCount",
           kind: {:scalar, 0},
           label: :optional,
-          name: :unlocked,
+          name: :shouqie_count,
           tag: 4,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "shouqieBonus",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :shouqie_bonus,
+          tag: 5,
           type: :uint32
         }
       ]
@@ -298,68 +309,28 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:unique_id) do
+        def field_def(:seat) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "uniqueId",
+             json_name: "seat",
              kind: {:scalar, 0},
              label: :optional,
-             name: :unique_id,
+             name: :seat,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("uniqueId") do
+        def field_def("seat") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "uniqueId",
+             json_name: "seat",
              kind: {:scalar, 0},
              label: :optional,
-             name: :unique_id,
+             name: :seat,
              tag: 1,
-             type: :uint32
-           }}
-        end
-
-        def field_def("unique_id") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "uniqueId",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :unique_id,
-             tag: 1,
-             type: :uint32
-           }}
-        end
-      ),
-      (
-        def field_def(:rewarded) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "rewarded",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :rewarded,
-             tag: 2,
-             type: :uint32
-           }}
-        end
-
-        def field_def("rewarded") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "rewarded",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :rewarded,
-             tag: 2,
              type: :uint32
            }}
         end
@@ -367,73 +338,164 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
         []
       ),
       (
-        def field_def(:unlocked_ending) do
+        def field_def(:moqie_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "unlockedEnding",
-             kind: :packed,
-             label: :repeated,
-             name: :unlocked_ending,
+             json_name: "moqieCount",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :moqie_count,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("moqieCount") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "moqieCount",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :moqie_count,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("moqie_count") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "moqieCount",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :moqie_count,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:moqie_bonus) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "moqieBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :moqie_bonus,
              tag: 3,
              type: :uint32
            }}
         end
 
-        def field_def("unlockedEnding") do
+        def field_def("moqieBonus") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "unlockedEnding",
-             kind: :packed,
-             label: :repeated,
-             name: :unlocked_ending,
+             json_name: "moqieBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :moqie_bonus,
              tag: 3,
              type: :uint32
            }}
         end
 
-        def field_def("unlocked_ending") do
+        def field_def("moqie_bonus") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "unlockedEnding",
-             kind: :packed,
-             label: :repeated,
-             name: :unlocked_ending,
+             json_name: "moqieBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :moqie_bonus,
              tag: 3,
              type: :uint32
            }}
         end
       ),
       (
-        def field_def(:unlocked) do
+        def field_def(:shouqie_count) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "unlocked",
+             json_name: "shouqieCount",
              kind: {:scalar, 0},
              label: :optional,
-             name: :unlocked,
+             name: :shouqie_count,
              tag: 4,
              type: :uint32
            }}
         end
 
-        def field_def("unlocked") do
+        def field_def("shouqieCount") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "unlocked",
+             json_name: "shouqieCount",
              kind: {:scalar, 0},
              label: :optional,
-             name: :unlocked,
+             name: :shouqie_count,
              tag: 4,
              type: :uint32
            }}
         end
 
-        []
+        def field_def("shouqie_count") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "shouqieCount",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :shouqie_count,
+             tag: 4,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:shouqie_bonus) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "shouqieBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :shouqie_bonus,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("shouqieBonus") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "shouqieBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :shouqie_bonus,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("shouqie_bonus") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "shouqieBonus",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :shouqie_bonus,
+             tag: 5,
+             type: :uint32
+           }}
+        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -474,16 +536,19 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:unique_id) do
+    def default(:seat) do
       {:ok, 0}
     end,
-    def default(:rewarded) do
+    def default(:moqie_count) do
       {:ok, 0}
     end,
-    def default(:unlocked_ending) do
-      {:error, :no_default_value}
+    def default(:moqie_bonus) do
+      {:ok, 0}
     end,
-    def default(:unlocked) do
+    def default(:shouqie_count) do
+      {:ok, 0}
+    end,
+    def default(:shouqie_bonus) do
       {:ok, 0}
     end,
     def default(_) do

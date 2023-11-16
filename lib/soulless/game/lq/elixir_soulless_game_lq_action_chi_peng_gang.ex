@@ -13,6 +13,7 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
             muyu: nil,
             scores: [],
             liqibang: 0,
+            yongchang: nil,
             __uf__: []
 
   (
@@ -41,6 +42,7 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
         |> encode_muyu(msg)
         |> encode_scores(msg)
         |> encode_liqibang(msg)
+        |> encode_yongchang(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -247,6 +249,18 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
           ArgumentError ->
             reraise Protox.EncodingError.new(:liqibang, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_yongchang(acc, msg) do
+        try do
+          if msg.yongchang == nil do
+            acc
+          else
+            [acc, "j", Protox.Encode.encode_message(msg.yongchang)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:yongchang, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -399,6 +413,18 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[liqibang: value], rest}
 
+            {13, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 yongchang:
+                   Protox.MergeMessage.merge(
+                     msg.yongchang,
+                     Soulless.Game.Lq.YongchangInfo.decode!(delimited)
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -471,7 +497,8 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
         9 => {:tile_states, :packed, :uint32},
         10 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         11 => {:scores, :packed, :int32},
-        12 => {:liqibang, {:scalar, 0}, :uint32}
+        12 => {:liqibang, {:scalar, 0}, :uint32},
+        13 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}}
       }
     end
 
@@ -492,6 +519,7 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
         tiles: {3, :unpacked, :string},
         tingpais: {8, :unpacked, {:message, Soulless.Game.Lq.TingPaiDiscardInfo}},
         type: {2, {:scalar, 0}, :uint32},
+        yongchang: {13, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}},
         zhenting: {7, {:scalar, false}, :bool}
       }
     end
@@ -608,6 +636,15 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
           name: :liqibang,
           tag: 12,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "yongchang",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :yongchang,
+          tag: 13,
+          type: {:message, Soulless.Game.Lq.YongchangInfo}
         }
       ]
     end
@@ -973,6 +1010,35 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
 
         []
       ),
+      (
+        def field_def(:yongchang) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchang",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :yongchang,
+             tag: 13,
+             type: {:message, Soulless.Game.Lq.YongchangInfo}
+           }}
+        end
+
+        def field_def("yongchang") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchang",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :yongchang,
+             tag: 13,
+             type: {:message, Soulless.Game.Lq.YongchangInfo}
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1047,6 +1113,9 @@ defmodule Soulless.Game.Lq.ActionChiPengGang do
     end,
     def default(:liqibang) do
       {:ok, 0}
+    end,
+    def default(:yongchang) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

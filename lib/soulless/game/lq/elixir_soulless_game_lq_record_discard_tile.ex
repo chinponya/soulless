@@ -12,6 +12,7 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
             operations: [],
             tile_state: 0,
             muyu: nil,
+            yongchang: nil,
             __uf__: []
 
   (
@@ -39,6 +40,7 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
         |> encode_operations(msg)
         |> encode_tile_state(msg)
         |> encode_muyu(msg)
+        |> encode_yongchang(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -212,6 +214,18 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
           ArgumentError ->
             reraise Protox.EncodingError.new(:muyu, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_yongchang(acc, msg) do
+        try do
+          if msg.yongchang == nil do
+            acc
+          else
+            [acc, "j", Protox.Encode.encode_message(msg.yongchang)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:yongchang, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -334,6 +348,18 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
                    )
                ], rest}
 
+            {13, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 yongchang:
+                   Protox.MergeMessage.merge(
+                     msg.yongchang,
+                     Soulless.Game.Lq.YongchangInfo.decode!(delimited)
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -405,7 +431,8 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
         9 => {:is_wliqi, {:scalar, false}, :bool},
         10 => {:operations, :unpacked, {:message, Soulless.Game.Lq.OptionalOperationList}},
         11 => {:tile_state, {:scalar, 0}, :uint32},
-        12 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}}
+        12 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
+        13 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}}
       }
     end
 
@@ -425,6 +452,7 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
         tile: {2, {:scalar, ""}, :string},
         tile_state: {11, {:scalar, 0}, :uint32},
         tingpais: {7, :unpacked, {:message, Soulless.Game.Lq.TingPaiInfo}},
+        yongchang: {13, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}},
         zhenting: {6, :packed, :bool}
       }
     end
@@ -532,6 +560,15 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
           name: :muyu,
           tag: 12,
           type: {:message, Soulless.Game.Lq.MuyuInfo}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "yongchang",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :yongchang,
+          tag: 13,
+          type: {:message, Soulless.Game.Lq.YongchangInfo}
         }
       ]
     end
@@ -890,6 +927,35 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
 
         []
       ),
+      (
+        def field_def(:yongchang) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchang",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :yongchang,
+             tag: 13,
+             type: {:message, Soulless.Game.Lq.YongchangInfo}
+           }}
+        end
+
+        def field_def("yongchang") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "yongchang",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :yongchang,
+             tag: 13,
+             type: {:message, Soulless.Game.Lq.YongchangInfo}
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -960,6 +1026,9 @@ defmodule Soulless.Game.Lq.RecordDiscardTile do
       {:ok, 0}
     end,
     def default(:muyu) do
+      {:ok, nil}
+    end,
+    def default(:yongchang) do
       {:ok, nil}
     end,
     def default(_) do

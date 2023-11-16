@@ -700,6 +700,7 @@ message GameDetailRule {
   uint32 disable_angang_guoshi = 67;
   uint32 enable_renhe = 68;
   uint32 enable_baopai_extend_settings = 69;
+  uint32 yongchang_mode = 70;
 }
 
 message Room {
@@ -1163,6 +1164,7 @@ message ActivitySpotData {
     uint32 unique_id = 1;
     uint32 rewarded = 2;
     repeated uint32 unlocked_ending = 3;
+    uint32 unlocked = 4;
   }
 
 }
@@ -1900,6 +1902,7 @@ message AccountMiscSnapshot {
   ShopInfo shop_info = 4;
   AccountMonthTicketSnapshot month_ticket = 5;
   repeated AccountRechargeInfo recharged = 6;
+  AccountMonthTicketSnapshotV2 month_ticket_v2 = 7;
   message AccountVIPRewardSnapshot {
     repeated uint32 rewarded = 1;
   }
@@ -1925,6 +1928,13 @@ message AccountMiscSnapshot {
     uint32 recharge_time = 2;
   }
 
+  message AccountMonthTicketSnapshotV2 {
+    uint32 end_time = 1;
+    uint32 last_pay_time = 2;
+    uint32 record_start_time = 3;
+    repeated uint32 history = 4;
+  }
+
 }
 
 message AccountGiftCodeRecord {
@@ -1944,6 +1954,13 @@ message AccSnDa {
   uint32 account_id = 1;
   uint32 time = 2;
   Wrapper snapshot = 3;
+}
+
+message TransparentData {
+  string method = 1;
+  Wrapper data = 2;
+  string session = 3;
+  NetworkEndpoint remote = 4;
 }
 
 service Lobby {
@@ -2089,7 +2106,7 @@ service Lobby {
   rpc buyFromZHP (ReqBuyFromZHP) returns (ResCommon);
   rpc refreshZHPShop (ReqReshZHPShop) returns (ResRefreshZHPShop);
   rpc fetchMonthTicketInfo (ReqCommon) returns (ResMonthTicketInfo);
-  rpc payMonthTicket (ReqPayMonthTicket) returns (ResPayMonthTicket);
+  rpc payMonthTicket (ReqCommon) returns (ResPayMonthTicket);
   rpc exchangeCurrency (ReqExchangeCurrency) returns (ResCommon);
   rpc exchangeChestStone (ReqExchangeCurrency) returns (ResCommon);
   rpc exchangeDiamond (ReqExchangeCurrency) returns (ResCommon);
@@ -2222,6 +2239,7 @@ service Lobby {
   rpc fetchVoteActivity (ReqFetchVoteActivity) returns (ResFetchVoteActivity);
   rpc voteActivity (ReqVoteActivity) returns (ResVoteActivity);
   rpc unlockActivitySpot (ReqUnlockActivitySpot) returns (ResCommon);
+  rpc unlockActivitySpotEnding (ReqUnlockActivitySpotEnding) returns (ResCommon);
   rpc receiveActivitySpotReward (ReqReceiveActivitySpotReward) returns (ResReceiveActivitySpotReward);
   rpc deleteAccount (ReqCommon) returns (ResDeleteAccount);
   rpc cancelDeleteAccount (ReqCommon) returns (ResCommon);
@@ -3769,7 +3787,7 @@ message ResRefreshZHPShop {
 
 message ResMonthTicketInfo {
   Error error = 2;
-  repeated MonthTicketInfo month_ticket_info = 1;
+  MonthTicketInfo month_ticket_info = 1;
 }
 
 message ReqExchangeCurrency {
@@ -4599,6 +4617,10 @@ message ResVoteActivity {
 
 message ReqUnlockActivitySpot {
   uint32 unique_id = 1;
+}
+
+message ReqUnlockActivitySpotEnding {
+  uint32 unique_id = 1;
   uint32 ending_id = 2;
 }
 
@@ -4755,6 +4777,14 @@ message ChuanmaGang {
   repeated HuleInfo hules_history = 5;
 }
 
+message YongchangInfo {
+  uint32 seat = 1;
+  uint32 moqie_count = 2;
+  uint32 moqie_bonus = 3;
+  uint32 shouqie_count = 4;
+  uint32 shouqie_bonus = 5;
+}
+
 message ActionNewCard {
   uint32 field_spell = 1;
 }
@@ -4783,6 +4813,7 @@ message ActionNewRound {
   uint32 ju_count = 17;
   uint32 field_spell = 18;
   string sha256 = 19;
+  YongchangInfo yongchang = 20;
 }
 
 message RecordNewRound {
@@ -4808,6 +4839,7 @@ message RecordNewRound {
   uint32 ju_count = 20;
   uint32 field_spell = 21;
   string sha256 = 22;
+  YongchangInfo yongchang = 23;
   message TingPai {
     uint32 seat = 1;
     repeated TingPaiInfo tingpais1 = 2;
@@ -5109,6 +5141,7 @@ message ActionDiscardTile {
   bool revealed = 12;
   repeated int32 scores = 13;
   uint32 liqibang = 14;
+  YongchangInfo yongchang = 25;
 }
 
 message RecordDiscardTile {
@@ -5123,6 +5156,7 @@ message RecordDiscardTile {
   repeated OptionalOperationList operations = 10;
   uint32 tile_state = 11;
   MuyuInfo muyu = 12;
+  YongchangInfo yongchang = 13;
 }
 
 message ActionDealTile {
@@ -5179,6 +5213,7 @@ message ActionChiPengGang {
   MuyuInfo muyu = 10;
   repeated int32 scores = 11;
   uint32 liqibang = 12;
+  YongchangInfo yongchang = 13;
 }
 
 message RecordChiPengGang {
@@ -5193,6 +5228,7 @@ message RecordChiPengGang {
   MuyuInfo muyu = 10;
   repeated int32 scores = 11;
   uint32 liqibang = 12;
+  YongchangInfo yongchang = 13;
 }
 
 message ActionGangResult {

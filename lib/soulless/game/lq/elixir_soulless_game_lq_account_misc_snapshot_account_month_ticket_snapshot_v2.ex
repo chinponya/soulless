@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
+defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2 do
   @moduledoc false
-  defstruct unique_id: 0, rewarded: 0, unlocked_ending: [], unlocked: 0, __uf__: []
+  defstruct end_time: 0, last_pay_time: 0, record_start_time: 0, history: [], __uf__: []
 
   (
     (
@@ -17,10 +17,10 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
         []
-        |> encode_unique_id(msg)
-        |> encode_rewarded(msg)
-        |> encode_unlocked_ending(msg)
-        |> encode_unlocked(msg)
+        |> encode_end_time(msg)
+        |> encode_last_pay_time(msg)
+        |> encode_record_start_time(msg)
+        |> encode_history(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -28,40 +28,54 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
     []
 
     [
-      defp encode_unique_id(acc, msg) do
+      defp encode_end_time(acc, msg) do
         try do
-          if msg.unique_id == 0 do
+          if msg.end_time == 0 do
             acc
           else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.unique_id)]
+            [acc, "\b", Protox.Encode.encode_uint32(msg.end_time)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:unique_id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:end_time, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_rewarded(acc, msg) do
+      defp encode_last_pay_time(acc, msg) do
         try do
-          if msg.rewarded == 0 do
+          if msg.last_pay_time == 0 do
             acc
           else
-            [acc, "\x10", Protox.Encode.encode_uint32(msg.rewarded)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.last_pay_time)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:rewarded, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:last_pay_time, "invalid field value"),
+                    __STACKTRACE__
         end
       end,
-      defp encode_unlocked_ending(acc, msg) do
+      defp encode_record_start_time(acc, msg) do
         try do
-          case msg.unlocked_ending do
+          if msg.record_start_time == 0 do
+            acc
+          else
+            [acc, "\x18", Protox.Encode.encode_uint32(msg.record_start_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:record_start_time, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_history(acc, msg) do
+        try do
+          case msg.history do
             [] ->
               acc
 
             values ->
               [
                 acc,
-                "\x1A",
+                "\"",
                 (
                   {bytes, len} =
                     Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
@@ -75,20 +89,7 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:unlocked_ending, "invalid field value"),
-                    __STACKTRACE__
-        end
-      end,
-      defp encode_unlocked(acc, msg) do
-        try do
-          if msg.unlocked == 0 do
-            acc
-          else
-            [acc, " ", Protox.Encode.encode_uint32(msg.unlocked)]
-          end
-        rescue
-          ArgumentError ->
-            reraise Protox.EncodingError.new(:unlocked, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:history, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -128,7 +129,10 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ActivitySpotData.SpotData))
+          parse_key_value(
+            bytes,
+            struct(Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2)
+          )
         end
       )
     )
@@ -147,28 +151,24 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
 
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[unique_id: value], rest}
+              {[end_time: value], rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[rewarded: value], rest}
-
-            {3, 2, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[
-                 unlocked_ending:
-                   msg.unlocked_ending ++ Protox.Decode.parse_repeated_uint32([], delimited)
-               ], rest}
+              {[last_pay_time: value], rest}
 
             {3, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[unlocked_ending: msg.unlocked_ending ++ [value]], rest}
+              {[record_start_time: value], rest}
+
+            {4, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[history: msg.history ++ Protox.Decode.parse_repeated_uint32([], delimited)], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[unlocked: value], rest}
+              {[history: msg.history ++ [value]], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -203,7 +203,7 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ActivitySpotData.SpotData,
+        Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -231,10 +231,10 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
           }
     def defs() do
       %{
-        1 => {:unique_id, {:scalar, 0}, :uint32},
-        2 => {:rewarded, {:scalar, 0}, :uint32},
-        3 => {:unlocked_ending, :packed, :uint32},
-        4 => {:unlocked, {:scalar, 0}, :uint32}
+        1 => {:end_time, {:scalar, 0}, :uint32},
+        2 => {:last_pay_time, {:scalar, 0}, :uint32},
+        3 => {:record_start_time, {:scalar, 0}, :uint32},
+        4 => {:history, :packed, :uint32}
       }
     end
 
@@ -244,10 +244,10 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
           }
     def defs_by_name() do
       %{
-        rewarded: {2, {:scalar, 0}, :uint32},
-        unique_id: {1, {:scalar, 0}, :uint32},
-        unlocked: {4, {:scalar, 0}, :uint32},
-        unlocked_ending: {3, :packed, :uint32}
+        end_time: {1, {:scalar, 0}, :uint32},
+        history: {4, :packed, :uint32},
+        last_pay_time: {2, {:scalar, 0}, :uint32},
+        record_start_time: {3, {:scalar, 0}, :uint32}
       }
     end
   )
@@ -258,37 +258,37 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "uniqueId",
+          json_name: "endTime",
           kind: {:scalar, 0},
           label: :optional,
-          name: :unique_id,
+          name: :end_time,
           tag: 1,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "rewarded",
+          json_name: "lastPayTime",
           kind: {:scalar, 0},
           label: :optional,
-          name: :rewarded,
+          name: :last_pay_time,
           tag: 2,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "unlockedEnding",
-          kind: :packed,
-          label: :repeated,
-          name: :unlocked_ending,
+          json_name: "recordStartTime",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :record_start_time,
           tag: 3,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "unlocked",
-          kind: {:scalar, 0},
-          label: :optional,
-          name: :unlocked,
+          json_name: "history",
+          kind: :packed,
+          label: :repeated,
+          name: :history,
           tag: 4,
           type: :uint32
         }
@@ -298,136 +298,147 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:unique_id) do
+        def field_def(:end_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "uniqueId",
+             json_name: "endTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :unique_id,
+             name: :end_time,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("uniqueId") do
+        def field_def("endTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "uniqueId",
+             json_name: "endTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :unique_id,
+             name: :end_time,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("unique_id") do
+        def field_def("end_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "uniqueId",
+             json_name: "endTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :unique_id,
+             name: :end_time,
              tag: 1,
              type: :uint32
            }}
         end
       ),
       (
-        def field_def(:rewarded) do
+        def field_def(:last_pay_time) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "rewarded",
+             json_name: "lastPayTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :rewarded,
+             name: :last_pay_time,
              tag: 2,
              type: :uint32
            }}
         end
 
-        def field_def("rewarded") do
+        def field_def("lastPayTime") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "rewarded",
+             json_name: "lastPayTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :rewarded,
+             name: :last_pay_time,
              tag: 2,
              type: :uint32
            }}
         end
 
-        []
-      ),
-      (
-        def field_def(:unlocked_ending) do
+        def field_def("last_pay_time") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "unlockedEnding",
-             kind: :packed,
-             label: :repeated,
-             name: :unlocked_ending,
-             tag: 3,
-             type: :uint32
-           }}
-        end
-
-        def field_def("unlockedEnding") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "unlockedEnding",
-             kind: :packed,
-             label: :repeated,
-             name: :unlocked_ending,
-             tag: 3,
-             type: :uint32
-           }}
-        end
-
-        def field_def("unlocked_ending") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "unlockedEnding",
-             kind: :packed,
-             label: :repeated,
-             name: :unlocked_ending,
-             tag: 3,
-             type: :uint32
-           }}
-        end
-      ),
-      (
-        def field_def(:unlocked) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "unlocked",
+             json_name: "lastPayTime",
              kind: {:scalar, 0},
              label: :optional,
-             name: :unlocked,
+             name: :last_pay_time,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:record_start_time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "recordStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :record_start_time,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("recordStartTime") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "recordStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :record_start_time,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+
+        def field_def("record_start_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "recordStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :record_start_time,
+             tag: 3,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:history) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "history",
+             kind: :packed,
+             label: :repeated,
+             name: :history,
              tag: 4,
              type: :uint32
            }}
         end
 
-        def field_def("unlocked") do
+        def field_def("history") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "unlocked",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :unlocked,
+             json_name: "history",
+             kind: :packed,
+             label: :repeated,
+             name: :history,
              tag: 4,
              type: :uint32
            }}
@@ -474,17 +485,17 @@ defmodule Soulless.Game.Lq.ActivitySpotData.SpotData do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:unique_id) do
+    def default(:end_time) do
       {:ok, 0}
     end,
-    def default(:rewarded) do
+    def default(:last_pay_time) do
       {:ok, 0}
     end,
-    def default(:unlocked_ending) do
+    def default(:record_start_time) do
+      {:ok, 0}
+    end,
+    def default(:history) do
       {:error, :no_default_value}
-    end,
-    def default(:unlocked) do
-      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}
