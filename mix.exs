@@ -1,7 +1,7 @@
 defmodule Soulless.MixProject do
   use Mix.Project
 
-  @version "0.1.8"
+  @version "0.2.0-pre"
   @source_url "https://github.com/chinponya/soulless"
 
   def project do
@@ -70,14 +70,9 @@ defmodule Soulless.MixProject do
       "fetch.game.proto": "run priv/scripts/fetch_proto.exs priv/protos/liqi.json",
       "generate.game.proto":
         "run priv/scripts/generate_proto_file.exs priv/protos/liqi.json priv/protos/majsoul.proto",
-      "generate.tourney.proto":
-        "run priv/scripts/generate_proto_file.exs priv/protos/dhs.json priv/protos/tourney.proto",
       "generate.game":
         "protox.generate --namespace=Soulless.Game --output-path=lib/soulless/game/lq --multiple-files priv/protos/majsoul.proto",
-      "generate.tourney":
-        "protox.generate --namespace=Soulless.Tourney --output-path=lib/soulless/tourney/lq --multiple-files priv/protos/tourney.proto",
       "update.game": ["fetch.game.proto", "generate.game.proto", "generate.game"],
-      "update.tourney": ["generate.tourney.proto", "generate.tourney"]
     ]
   end
 end
