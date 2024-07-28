@@ -17,6 +17,10 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
             emoji_switch: 0,
             contest_type: 0,
             disable_broadcast: 0,
+            signup_start_time: 0,
+            signup_end_time: 0,
+            signup_type: 0,
+            auto_match: 0,
             __uf__: []
 
   (
@@ -49,6 +53,10 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
         |> encode_emoji_switch(msg)
         |> encode_contest_type(msg)
         |> encode_disable_broadcast(msg)
+        |> encode_signup_start_time(msg)
+        |> encode_signup_end_time(msg)
+        |> encode_signup_type(msg)
+        |> encode_auto_match(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -250,6 +258,56 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
             reraise Protox.EncodingError.new(:disable_broadcast, "invalid field value"),
                     __STACKTRACE__
         end
+      end,
+      defp encode_signup_start_time(acc, msg) do
+        try do
+          if msg.signup_start_time == 0 do
+            acc
+          else
+            [acc, "\x88\x01", Protox.Encode.encode_uint32(msg.signup_start_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:signup_start_time, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_signup_end_time(acc, msg) do
+        try do
+          if msg.signup_end_time == 0 do
+            acc
+          else
+            [acc, "\x90\x01", Protox.Encode.encode_uint32(msg.signup_end_time)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:signup_end_time, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_signup_type(acc, msg) do
+        try do
+          if msg.signup_type == 0 do
+            acc
+          else
+            [acc, "\x98\x01", Protox.Encode.encode_uint32(msg.signup_type)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:signup_type, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_auto_match(acc, msg) do
+        try do
+          if msg.auto_match == 0 do
+            acc
+          else
+            [acc, "\xA0\x01", Protox.Encode.encode_uint32(msg.auto_match)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:auto_match, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -379,6 +437,22 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[disable_broadcast: value], rest}
 
+            {17, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[signup_start_time: value], rest}
+
+            {18, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[signup_end_time: value], rest}
+
+            {19, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[signup_type: value], rest}
+
+            {20, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[auto_match: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -455,7 +529,11 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
         13 => {:observer_switch, {:scalar, 0}, :uint32},
         14 => {:emoji_switch, {:scalar, 0}, :uint32},
         15 => {:contest_type, {:scalar, 0}, :uint32},
-        16 => {:disable_broadcast, {:scalar, 0}, :uint32}
+        16 => {:disable_broadcast, {:scalar, 0}, :uint32},
+        17 => {:signup_start_time, {:scalar, 0}, :uint32},
+        18 => {:signup_end_time, {:scalar, 0}, :uint32},
+        19 => {:signup_type, {:scalar, 0}, :uint32},
+        20 => {:auto_match, {:scalar, 0}, :uint32}
       }
     end
 
@@ -465,6 +543,7 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
           }
     def defs_by_name() do
       %{
+        auto_match: {20, {:scalar, 0}, :uint32},
         contest_id: {2, {:scalar, 0}, :uint32},
         contest_name: {3, {:scalar, ""}, :string},
         contest_type: {15, {:scalar, 0}, :uint32},
@@ -478,6 +557,9 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
         open: {9, {:scalar, false}, :bool},
         private_notice: {12, {:scalar, ""}, :string},
         rank_rule: {10, {:scalar, 0}, :uint32},
+        signup_end_time: {18, {:scalar, 0}, :uint32},
+        signup_start_time: {17, {:scalar, 0}, :uint32},
+        signup_type: {19, {:scalar, 0}, :uint32},
         start_time: {7, {:scalar, 0}, :uint32},
         state: {4, {:scalar, 0}, :uint32},
         unique_id: {1, {:scalar, 0}, :uint32}
@@ -631,6 +713,42 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
           label: :optional,
           name: :disable_broadcast,
           tag: 16,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "signupStartTime",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :signup_start_time,
+          tag: 17,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "signupEndTime",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :signup_end_time,
+          tag: 18,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "signupType",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :signup_type,
+          tag: 19,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "autoMatch",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :auto_match,
+          tag: 20,
           type: :uint32
         }
       ]
@@ -1256,6 +1374,166 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
            }}
         end
       ),
+      (
+        def field_def(:signup_start_time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_start_time,
+             tag: 17,
+             type: :uint32
+           }}
+        end
+
+        def field_def("signupStartTime") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_start_time,
+             tag: 17,
+             type: :uint32
+           }}
+        end
+
+        def field_def("signup_start_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupStartTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_start_time,
+             tag: 17,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:signup_end_time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupEndTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_end_time,
+             tag: 18,
+             type: :uint32
+           }}
+        end
+
+        def field_def("signupEndTime") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupEndTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_end_time,
+             tag: 18,
+             type: :uint32
+           }}
+        end
+
+        def field_def("signup_end_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupEndTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_end_time,
+             tag: 18,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:signup_type) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupType",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_type,
+             tag: 19,
+             type: :uint32
+           }}
+        end
+
+        def field_def("signupType") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupType",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_type,
+             tag: 19,
+             type: :uint32
+           }}
+        end
+
+        def field_def("signup_type") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "signupType",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :signup_type,
+             tag: 19,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:auto_match) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "autoMatch",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :auto_match,
+             tag: 20,
+             type: :uint32
+           }}
+        end
+
+        def field_def("autoMatch") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "autoMatch",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :auto_match,
+             tag: 20,
+             type: :uint32
+           }}
+        end
+
+        def field_def("auto_match") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "autoMatch",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :auto_match,
+             tag: 20,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1341,6 +1619,18 @@ defmodule Soulless.Game.Lq.CustomizedContestDetail do
       {:ok, 0}
     end,
     def default(:disable_broadcast) do
+      {:ok, 0}
+    end,
+    def default(:signup_start_time) do
+      {:ok, 0}
+    end,
+    def default(:signup_end_time) do
+      {:ok, 0}
+    end,
+    def default(:signup_type) do
+      {:ok, 0}
+    end,
+    def default(:auto_match) do
       {:ok, 0}
     end,
     def default(_) do

@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ReqSayChatMessage do
   @moduledoc false
-  defstruct content: "", __uf__: []
+  defstruct content: "", unique_id: 0, __uf__: []
 
   (
     (
@@ -16,7 +16,7 @@ defmodule Soulless.Game.Lq.ReqSayChatMessage do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_content(msg) |> encode_unknown_fields(msg)
+        [] |> encode_content(msg) |> encode_unique_id(msg) |> encode_unknown_fields(msg)
       end
     )
 
@@ -33,6 +33,18 @@ defmodule Soulless.Game.Lq.ReqSayChatMessage do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:content, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_unique_id(acc, msg) do
+        try do
+          if msg.unique_id == 0 do
+            acc
+          else
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.unique_id)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:unique_id, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -94,6 +106,10 @@ defmodule Soulless.Game.Lq.ReqSayChatMessage do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[content: delimited], rest}
 
+            {2, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[unique_id: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -154,7 +170,7 @@ defmodule Soulless.Game.Lq.ReqSayChatMessage do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:content, {:scalar, ""}, :string}}
+      %{1 => {:content, {:scalar, ""}, :string}, 2 => {:unique_id, {:scalar, 0}, :uint32}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -162,7 +178,7 @@ defmodule Soulless.Game.Lq.ReqSayChatMessage do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{content: {1, {:scalar, ""}, :string}}
+      %{content: {1, {:scalar, ""}, :string}, unique_id: {2, {:scalar, 0}, :uint32}}
     end
   )
 
@@ -178,6 +194,15 @@ defmodule Soulless.Game.Lq.ReqSayChatMessage do
           name: :content,
           tag: 1,
           type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "uniqueId",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :unique_id,
+          tag: 2,
+          type: :uint32
         }
       ]
     end
@@ -212,6 +237,46 @@ defmodule Soulless.Game.Lq.ReqSayChatMessage do
         end
 
         []
+      ),
+      (
+        def field_def(:unique_id) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :unique_id,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("uniqueId") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :unique_id,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("unique_id") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "uniqueId",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :unique_id,
+             tag: 2,
+             type: :uint32
+           }}
+        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -254,6 +319,9 @@ defmodule Soulless.Game.Lq.ReqSayChatMessage do
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
     def default(:content) do
       {:ok, ""}
+    end,
+    def default(:unique_id) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

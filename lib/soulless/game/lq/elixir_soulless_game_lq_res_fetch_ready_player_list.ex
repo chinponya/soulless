@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
+defmodule Soulless.Game.Lq.ResFetchReadyPlayerList do
   @moduledoc false
-  defstruct error: nil, extend_list: [], __uf__: []
+  defstruct error: nil, list: [], __uf__: []
 
   (
     (
@@ -16,7 +16,7 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_error(msg) |> encode_extend_list(msg) |> encode_unknown_fields(msg)
+        [] |> encode_error(msg) |> encode_list(msg) |> encode_unknown_fields(msg)
       end
     )
 
@@ -35,9 +35,9 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
             reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_extend_list(acc, msg) do
+      defp encode_list(acc, msg) do
         try do
-          case msg.extend_list do
+          case msg.list do
             [] ->
               acc
 
@@ -51,7 +51,7 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:extend_list, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:list, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -91,7 +91,7 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ResFetchReadyPlayerList))
         end
       )
     )
@@ -122,9 +122,9 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
               {[
-                 extend_list:
-                   msg.extend_list ++
-                     [Soulless.Game.Lq.CustomizedContestExtend.decode!(delimited)]
+                 list:
+                   msg.list ++
+                     [Soulless.Game.Lq.ResFetchReadyPlayerList.Player.decode!(delimited)]
                ], rest}
 
             {tag, wire_type, rest} ->
@@ -160,7 +160,7 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo,
+        Soulless.Game.Lq.ResFetchReadyPlayerList,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -189,7 +189,7 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
     def defs() do
       %{
         1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        2 => {:extend_list, :unpacked, {:message, Soulless.Game.Lq.CustomizedContestExtend}}
+        2 => {:list, :unpacked, {:message, Soulless.Game.Lq.ResFetchReadyPlayerList.Player}}
       }
     end
 
@@ -200,7 +200,7 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
     def defs_by_name() do
       %{
         error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        extend_list: {2, :unpacked, {:message, Soulless.Game.Lq.CustomizedContestExtend}}
+        list: {2, :unpacked, {:message, Soulless.Game.Lq.ResFetchReadyPlayerList.Player}}
       }
     end
   )
@@ -220,12 +220,12 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
         },
         %{
           __struct__: Protox.Field,
-          json_name: "extendList",
+          json_name: "list",
           kind: :unpacked,
           label: :repeated,
-          name: :extend_list,
+          name: :list,
           tag: 2,
-          type: {:message, Soulless.Game.Lq.CustomizedContestExtend}
+          type: {:message, Soulless.Game.Lq.ResFetchReadyPlayerList.Player}
         }
       ]
     end
@@ -262,44 +262,33 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
         []
       ),
       (
-        def field_def(:extend_list) do
+        def field_def(:list) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "extendList",
+             json_name: "list",
              kind: :unpacked,
              label: :repeated,
-             name: :extend_list,
+             name: :list,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.CustomizedContestExtend}
+             type: {:message, Soulless.Game.Lq.ResFetchReadyPlayerList.Player}
            }}
         end
 
-        def field_def("extendList") do
+        def field_def("list") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "extendList",
+             json_name: "list",
              kind: :unpacked,
              label: :repeated,
-             name: :extend_list,
+             name: :list,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.CustomizedContestExtend}
+             type: {:message, Soulless.Game.Lq.ResFetchReadyPlayerList.Player}
            }}
         end
 
-        def field_def("extend_list") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "extendList",
-             kind: :unpacked,
-             label: :repeated,
-             name: :extend_list,
-             tag: 2,
-             type: {:message, Soulless.Game.Lq.CustomizedContestExtend}
-           }}
-        end
+        []
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -343,7 +332,7 @@ defmodule Soulless.Game.Lq.ResFetchCustomizedContestExtendInfo do
     def default(:error) do
       {:ok, nil}
     end,
-    def default(:extend_list) do
+    def default(:list) do
       {:error, :no_default_value}
     end,
     def default(_) do

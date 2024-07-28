@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
+defmodule Soulless.Game.Lq.ResSignupCustomizedContest do
   @moduledoc false
-  defstruct account_id: 0, items: [], receive_count: 0, __uf__: []
+  defstruct error: nil, state: 0, __uf__: []
 
   (
     (
@@ -16,59 +16,35 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        []
-        |> encode_account_id(msg)
-        |> encode_items(msg)
-        |> encode_receive_count(msg)
-        |> encode_unknown_fields(msg)
+        [] |> encode_error(msg) |> encode_state(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_account_id(acc, msg) do
+      defp encode_error(acc, msg) do
         try do
-          if msg.account_id == 0 do
+          if msg.error == nil do
             acc
           else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.account_id)]
+            [acc, "\n", Protox.Encode.encode_message(msg.error)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:account_id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_items(acc, msg) do
+      defp encode_state(acc, msg) do
         try do
-          case msg.items do
-            [] ->
-              acc
-
-            values ->
-              [
-                acc,
-                Enum.reduce(values, [], fn value, acc ->
-                  [acc, "\x12", Protox.Encode.encode_message(value)]
-                end)
-              ]
-          end
-        rescue
-          ArgumentError ->
-            reraise Protox.EncodingError.new(:items, "invalid field value"), __STACKTRACE__
-        end
-      end,
-      defp encode_receive_count(acc, msg) do
-        try do
-          if msg.receive_count == 0 do
+          if msg.state == 0 do
             acc
           else
-            [acc, "\x18", Protox.Encode.encode_uint32(msg.receive_count)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.state)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:receive_count, "invalid field value"),
-                    __STACKTRACE__
+            reraise Protox.EncodingError.new(:state, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -108,10 +84,7 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(
-            bytes,
-            struct(Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData)
-          )
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ResSignupCustomizedContest))
         end
       )
     )
@@ -129,26 +102,17 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[account_id: value], rest}
-
-            {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
               {[
-                 items:
-                   msg.items ++
-                     [
-                       Soulless.Game.Lq.ResFetchFriendFeedActivityData.ItemCountData.decode!(
-                         delimited
-                       )
-                     ]
+                 error:
+                   Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
                ], rest}
 
-            {3, _, bytes} ->
+            {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[receive_count: value], rest}
+              {[state: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -183,7 +147,7 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData,
+        Soulless.Game.Lq.ResSignupCustomizedContest,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -211,11 +175,8 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
           }
     def defs() do
       %{
-        1 => {:account_id, {:scalar, 0}, :uint32},
-        2 =>
-          {:items, :unpacked,
-           {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.ItemCountData}},
-        3 => {:receive_count, {:scalar, 0}, :uint32}
+        1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        2 => {:state, {:scalar, 0}, :uint32}
       }
     end
 
@@ -225,11 +186,8 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
           }
     def defs_by_name() do
       %{
-        account_id: {1, {:scalar, 0}, :uint32},
-        items:
-          {2, :unpacked,
-           {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.ItemCountData}},
-        receive_count: {3, {:scalar, 0}, :uint32}
+        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        state: {2, {:scalar, 0}, :uint32}
       }
     end
   )
@@ -240,29 +198,20 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "accountId",
-          kind: {:scalar, 0},
+          json_name: "error",
+          kind: {:scalar, nil},
           label: :optional,
-          name: :account_id,
+          name: :error,
           tag: 1,
-          type: :uint32
+          type: {:message, Soulless.Game.Lq.Error}
         },
         %{
           __struct__: Protox.Field,
-          json_name: "items",
-          kind: :unpacked,
-          label: :repeated,
-          name: :items,
-          tag: 2,
-          type: {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.ItemCountData}
-        },
-        %{
-          __struct__: Protox.Field,
-          json_name: "receiveCount",
+          json_name: "state",
           kind: {:scalar, 0},
           label: :optional,
-          name: :receive_count,
-          tag: 3,
+          name: :state,
+          tag: 2,
           type: :uint32
         }
       ]
@@ -271,113 +220,62 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:account_id) do
+        def field_def(:error) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "accountId",
-             kind: {:scalar, 0},
+             json_name: "error",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :account_id,
+             name: :error,
              tag: 1,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.Error}
            }}
         end
 
-        def field_def("accountId") do
+        def field_def("error") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "accountId",
-             kind: {:scalar, 0},
+             json_name: "error",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :account_id,
+             name: :error,
              tag: 1,
-             type: :uint32
-           }}
-        end
-
-        def field_def("account_id") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "accountId",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :account_id,
-             tag: 1,
-             type: :uint32
-           }}
-        end
-      ),
-      (
-        def field_def(:items) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "items",
-             kind: :unpacked,
-             label: :repeated,
-             name: :items,
-             tag: 2,
-             type: {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.ItemCountData}
-           }}
-        end
-
-        def field_def("items") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "items",
-             kind: :unpacked,
-             label: :repeated,
-             name: :items,
-             tag: 2,
-             type: {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.ItemCountData}
+             type: {:message, Soulless.Game.Lq.Error}
            }}
         end
 
         []
       ),
       (
-        def field_def(:receive_count) do
+        def field_def(:state) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "receiveCount",
+             json_name: "state",
              kind: {:scalar, 0},
              label: :optional,
-             name: :receive_count,
-             tag: 3,
+             name: :state,
+             tag: 2,
              type: :uint32
            }}
         end
 
-        def field_def("receiveCount") do
+        def field_def("state") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "receiveCount",
+             json_name: "state",
              kind: {:scalar, 0},
              label: :optional,
-             name: :receive_count,
-             tag: 3,
+             name: :state,
+             tag: 2,
              type: :uint32
            }}
         end
 
-        def field_def("receive_count") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "receiveCount",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :receive_count,
-             tag: 3,
-             type: :uint32
-           }}
-        end
+        []
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -418,13 +316,10 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:account_id) do
-      {:ok, 0}
+    def default(:error) do
+      {:ok, nil}
     end,
-    def default(:items) do
-      {:error, :no_default_value}
-    end,
-    def default(:receive_count) do
+    def default(:state) do
       {:ok, 0}
     end,
     def default(_) do

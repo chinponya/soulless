@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
+defmodule Soulless.Game.Lq.IslandBagData do
   @moduledoc false
-  defstruct error: nil, list: [], __uf__: []
+  defstruct id: 0, matrix: "", items: [], __uf__: []
 
   (
     (
@@ -16,28 +16,44 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_error(msg) |> encode_list(msg) |> encode_unknown_fields(msg)
+        []
+        |> encode_id(msg)
+        |> encode_matrix(msg)
+        |> encode_items(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_error(acc, msg) do
+      defp encode_id(acc, msg) do
         try do
-          if msg.error == nil do
+          if msg.id == 0 do
             acc
           else
-            [acc, "\n", Protox.Encode.encode_message(msg.error)]
+            [acc, "\b", Protox.Encode.encode_uint32(msg.id)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:id, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_list(acc, msg) do
+      defp encode_matrix(acc, msg) do
         try do
-          case msg.list do
+          if msg.matrix == "" do
+            acc
+          else
+            [acc, "\x12", Protox.Encode.encode_string(msg.matrix)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:matrix, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_items(acc, msg) do
+        try do
+          case msg.items do
             [] ->
               acc
 
@@ -45,13 +61,13 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
               [
                 acc,
                 Enum.reduce(values, [], fn value, acc ->
-                  [acc, "\x12", Protox.Encode.encode_message(value)]
+                  [acc, "\x1A", Protox.Encode.encode_message(value)]
                 end)
               ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:list, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:items, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -91,7 +107,7 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ResFetchFriendFeedActivityData))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.IslandBagData))
         end
       )
     )
@@ -109,27 +125,20 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[
-                 error:
-                   Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
-               ], rest}
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[id: value], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[matrix: delimited], rest}
 
-              {[
-                 list:
-                   msg.list ++
-                     [
-                       Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData.decode!(
-                         delimited
-                       )
-                     ]
-               ], rest}
+            {3, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[items: msg.items ++ [Soulless.Game.Lq.IslandBagItemData.decode!(delimited)]],
+               rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -164,7 +173,7 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ResFetchFriendFeedActivityData,
+        Soulless.Game.Lq.IslandBagData,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -192,10 +201,9 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
           }
     def defs() do
       %{
-        1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        2 =>
-          {:list, :unpacked,
-           {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData}}
+        1 => {:id, {:scalar, 0}, :uint32},
+        2 => {:matrix, {:scalar, ""}, :string},
+        3 => {:items, :unpacked, {:message, Soulless.Game.Lq.IslandBagItemData}}
       }
     end
 
@@ -205,9 +213,9 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
           }
     def defs_by_name() do
       %{
-        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        list:
-          {2, :unpacked, {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData}}
+        id: {1, {:scalar, 0}, :uint32},
+        items: {3, :unpacked, {:message, Soulless.Game.Lq.IslandBagItemData}},
+        matrix: {2, {:scalar, ""}, :string}
       }
     end
   )
@@ -218,21 +226,30 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "error",
-          kind: {:scalar, nil},
+          json_name: "id",
+          kind: {:scalar, 0},
           label: :optional,
-          name: :error,
+          name: :id,
           tag: 1,
-          type: {:message, Soulless.Game.Lq.Error}
+          type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "list",
+          json_name: "matrix",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :matrix,
+          tag: 2,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "items",
           kind: :unpacked,
           label: :repeated,
-          name: :list,
-          tag: 2,
-          type: {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData}
+          name: :items,
+          tag: 3,
+          type: {:message, Soulless.Game.Lq.IslandBagItemData}
         }
       ]
     end
@@ -240,58 +257,87 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:error) do
+        def field_def(:id) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "error",
-             kind: {:scalar, nil},
+             json_name: "id",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :error,
+             name: :id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.Error}
+             type: :uint32
            }}
         end
 
-        def field_def("error") do
+        def field_def("id") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "error",
-             kind: {:scalar, nil},
+             json_name: "id",
+             kind: {:scalar, 0},
              label: :optional,
-             name: :error,
+             name: :id,
              tag: 1,
-             type: {:message, Soulless.Game.Lq.Error}
+             type: :uint32
            }}
         end
 
         []
       ),
       (
-        def field_def(:list) do
+        def field_def(:matrix) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "list",
-             kind: :unpacked,
-             label: :repeated,
-             name: :list,
+             json_name: "matrix",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :matrix,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData}
+             type: :string
            }}
         end
 
-        def field_def("list") do
+        def field_def("matrix") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "list",
+             json_name: "matrix",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :matrix,
+             tag: 2,
+             type: :string
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:items) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "items",
              kind: :unpacked,
              label: :repeated,
-             name: :list,
-             tag: 2,
-             type: {:message, Soulless.Game.Lq.ResFetchFriendFeedActivityData.FriendData}
+             name: :items,
+             tag: 3,
+             type: {:message, Soulless.Game.Lq.IslandBagItemData}
+           }}
+        end
+
+        def field_def("items") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "items",
+             kind: :unpacked,
+             label: :repeated,
+             name: :items,
+             tag: 3,
+             type: {:message, Soulless.Game.Lq.IslandBagItemData}
            }}
         end
 
@@ -336,10 +382,13 @@ defmodule Soulless.Game.Lq.ResFetchFriendFeedActivityData do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:error) do
-      {:ok, nil}
+    def default(:id) do
+      {:ok, 0}
     end,
-    def default(:list) do
+    def default(:matrix) do
+      {:ok, ""}
+    end,
+    def default(:items) do
       {:error, :no_default_value}
     end,
     def default(_) do

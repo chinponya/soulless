@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
+defmodule Soulless.Game.Lq.ActivityCombiningMenuData.MenuRequire do
   @moduledoc false
-  defstruct uid_list: [], __uf__: []
+  defstruct level: 0, count: 0, __uf__: []
 
   (
     (
@@ -16,37 +16,35 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_uid_list(msg) |> encode_unknown_fields(msg)
+        [] |> encode_level(msg) |> encode_count(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_uid_list(acc, msg) do
+      defp encode_level(acc, msg) do
         try do
-          case msg.uid_list do
-            [] ->
-              acc
-
-            values ->
-              [
-                acc,
-                "\n",
-                (
-                  {bytes, len} =
-                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
-                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
-                      {[acc, value_bytes], len + byte_size(value_bytes)}
-                    end)
-
-                  [Protox.Varint.encode(len), bytes]
-                )
-              ]
+          if msg.level == 0 do
+            acc
+          else
+            [acc, "\b", Protox.Encode.encode_uint32(msg.level)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:uid_list, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_count(acc, msg) do
+        try do
+          if msg.count == 0 do
+            acc
+          else
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.count)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:count, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -86,7 +84,7 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ActivityCombiningMenuData.MenuRequire))
         end
       )
     )
@@ -103,16 +101,13 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
             {0, _, _} ->
               raise %Protox.IllegalTagError{}
 
-            {1, 2, bytes} ->
-              {len, bytes} = Protox.Varint.decode(bytes)
-              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[uid_list: msg.uid_list ++ Protox.Decode.parse_repeated_uint32([], delimited)],
-               rest}
-
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[uid_list: msg.uid_list ++ [value]], rest}
+              {[level: value], rest}
+
+            {2, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[count: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -147,7 +142,7 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo,
+        Soulless.Game.Lq.ActivityCombiningMenuData.MenuRequire,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -174,7 +169,7 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:uid_list, :packed, :uint32}}
+      %{1 => {:level, {:scalar, 0}, :uint32}, 2 => {:count, {:scalar, 0}, :uint32}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -182,7 +177,7 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{uid_list: {1, :packed, :uint32}}
+      %{count: {2, {:scalar, 0}, :uint32}, level: {1, {:scalar, 0}, :uint32}}
     end
   )
 
@@ -192,11 +187,20 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "uidList",
-          kind: :packed,
-          label: :repeated,
-          name: :uid_list,
+          json_name: "level",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :level,
           tag: 1,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "count",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :count,
+          tag: 2,
           type: :uint32
         }
       ]
@@ -205,44 +209,62 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:uid_list) do
+        def field_def(:level) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "uidList",
-             kind: :packed,
-             label: :repeated,
-             name: :uid_list,
+             json_name: "level",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :level,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("uidList") do
+        def field_def("level") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "uidList",
-             kind: :packed,
-             label: :repeated,
-             name: :uid_list,
+             json_name: "level",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :level,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("uid_list") do
+        []
+      ),
+      (
+        def field_def(:count) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "uidList",
-             kind: :packed,
-             label: :repeated,
-             name: :uid_list,
-             tag: 1,
+             json_name: "count",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :count,
+             tag: 2,
              type: :uint32
            }}
         end
+
+        def field_def("count") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "count",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :count,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        []
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -283,8 +305,11 @@ defmodule Soulless.Game.Lq.ReqFetchCustomizedContestExtendInfo do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:uid_list) do
-      {:error, :no_default_value}
+    def default(:level) do
+      {:ok, 0}
+    end,
+    def default(:count) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

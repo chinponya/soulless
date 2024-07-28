@@ -6,7 +6,7 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
             vip: nil,
             shop_info: nil,
             month_ticket: nil,
-            recharged: [],
+            recharged: nil,
             month_ticket_v2: nil,
             __uf__: []
 
@@ -101,17 +101,10 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
       end,
       defp encode_recharged(acc, msg) do
         try do
-          case msg.recharged do
-            [] ->
-              acc
-
-            values ->
-              [
-                acc,
-                Enum.reduce(values, [], fn value, acc ->
-                  [acc, "2", Protox.Encode.encode_message(value)]
-                end)
-              ]
+          if msg.recharged == nil do
+            acc
+          else
+            [acc, "2", Protox.Encode.encode_message(msg.recharged)]
           end
         rescue
           ArgumentError ->
@@ -255,8 +248,10 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
 
               {[
                  recharged:
-                   msg.recharged ++
-                     [Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.decode!(delimited)]
+                   Protox.MergeMessage.merge(
+                     msg.recharged,
+                     Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.decode!(delimited)
+                   )
                ], rest}
 
             {7, _, bytes} ->
@@ -344,7 +339,7 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
           {:month_ticket, {:scalar, nil},
            {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshot}},
         6 =>
-          {:recharged, :unpacked,
+          {:recharged, {:scalar, nil},
            {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}},
         7 =>
           {:month_ticket_v2, {:scalar, nil},
@@ -366,7 +361,8 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
           {7, {:scalar, nil},
            {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountMonthTicketSnapshotV2}},
         recharged:
-          {6, :unpacked, {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}},
+          {6, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}},
         shop_info: {4, {:scalar, nil}, {:message, Soulless.Game.Lq.ShopInfo}},
         vip: {3, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountVIP}},
         vip_reward_gained:
@@ -428,8 +424,8 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
         %{
           __struct__: Protox.Field,
           json_name: "recharged",
-          kind: :unpacked,
-          label: :repeated,
+          kind: {:scalar, nil},
+          label: :optional,
           name: :recharged,
           tag: 6,
           type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}
@@ -643,8 +639,8 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
            %{
              __struct__: Protox.Field,
              json_name: "recharged",
-             kind: :unpacked,
-             label: :repeated,
+             kind: {:scalar, nil},
+             label: :optional,
              name: :recharged,
              tag: 6,
              type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}
@@ -656,8 +652,8 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
            %{
              __struct__: Protox.Field,
              json_name: "recharged",
-             kind: :unpacked,
-             label: :repeated,
+             kind: {:scalar, nil},
+             label: :optional,
              name: :recharged,
              tag: 6,
              type: {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo}
@@ -761,7 +757,7 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot do
       {:ok, nil}
     end,
     def default(:recharged) do
-      {:error, :no_default_value}
+      {:ok, nil}
     end,
     def default(:month_ticket_v2) do
       {:ok, nil}

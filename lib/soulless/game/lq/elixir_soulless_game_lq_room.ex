@@ -12,6 +12,7 @@ defmodule Soulless.Game.Lq.Room do
             robot_count: 0,
             tournament_id: 0,
             seq: 0,
+            pre_rule: "",
             __uf__: []
 
   (
@@ -39,6 +40,7 @@ defmodule Soulless.Game.Lq.Room do
         |> encode_robot_count(msg)
         |> encode_tournament_id(msg)
         |> encode_seq(msg)
+        |> encode_pre_rule(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -200,6 +202,18 @@ defmodule Soulless.Game.Lq.Room do
           ArgumentError ->
             reraise Protox.EncodingError.new(:seq, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_pre_rule(acc, msg) do
+        try do
+          if msg.pre_rule == "" do
+            acc
+          else
+            [acc, "b", Protox.Encode.encode_string(msg.pre_rule)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:pre_rule, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -317,6 +331,11 @@ defmodule Soulless.Game.Lq.Room do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[seq: value], rest}
 
+            {12, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[pre_rule: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -388,7 +407,8 @@ defmodule Soulless.Game.Lq.Room do
         8 => {:public_live, {:scalar, false}, :bool},
         9 => {:robot_count, {:scalar, 0}, :uint32},
         10 => {:tournament_id, {:scalar, 0}, :uint32},
-        11 => {:seq, {:scalar, 0}, :uint32}
+        11 => {:seq, {:scalar, 0}, :uint32},
+        12 => {:pre_rule, {:scalar, ""}, :string}
       }
     end
 
@@ -403,6 +423,7 @@ defmodule Soulless.Game.Lq.Room do
         mode: {3, {:scalar, nil}, {:message, Soulless.Game.Lq.GameMode}},
         owner_id: {2, {:scalar, 0}, :uint32},
         persons: {5, :unpacked, {:message, Soulless.Game.Lq.PlayerGameView}},
+        pre_rule: {12, {:scalar, ""}, :string},
         public_live: {8, {:scalar, false}, :bool},
         ready_list: {6, :packed, :uint32},
         robot_count: {9, {:scalar, 0}, :uint32},
@@ -515,6 +536,15 @@ defmodule Soulless.Game.Lq.Room do
           name: :seq,
           tag: 11,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "preRule",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :pre_rule,
+          tag: 12,
+          type: :string
         }
       ]
     end
@@ -928,6 +958,46 @@ defmodule Soulless.Game.Lq.Room do
 
         []
       ),
+      (
+        def field_def(:pre_rule) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "preRule",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :pre_rule,
+             tag: 12,
+             type: :string
+           }}
+        end
+
+        def field_def("preRule") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "preRule",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :pre_rule,
+             tag: 12,
+             type: :string
+           }}
+        end
+
+        def field_def("pre_rule") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "preRule",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :pre_rule,
+             tag: 12,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -999,6 +1069,9 @@ defmodule Soulless.Game.Lq.Room do
     end,
     def default(:seq) do
       {:ok, 0}
+    end,
+    def default(:pre_rule) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}

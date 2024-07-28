@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ReqReadAnnouncement do
   @moduledoc false
-  defstruct announcement_id: 0, __uf__: []
+  defstruct announcement_id: 0, announcement_list: [], __uf__: []
 
   (
     (
@@ -16,7 +16,10 @@ defmodule Soulless.Game.Lq.ReqReadAnnouncement do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_announcement_id(msg) |> encode_unknown_fields(msg)
+        []
+        |> encode_announcement_id(msg)
+        |> encode_announcement_list(msg)
+        |> encode_unknown_fields(msg)
       end
     )
 
@@ -33,6 +36,33 @@ defmodule Soulless.Game.Lq.ReqReadAnnouncement do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:announcement_id, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_announcement_list(acc, msg) do
+        try do
+          case msg.announcement_list do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                "\x12",
+                (
+                  {bytes, len} =
+                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
+                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
+                      {[acc, value_bytes], len + byte_size(value_bytes)}
+                    end)
+
+                  [Protox.Varint.encode(len), bytes]
+                )
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:announcement_list, "invalid field value"),
                     __STACKTRACE__
         end
       end
@@ -94,6 +124,19 @@ defmodule Soulless.Game.Lq.ReqReadAnnouncement do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[announcement_id: value], rest}
 
+            {2, 2, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 announcement_list:
+                   msg.announcement_list ++ Protox.Decode.parse_repeated_uint32([], delimited)
+               ], rest}
+
+            {2, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[announcement_list: msg.announcement_list ++ [value]], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -154,7 +197,10 @@ defmodule Soulless.Game.Lq.ReqReadAnnouncement do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:announcement_id, {:scalar, 0}, :uint32}}
+      %{
+        1 => {:announcement_id, {:scalar, 0}, :uint32},
+        2 => {:announcement_list, :packed, :uint32}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -162,7 +208,7 @@ defmodule Soulless.Game.Lq.ReqReadAnnouncement do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{announcement_id: {1, {:scalar, 0}, :uint32}}
+      %{announcement_id: {1, {:scalar, 0}, :uint32}, announcement_list: {2, :packed, :uint32}}
     end
   )
 
@@ -177,6 +223,15 @@ defmodule Soulless.Game.Lq.ReqReadAnnouncement do
           label: :optional,
           name: :announcement_id,
           tag: 1,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "announcementList",
+          kind: :packed,
+          label: :repeated,
+          name: :announcement_list,
+          tag: 2,
           type: :uint32
         }
       ]
@@ -224,6 +279,46 @@ defmodule Soulless.Game.Lq.ReqReadAnnouncement do
            }}
         end
       ),
+      (
+        def field_def(:announcement_list) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "announcementList",
+             kind: :packed,
+             label: :repeated,
+             name: :announcement_list,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("announcementList") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "announcementList",
+             kind: :packed,
+             label: :repeated,
+             name: :announcement_list,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("announcement_list") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "announcementList",
+             kind: :packed,
+             label: :repeated,
+             name: :announcement_list,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -265,6 +360,9 @@ defmodule Soulless.Game.Lq.ReqReadAnnouncement do
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
     def default(:announcement_id) do
       {:ok, 0}
+    end,
+    def default(:announcement_list) do
+      {:error, :no_default_value}
     end,
     def default(_) do
       {:error, :no_such_field}

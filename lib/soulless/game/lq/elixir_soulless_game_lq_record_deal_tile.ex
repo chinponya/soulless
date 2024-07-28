@@ -11,6 +11,7 @@ defmodule Soulless.Game.Lq.RecordDealTile do
             tile_state: 0,
             muyu: nil,
             tile_index: 0,
+            hun_zhi_yi_ji_info: nil,
             __uf__: []
 
   (
@@ -37,6 +38,7 @@ defmodule Soulless.Game.Lq.RecordDealTile do
         |> encode_tile_state(msg)
         |> encode_muyu(msg)
         |> encode_tile_index(msg)
+        |> encode_hun_zhi_yi_ji_info(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -185,6 +187,19 @@ defmodule Soulless.Game.Lq.RecordDealTile do
           ArgumentError ->
             reraise Protox.EncodingError.new(:tile_index, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_hun_zhi_yi_ji_info(acc, msg) do
+        try do
+          if msg.hun_zhi_yi_ji_info == nil do
+            acc
+          else
+            [acc, "j", Protox.Encode.encode_message(msg.hun_zhi_yi_ji_info)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:hun_zhi_yi_ji_info, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -311,6 +326,18 @@ defmodule Soulless.Game.Lq.RecordDealTile do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[tile_index: value], rest}
 
+            {13, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 hun_zhi_yi_ji_info:
+                   Protox.MergeMessage.merge(
+                     msg.hun_zhi_yi_ji_info,
+                     Soulless.Game.Lq.HunZhiYiJiBuffInfo.decode!(delimited)
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -381,7 +408,9 @@ defmodule Soulless.Game.Lq.RecordDealTile do
         8 => {:operation, {:scalar, nil}, {:message, Soulless.Game.Lq.OptionalOperationList}},
         9 => {:tile_state, {:scalar, 0}, :uint32},
         11 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
-        12 => {:tile_index, {:scalar, 0}, :uint32}
+        12 => {:tile_index, {:scalar, 0}, :uint32},
+        13 =>
+          {:hun_zhi_yi_ji_info, {:scalar, nil}, {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}}
       }
     end
 
@@ -392,6 +421,7 @@ defmodule Soulless.Game.Lq.RecordDealTile do
     def defs_by_name() do
       %{
         doras: {6, :unpacked, :string},
+        hun_zhi_yi_ji_info: {13, {:scalar, nil}, {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}},
         left_tile_count: {3, {:scalar, 0}, :uint32},
         liqi: {5, {:scalar, nil}, {:message, Soulless.Game.Lq.LiQiSuccess}},
         muyu: {11, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
@@ -498,6 +528,15 @@ defmodule Soulless.Game.Lq.RecordDealTile do
           name: :tile_index,
           tag: 12,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "hunZhiYiJiInfo",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :hun_zhi_yi_ji_info,
+          tag: 13,
+          type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
         }
       ]
     end
@@ -827,6 +866,46 @@ defmodule Soulless.Game.Lq.RecordDealTile do
            }}
         end
       ),
+      (
+        def field_def(:hun_zhi_yi_ji_info) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 13,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+
+        def field_def("hunZhiYiJiInfo") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 13,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+
+        def field_def("hun_zhi_yi_ji_info") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 13,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -895,6 +974,9 @@ defmodule Soulless.Game.Lq.RecordDealTile do
     end,
     def default(:tile_index) do
       {:ok, 0}
+    end,
+    def default(:hun_zhi_yi_ji_info) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

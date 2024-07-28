@@ -11,6 +11,9 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
             finish_time: 0,
             open: false,
             contest_type: 0,
+            public_notice: "",
+            check_state: 0,
+            checking_name: "",
             __uf__: []
 
   (
@@ -37,6 +40,9 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
         |> encode_finish_time(msg)
         |> encode_open(msg)
         |> encode_contest_type(msg)
+        |> encode_public_notice(msg)
+        |> encode_check_state(msg)
+        |> encode_checking_name(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -163,6 +169,44 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
           ArgumentError ->
             reraise Protox.EncodingError.new(:contest_type, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_public_notice(acc, msg) do
+        try do
+          if msg.public_notice == "" do
+            acc
+          else
+            [acc, "Z", Protox.Encode.encode_string(msg.public_notice)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:public_notice, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_check_state(acc, msg) do
+        try do
+          if msg.check_state == 0 do
+            acc
+          else
+            [acc, "`", Protox.Encode.encode_uint32(msg.check_state)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:check_state, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_checking_name(acc, msg) do
+        try do
+          if msg.checking_name == "" do
+            acc
+          else
+            [acc, "j", Protox.Encode.encode_string(msg.checking_name)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:checking_name, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -259,6 +303,20 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[contest_type: value], rest}
 
+            {11, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[public_notice: delimited], rest}
+
+            {12, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[check_state: value], rest}
+
+            {13, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[checking_name: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -329,7 +387,10 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
         7 => {:start_time, {:scalar, 0}, :uint32},
         8 => {:finish_time, {:scalar, 0}, :uint32},
         9 => {:open, {:scalar, false}, :bool},
-        10 => {:contest_type, {:scalar, 0}, :uint32}
+        10 => {:contest_type, {:scalar, 0}, :uint32},
+        11 => {:public_notice, {:scalar, ""}, :string},
+        12 => {:check_state, {:scalar, 0}, :uint32},
+        13 => {:checking_name, {:scalar, ""}, :string}
       }
     end
 
@@ -339,6 +400,8 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
           }
     def defs_by_name() do
       %{
+        check_state: {12, {:scalar, 0}, :uint32},
+        checking_name: {13, {:scalar, ""}, :string},
         contest_id: {2, {:scalar, 0}, :uint32},
         contest_name: {3, {:scalar, ""}, :string},
         contest_type: {10, {:scalar, 0}, :uint32},
@@ -346,6 +409,7 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
         creator_id: {5, {:scalar, 0}, :uint32},
         finish_time: {8, {:scalar, 0}, :uint32},
         open: {9, {:scalar, false}, :bool},
+        public_notice: {11, {:scalar, ""}, :string},
         start_time: {7, {:scalar, 0}, :uint32},
         state: {4, {:scalar, 0}, :uint32},
         unique_id: {1, {:scalar, 0}, :uint32}
@@ -446,6 +510,33 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
           name: :contest_type,
           tag: 10,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "publicNotice",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :public_notice,
+          tag: 11,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "checkState",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :check_state,
+          tag: 12,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "checkingName",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :checking_name,
+          tag: 13,
+          type: :string
         }
       ]
     end
@@ -830,6 +921,126 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
            }}
         end
       ),
+      (
+        def field_def(:public_notice) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "publicNotice",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :public_notice,
+             tag: 11,
+             type: :string
+           }}
+        end
+
+        def field_def("publicNotice") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "publicNotice",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :public_notice,
+             tag: 11,
+             type: :string
+           }}
+        end
+
+        def field_def("public_notice") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "publicNotice",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :public_notice,
+             tag: 11,
+             type: :string
+           }}
+        end
+      ),
+      (
+        def field_def(:check_state) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "checkState",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :check_state,
+             tag: 12,
+             type: :uint32
+           }}
+        end
+
+        def field_def("checkState") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "checkState",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :check_state,
+             tag: 12,
+             type: :uint32
+           }}
+        end
+
+        def field_def("check_state") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "checkState",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :check_state,
+             tag: 12,
+             type: :uint32
+           }}
+        end
+      ),
+      (
+        def field_def(:checking_name) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "checkingName",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :checking_name,
+             tag: 13,
+             type: :string
+           }}
+        end
+
+        def field_def("checkingName") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "checkingName",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :checking_name,
+             tag: 13,
+             type: :string
+           }}
+        end
+
+        def field_def("checking_name") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "checkingName",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :checking_name,
+             tag: 13,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -898,6 +1109,15 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
     end,
     def default(:contest_type) do
       {:ok, 0}
+    end,
+    def default(:public_notice) do
+      {:ok, ""}
+    end,
+    def default(:check_state) do
+      {:ok, 0}
+    end,
+    def default(:checking_name) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}

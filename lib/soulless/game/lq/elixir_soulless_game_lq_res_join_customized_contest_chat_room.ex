@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
   @moduledoc false
-  defstruct error: nil, chat_history: [], __uf__: []
+  defstruct error: nil, token: "", __uf__: []
 
   (
     (
@@ -16,7 +16,7 @@ defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_error(msg) |> encode_chat_history(msg) |> encode_unknown_fields(msg)
+        [] |> encode_error(msg) |> encode_token(msg) |> encode_unknown_fields(msg)
       end
     )
 
@@ -35,23 +35,16 @@ defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
             reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_chat_history(acc, msg) do
+      defp encode_token(acc, msg) do
         try do
-          case msg.chat_history do
-            [] ->
-              acc
-
-            values ->
-              [
-                acc,
-                Enum.reduce(values, [], fn value, acc ->
-                  [acc, "\x12", Protox.Encode.encode_message(value)]
-                end)
-              ]
+          if msg.token == "" do
+            acc
+          else
+            [acc, "\x12", Protox.Encode.encode_string(msg.token)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:chat_history, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:token, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -120,9 +113,7 @@ defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-
-              {[chat_history: msg.chat_history ++ [Soulless.Game.Lq.Wrapper.decode!(delimited)]],
-               rest}
+              {[token: delimited], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -186,7 +177,7 @@ defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
     def defs() do
       %{
         1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
-        2 => {:chat_history, :unpacked, {:message, Soulless.Game.Lq.Wrapper}}
+        2 => {:token, {:scalar, ""}, :string}
       }
     end
 
@@ -196,8 +187,8 @@ defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
           }
     def defs_by_name() do
       %{
-        chat_history: {2, :unpacked, {:message, Soulless.Game.Lq.Wrapper}},
-        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}}
+        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        token: {2, {:scalar, ""}, :string}
       }
     end
   )
@@ -217,12 +208,12 @@ defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
         },
         %{
           __struct__: Protox.Field,
-          json_name: "chatHistory",
-          kind: :unpacked,
-          label: :repeated,
-          name: :chat_history,
+          json_name: "token",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :token,
           tag: 2,
-          type: {:message, Soulless.Game.Lq.Wrapper}
+          type: :string
         }
       ]
     end
@@ -259,44 +250,33 @@ defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
         []
       ),
       (
-        def field_def(:chat_history) do
+        def field_def(:token) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "chatHistory",
-             kind: :unpacked,
-             label: :repeated,
-             name: :chat_history,
+             json_name: "token",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :token,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.Wrapper}
+             type: :string
            }}
         end
 
-        def field_def("chatHistory") do
+        def field_def("token") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "chatHistory",
-             kind: :unpacked,
-             label: :repeated,
-             name: :chat_history,
+             json_name: "token",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :token,
              tag: 2,
-             type: {:message, Soulless.Game.Lq.Wrapper}
+             type: :string
            }}
         end
 
-        def field_def("chat_history") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "chatHistory",
-             kind: :unpacked,
-             label: :repeated,
-             name: :chat_history,
-             tag: 2,
-             type: {:message, Soulless.Game.Lq.Wrapper}
-           }}
-        end
+        []
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -340,8 +320,8 @@ defmodule Soulless.Game.Lq.ResJoinCustomizedContestChatRoom do
     def default(:error) do
       {:ok, nil}
     end,
-    def default(:chat_history) do
-      {:error, :no_default_value}
+    def default(:token) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}

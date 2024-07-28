@@ -1,7 +1,12 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ReqCreateRoom do
   @moduledoc false
-  defstruct player_count: 0, mode: nil, public_live: false, client_version_string: "", __uf__: []
+  defstruct player_count: 0,
+            mode: nil,
+            public_live: false,
+            client_version_string: "",
+            pre_rule: "",
+            __uf__: []
 
   (
     (
@@ -21,6 +26,7 @@ defmodule Soulless.Game.Lq.ReqCreateRoom do
         |> encode_mode(msg)
         |> encode_public_live(msg)
         |> encode_client_version_string(msg)
+        |> encode_pre_rule(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -75,6 +81,18 @@ defmodule Soulless.Game.Lq.ReqCreateRoom do
           ArgumentError ->
             reraise Protox.EncodingError.new(:client_version_string, "invalid field value"),
                     __STACKTRACE__
+        end
+      end,
+      defp encode_pre_rule(acc, msg) do
+        try do
+          if msg.pre_rule == "" do
+            acc
+          else
+            [acc, "*", Protox.Encode.encode_string(msg.pre_rule)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:pre_rule, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -156,6 +174,11 @@ defmodule Soulless.Game.Lq.ReqCreateRoom do
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
               {[client_version_string: delimited], rest}
 
+            {5, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[pre_rule: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -220,7 +243,8 @@ defmodule Soulless.Game.Lq.ReqCreateRoom do
         1 => {:player_count, {:scalar, 0}, :uint32},
         2 => {:mode, {:scalar, nil}, {:message, Soulless.Game.Lq.GameMode}},
         3 => {:public_live, {:scalar, false}, :bool},
-        4 => {:client_version_string, {:scalar, ""}, :string}
+        4 => {:client_version_string, {:scalar, ""}, :string},
+        5 => {:pre_rule, {:scalar, ""}, :string}
       }
     end
 
@@ -233,6 +257,7 @@ defmodule Soulless.Game.Lq.ReqCreateRoom do
         client_version_string: {4, {:scalar, ""}, :string},
         mode: {2, {:scalar, nil}, {:message, Soulless.Game.Lq.GameMode}},
         player_count: {1, {:scalar, 0}, :uint32},
+        pre_rule: {5, {:scalar, ""}, :string},
         public_live: {3, {:scalar, false}, :bool}
       }
     end
@@ -276,6 +301,15 @@ defmodule Soulless.Game.Lq.ReqCreateRoom do
           label: :optional,
           name: :client_version_string,
           tag: 4,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "preRule",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :pre_rule,
+          tag: 5,
           type: :string
         }
       ]
@@ -432,6 +466,46 @@ defmodule Soulless.Game.Lq.ReqCreateRoom do
            }}
         end
       ),
+      (
+        def field_def(:pre_rule) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "preRule",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :pre_rule,
+             tag: 5,
+             type: :string
+           }}
+        end
+
+        def field_def("preRule") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "preRule",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :pre_rule,
+             tag: 5,
+             type: :string
+           }}
+        end
+
+        def field_def("pre_rule") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "preRule",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :pre_rule,
+             tag: 5,
+             type: :string
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -481,6 +555,9 @@ defmodule Soulless.Game.Lq.ReqCreateRoom do
       {:ok, false}
     end,
     def default(:client_version_string) do
+      {:ok, ""}
+    end,
+    def default(:pre_rule) do
       {:ok, ""}
     end,
     def default(_) do

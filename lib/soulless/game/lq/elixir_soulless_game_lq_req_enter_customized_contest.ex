@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
   @moduledoc false
-  defstruct unique_id: 0, __uf__: []
+  defstruct unique_id: 0, lang: "", __uf__: []
 
   (
     (
@@ -16,7 +16,7 @@ defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_unique_id(msg) |> encode_unknown_fields(msg)
+        [] |> encode_unique_id(msg) |> encode_lang(msg) |> encode_unknown_fields(msg)
       end
     )
 
@@ -33,6 +33,18 @@ defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:unique_id, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_lang(acc, msg) do
+        try do
+          if msg.lang == "" do
+            acc
+          else
+            [acc, "\x12", Protox.Encode.encode_string(msg.lang)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:lang, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -92,6 +104,11 @@ defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[unique_id: value], rest}
+
+            {2, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[lang: delimited], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -153,7 +170,7 @@ defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:unique_id, {:scalar, 0}, :uint32}}
+      %{1 => {:unique_id, {:scalar, 0}, :uint32}, 2 => {:lang, {:scalar, ""}, :string}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -161,7 +178,7 @@ defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{unique_id: {1, {:scalar, 0}, :uint32}}
+      %{lang: {2, {:scalar, ""}, :string}, unique_id: {1, {:scalar, 0}, :uint32}}
     end
   )
 
@@ -177,6 +194,15 @@ defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
           name: :unique_id,
           tag: 1,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "lang",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :lang,
+          tag: 2,
+          type: :string
         }
       ]
     end
@@ -223,6 +249,35 @@ defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
            }}
         end
       ),
+      (
+        def field_def(:lang) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lang",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :lang,
+             tag: 2,
+             type: :string
+           }}
+        end
+
+        def field_def("lang") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "lang",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :lang,
+             tag: 2,
+             type: :string
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -264,6 +319,9 @@ defmodule Soulless.Game.Lq.ReqEnterCustomizedContest do
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
     def default(:unique_id) do
       {:ok, 0}
+    end,
+    def default(:lang) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}

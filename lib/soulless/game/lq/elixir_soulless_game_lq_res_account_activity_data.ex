@@ -24,6 +24,10 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
             upgrade_data: [],
             gacha_data: [],
             simulation_data: [],
+            combining_data: [],
+            village_data: [],
+            festival_data: [],
+            island_data: [],
             __uf__: []
 
   (
@@ -63,6 +67,10 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         |> encode_upgrade_data(msg)
         |> encode_gacha_data(msg)
         |> encode_simulation_data(msg)
+        |> encode_combining_data(msg)
+        |> encode_village_data(msg)
+        |> encode_festival_data(msg)
+        |> encode_island_data(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -503,6 +511,84 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
             reraise Protox.EncodingError.new(:simulation_data, "invalid field value"),
                     __STACKTRACE__
         end
+      end,
+      defp encode_combining_data(acc, msg) do
+        try do
+          case msg.combining_data do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xC2\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:combining_data, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_village_data(acc, msg) do
+        try do
+          case msg.village_data do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xCA\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:village_data, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_festival_data(acc, msg) do
+        try do
+          case msg.festival_data do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xD2\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:festival_data, "invalid field value"),
+                    __STACKTRACE__
+        end
+      end,
+      defp encode_island_data(acc, msg) do
+        try do
+          case msg.island_data do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\xDA\x01", Protox.Encode.encode_message(value)]
+                end)
+              ]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:island_data, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -783,6 +869,43 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
                      [Soulless.Game.Lq.ActivitySimulationData.decode!(delimited)]
                ], rest}
 
+            {24, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 combining_data:
+                   msg.combining_data ++
+                     [Soulless.Game.Lq.ActivityCombiningLQData.decode!(delimited)]
+               ], rest}
+
+            {25, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 village_data:
+                   msg.village_data ++ [Soulless.Game.Lq.ActivityVillageData.decode!(delimited)]
+               ], rest}
+
+            {26, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 festival_data:
+                   msg.festival_data ++ [Soulless.Game.Lq.ActivityFestivalData.decode!(delimited)]
+               ], rest}
+
+            {27, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 island_data:
+                   msg.island_data ++ [Soulless.Game.Lq.ActivityIslandData.decode!(delimited)]
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -878,7 +1001,11 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         20 => {:friend_gift_data, :unpacked, {:message, Soulless.Game.Lq.ActivityFriendGiftData}},
         21 => {:upgrade_data, :unpacked, {:message, Soulless.Game.Lq.ActivityUpgradeData}},
         22 => {:gacha_data, :unpacked, {:message, Soulless.Game.Lq.ActivityGachaUpdateData}},
-        23 => {:simulation_data, :unpacked, {:message, Soulless.Game.Lq.ActivitySimulationData}}
+        23 => {:simulation_data, :unpacked, {:message, Soulless.Game.Lq.ActivitySimulationData}},
+        24 => {:combining_data, :unpacked, {:message, Soulless.Game.Lq.ActivityCombiningLQData}},
+        25 => {:village_data, :unpacked, {:message, Soulless.Game.Lq.ActivityVillageData}},
+        26 => {:festival_data, :unpacked, {:message, Soulless.Game.Lq.ActivityFestivalData}},
+        27 => {:island_data, :unpacked, {:message, Soulless.Game.Lq.ActivityIslandData}}
       }
     end
 
@@ -893,12 +1020,15 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         arena_data: {15, :unpacked, {:message, Soulless.Game.Lq.ActivityArenaData}},
         chest_up_data:
           {11, :unpacked, {:message, Soulless.Game.Lq.ResAccountActivityData.ChestUpData}},
+        combining_data: {24, :unpacked, {:message, Soulless.Game.Lq.ActivityCombiningLQData}},
         error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
         exchange_records: {2, :unpacked, {:message, Soulless.Game.Lq.ExchangeRecord}},
         feed_data: {16, :unpacked, {:message, Soulless.Game.Lq.FeedActivityData}},
+        festival_data: {26, :unpacked, {:message, Soulless.Game.Lq.ActivityFestivalData}},
         flip_task_progress_list: {6, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
         friend_gift_data: {20, :unpacked, {:message, Soulless.Game.Lq.ActivityFriendGiftData}},
         gacha_data: {22, :unpacked, {:message, Soulless.Game.Lq.ActivityGachaUpdateData}},
+        island_data: {27, :unpacked, {:message, Soulless.Game.Lq.ActivityIslandData}},
         mine_data: {13, :unpacked, {:message, Soulless.Game.Lq.MineActivityData}},
         period_task_progress_list: {9, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
         random_task_progress_list: {10, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
@@ -917,6 +1047,7 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
         spot_data: {19, :unpacked, {:message, Soulless.Game.Lq.ActivitySpotData}},
         task_progress_list: {3, :unpacked, {:message, Soulless.Game.Lq.TaskProgress}},
         upgrade_data: {21, :unpacked, {:message, Soulless.Game.Lq.ActivityUpgradeData}},
+        village_data: {25, :unpacked, {:message, Soulless.Game.Lq.ActivityVillageData}},
         vote_records: {18, :unpacked, {:message, Soulless.Game.Lq.VoteData}}
       }
     end
@@ -1132,6 +1263,42 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
           name: :simulation_data,
           tag: 23,
           type: {:message, Soulless.Game.Lq.ActivitySimulationData}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "combiningData",
+          kind: :unpacked,
+          label: :repeated,
+          name: :combining_data,
+          tag: 24,
+          type: {:message, Soulless.Game.Lq.ActivityCombiningLQData}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "villageData",
+          kind: :unpacked,
+          label: :repeated,
+          name: :village_data,
+          tag: 25,
+          type: {:message, Soulless.Game.Lq.ActivityVillageData}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "festivalData",
+          kind: :unpacked,
+          label: :repeated,
+          name: :festival_data,
+          tag: 26,
+          type: {:message, Soulless.Game.Lq.ActivityFestivalData}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "islandData",
+          kind: :unpacked,
+          label: :repeated,
+          name: :island_data,
+          tag: 27,
+          type: {:message, Soulless.Game.Lq.ActivityIslandData}
         }
       ]
     end
@@ -2047,6 +2214,166 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
            }}
         end
       ),
+      (
+        def field_def(:combining_data) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "combiningData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :combining_data,
+             tag: 24,
+             type: {:message, Soulless.Game.Lq.ActivityCombiningLQData}
+           }}
+        end
+
+        def field_def("combiningData") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "combiningData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :combining_data,
+             tag: 24,
+             type: {:message, Soulless.Game.Lq.ActivityCombiningLQData}
+           }}
+        end
+
+        def field_def("combining_data") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "combiningData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :combining_data,
+             tag: 24,
+             type: {:message, Soulless.Game.Lq.ActivityCombiningLQData}
+           }}
+        end
+      ),
+      (
+        def field_def(:village_data) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "villageData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :village_data,
+             tag: 25,
+             type: {:message, Soulless.Game.Lq.ActivityVillageData}
+           }}
+        end
+
+        def field_def("villageData") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "villageData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :village_data,
+             tag: 25,
+             type: {:message, Soulless.Game.Lq.ActivityVillageData}
+           }}
+        end
+
+        def field_def("village_data") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "villageData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :village_data,
+             tag: 25,
+             type: {:message, Soulless.Game.Lq.ActivityVillageData}
+           }}
+        end
+      ),
+      (
+        def field_def(:festival_data) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "festivalData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :festival_data,
+             tag: 26,
+             type: {:message, Soulless.Game.Lq.ActivityFestivalData}
+           }}
+        end
+
+        def field_def("festivalData") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "festivalData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :festival_data,
+             tag: 26,
+             type: {:message, Soulless.Game.Lq.ActivityFestivalData}
+           }}
+        end
+
+        def field_def("festival_data") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "festivalData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :festival_data,
+             tag: 26,
+             type: {:message, Soulless.Game.Lq.ActivityFestivalData}
+           }}
+        end
+      ),
+      (
+        def field_def(:island_data) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "islandData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :island_data,
+             tag: 27,
+             type: {:message, Soulless.Game.Lq.ActivityIslandData}
+           }}
+        end
+
+        def field_def("islandData") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "islandData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :island_data,
+             tag: 27,
+             type: {:message, Soulless.Game.Lq.ActivityIslandData}
+           }}
+        end
+
+        def field_def("island_data") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "islandData",
+             kind: :unpacked,
+             label: :repeated,
+             name: :island_data,
+             tag: 27,
+             type: {:message, Soulless.Game.Lq.ActivityIslandData}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -2153,6 +2480,18 @@ defmodule Soulless.Game.Lq.ResAccountActivityData do
       {:error, :no_default_value}
     end,
     def default(:simulation_data) do
+      {:error, :no_default_value}
+    end,
+    def default(:combining_data) do
+      {:error, :no_default_value}
+    end,
+    def default(:village_data) do
+      {:error, :no_default_value}
+    end,
+    def default(:festival_data) do
+      {:error, :no_default_value}
+    end,
+    def default(:island_data) do
       {:error, :no_default_value}
     end,
     def default(_) do

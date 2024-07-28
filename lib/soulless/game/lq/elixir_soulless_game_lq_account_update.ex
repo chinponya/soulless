@@ -17,6 +17,7 @@ defmodule Soulless.Game.Lq.AccountUpdate do
             ab_match: nil,
             activity: nil,
             activity_segment_task: nil,
+            month_ticket: nil,
             __uf__: []
 
   (
@@ -49,6 +50,7 @@ defmodule Soulless.Game.Lq.AccountUpdate do
         |> encode_ab_match(msg)
         |> encode_activity(msg)
         |> encode_activity_segment_task(msg)
+        |> encode_month_ticket(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -273,6 +275,18 @@ defmodule Soulless.Game.Lq.AccountUpdate do
           ArgumentError ->
             reraise Protox.EncodingError.new(:activity_segment_task, "invalid field value"),
                     __STACKTRACE__
+        end
+      end,
+      defp encode_month_ticket(acc, msg) do
+        try do
+          if msg.month_ticket == nil do
+            acc
+          else
+            [acc, "\x8A\x01", Protox.Encode.encode_message(msg.month_ticket)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:month_ticket, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -520,6 +534,18 @@ defmodule Soulless.Game.Lq.AccountUpdate do
                    )
                ], rest}
 
+            {17, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 month_ticket:
+                   Protox.MergeMessage.merge(
+                     msg.month_ticket,
+                     Soulless.Game.Lq.AccountUpdate.MonthTicketUpdate.decode!(delimited)
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -614,7 +640,10 @@ defmodule Soulless.Game.Lq.AccountUpdate do
         15 => {:activity, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountActivityUpdate}},
         16 =>
           {:activity_segment_task, {:scalar, nil},
-           {:message, Soulless.Game.Lq.AccountUpdate.SegmentTaskUpdate}}
+           {:message, Soulless.Game.Lq.AccountUpdate.SegmentTaskUpdate}},
+        17 =>
+          {:month_ticket, {:scalar, nil},
+           {:message, Soulless.Game.Lq.AccountUpdate.MonthTicketUpdate}}
       }
     end
 
@@ -645,6 +674,8 @@ defmodule Soulless.Game.Lq.AccountUpdate do
           {2, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountUpdate.CharacterUpdate}},
         daily_task:
           {6, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountUpdate.DailyTaskUpdate}},
+        month_ticket:
+          {17, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountUpdate.MonthTicketUpdate}},
         new_recharged_list: {8, :packed, :uint32},
         numerical: {1, :unpacked, {:message, Soulless.Game.Lq.AccountUpdate.NumericalUpdate}},
         shilian: {5, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountShiLian}},
@@ -800,6 +831,15 @@ defmodule Soulless.Game.Lq.AccountUpdate do
           name: :activity_segment_task,
           tag: 16,
           type: {:message, Soulless.Game.Lq.AccountUpdate.SegmentTaskUpdate}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "monthTicket",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :month_ticket,
+          tag: 17,
+          type: {:message, Soulless.Game.Lq.AccountUpdate.MonthTicketUpdate}
         }
       ]
     end
@@ -1358,6 +1398,46 @@ defmodule Soulless.Game.Lq.AccountUpdate do
            }}
         end
       ),
+      (
+        def field_def(:month_ticket) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "monthTicket",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :month_ticket,
+             tag: 17,
+             type: {:message, Soulless.Game.Lq.AccountUpdate.MonthTicketUpdate}
+           }}
+        end
+
+        def field_def("monthTicket") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "monthTicket",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :month_ticket,
+             tag: 17,
+             type: {:message, Soulless.Game.Lq.AccountUpdate.MonthTicketUpdate}
+           }}
+        end
+
+        def field_def("month_ticket") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "monthTicket",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :month_ticket,
+             tag: 17,
+             type: {:message, Soulless.Game.Lq.AccountUpdate.MonthTicketUpdate}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1443,6 +1523,9 @@ defmodule Soulless.Game.Lq.AccountUpdate do
       {:ok, nil}
     end,
     def default(:activity_segment_task) do
+      {:ok, nil}
+    end,
+    def default(:month_ticket) do
       {:ok, nil}
     end,
     def default(_) do

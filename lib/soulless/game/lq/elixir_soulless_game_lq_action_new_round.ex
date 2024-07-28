@@ -21,6 +21,7 @@ defmodule Soulless.Game.Lq.ActionNewRound do
             field_spell: 0,
             sha256: "",
             yongchang: nil,
+            saltSha256: "",
             __uf__: []
 
   (
@@ -57,6 +58,7 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         |> encode_field_spell(msg)
         |> encode_sha256(msg)
         |> encode_yongchang(msg)
+        |> encode_saltSha256(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -353,6 +355,18 @@ defmodule Soulless.Game.Lq.ActionNewRound do
           ArgumentError ->
             reraise Protox.EncodingError.new(:yongchang, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_saltSha256(acc, msg) do
+        try do
+          if msg.saltSha256 == "" do
+            acc
+          else
+            [acc, "\xAA\x01", Protox.Encode.encode_string(msg.saltSha256)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:saltSha256, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -533,6 +547,11 @@ defmodule Soulless.Game.Lq.ActionNewRound do
                    )
                ], rest}
 
+            {21, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[saltSha256: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -613,7 +632,8 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         17 => {:ju_count, {:scalar, 0}, :uint32},
         18 => {:field_spell, {:scalar, 0}, :uint32},
         19 => {:sha256, {:scalar, ""}, :string},
-        20 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}}
+        20 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}},
+        21 => {:saltSha256, {:scalar, ""}, :string}
       }
     end
 
@@ -637,6 +657,7 @@ defmodule Soulless.Game.Lq.ActionNewRound do
         muyu: {16, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         opens: {15, :unpacked, {:message, Soulless.Game.Lq.NewRoundOpenedTiles}},
         operation: {7, {:scalar, nil}, {:message, Soulless.Game.Lq.OptionalOperationList}},
+        saltSha256: {21, {:scalar, ""}, :string},
         scores: {6, :packed, :int32},
         sha256: {19, {:scalar, ""}, :string},
         tiles: {4, :unpacked, :string},
@@ -830,6 +851,15 @@ defmodule Soulless.Game.Lq.ActionNewRound do
           name: :yongchang,
           tag: 20,
           type: {:message, Soulless.Game.Lq.YongchangInfo}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "saltSha256",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :saltSha256,
+          tag: 21,
+          type: :string
         }
       ]
     end
@@ -1449,6 +1479,35 @@ defmodule Soulless.Game.Lq.ActionNewRound do
 
         []
       ),
+      (
+        def field_def(:saltSha256) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "saltSha256",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :saltSha256,
+             tag: 21,
+             type: :string
+           }}
+        end
+
+        def field_def("saltSha256") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "saltSha256",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :saltSha256,
+             tag: 21,
+             type: :string
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1547,6 +1606,9 @@ defmodule Soulless.Game.Lq.ActionNewRound do
     end,
     def default(:yongchang) do
       {:ok, nil}
+    end,
+    def default(:saltSha256) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}

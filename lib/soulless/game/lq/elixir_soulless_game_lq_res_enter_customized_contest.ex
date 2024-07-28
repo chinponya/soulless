@@ -1,7 +1,13 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
   @moduledoc false
-  defstruct error: nil, detail_info: nil, player_report: nil, is_followed: false, __uf__: []
+  defstruct error: nil,
+            detail_info: nil,
+            player_report: nil,
+            is_followed: false,
+            state: 0,
+            is_admin: false,
+            __uf__: []
 
   (
     (
@@ -21,6 +27,8 @@ defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
         |> encode_detail_info(msg)
         |> encode_player_report(msg)
         |> encode_is_followed(msg)
+        |> encode_state(msg)
+        |> encode_is_admin(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -75,6 +83,30 @@ defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:is_followed, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_state(acc, msg) do
+        try do
+          if msg.state == 0 do
+            acc
+          else
+            [acc, "(", Protox.Encode.encode_uint32(msg.state)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:state, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_is_admin(acc, msg) do
+        try do
+          if msg.is_admin == false do
+            acc
+          else
+            [acc, "0", Protox.Encode.encode_bool(msg.is_admin)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:is_admin, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -168,6 +200,14 @@ defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
               {value, rest} = Protox.Decode.parse_bool(bytes)
               {[is_followed: value], rest}
 
+            {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[state: value], rest}
+
+            {6, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_bool(bytes)
+              {[is_admin: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -234,7 +274,9 @@ defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
         3 =>
           {:player_report, {:scalar, nil},
            {:message, Soulless.Game.Lq.CustomizedContestPlayerReport}},
-        4 => {:is_followed, {:scalar, false}, :bool}
+        4 => {:is_followed, {:scalar, false}, :bool},
+        5 => {:state, {:scalar, 0}, :uint32},
+        6 => {:is_admin, {:scalar, false}, :bool}
       }
     end
 
@@ -246,9 +288,11 @@ defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
       %{
         detail_info: {2, {:scalar, nil}, {:message, Soulless.Game.Lq.CustomizedContestDetail}},
         error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        is_admin: {6, {:scalar, false}, :bool},
         is_followed: {4, {:scalar, false}, :bool},
         player_report:
-          {3, {:scalar, nil}, {:message, Soulless.Game.Lq.CustomizedContestPlayerReport}}
+          {3, {:scalar, nil}, {:message, Soulless.Game.Lq.CustomizedContestPlayerReport}},
+        state: {5, {:scalar, 0}, :uint32}
       }
     end
   )
@@ -291,6 +335,24 @@ defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
           label: :optional,
           name: :is_followed,
           tag: 4,
+          type: :bool
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "state",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :state,
+          tag: 5,
+          type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "isAdmin",
+          kind: {:scalar, false},
+          label: :optional,
+          name: :is_admin,
+          tag: 6,
           type: :bool
         }
       ]
@@ -447,6 +509,75 @@ defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
            }}
         end
       ),
+      (
+        def field_def(:state) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "state",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :state,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("state") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "state",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :state,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:is_admin) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "isAdmin",
+             kind: {:scalar, false},
+             label: :optional,
+             name: :is_admin,
+             tag: 6,
+             type: :bool
+           }}
+        end
+
+        def field_def("isAdmin") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "isAdmin",
+             kind: {:scalar, false},
+             label: :optional,
+             name: :is_admin,
+             tag: 6,
+             type: :bool
+           }}
+        end
+
+        def field_def("is_admin") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "isAdmin",
+             kind: {:scalar, false},
+             label: :optional,
+             name: :is_admin,
+             tag: 6,
+             type: :bool
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -496,6 +627,12 @@ defmodule Soulless.Game.Lq.ResEnterCustomizedContest do
       {:ok, nil}
     end,
     def default(:is_followed) do
+      {:ok, false}
+    end,
+    def default(:state) do
+      {:ok, 0}
+    end,
+    def default(:is_admin) do
       {:ok, false}
     end,
     def default(_) do

@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
+defmodule Soulless.Game.Lq.ResGetFriendVillageData do
   @moduledoc false
-  defstruct activity_id: 0, account_list: [], __uf__: []
+  defstruct error: nil, list: [], __uf__: []
 
   (
     (
@@ -16,49 +16,42 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_activity_id(msg) |> encode_account_list(msg) |> encode_unknown_fields(msg)
+        [] |> encode_error(msg) |> encode_list(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_activity_id(acc, msg) do
+      defp encode_error(acc, msg) do
         try do
-          if msg.activity_id == 0 do
+          if msg.error == nil do
             acc
           else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.activity_id)]
+            [acc, "\n", Protox.Encode.encode_message(msg.error)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:activity_id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_account_list(acc, msg) do
+      defp encode_list(acc, msg) do
         try do
-          case msg.account_list do
+          case msg.list do
             [] ->
               acc
 
             values ->
               [
                 acc,
-                "\x12",
-                (
-                  {bytes, len} =
-                    Enum.reduce(values, {[], 0}, fn value, {acc, len} ->
-                      value_bytes = :binary.list_to_bin([Protox.Encode.encode_uint32(value)])
-                      {[acc, value_bytes], len + byte_size(value_bytes)}
-                    end)
-
-                  [Protox.Varint.encode(len), bytes]
-                )
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\x12", Protox.Encode.encode_message(value)]
+                end)
               ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:account_list, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:list, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -98,7 +91,7 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ReqFetchFriendFeedActivityData))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.ResGetFriendVillageData))
         end
       )
     )
@@ -116,21 +109,27 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[activity_id: value], rest}
-
-            {2, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
 
               {[
-                 account_list:
-                   msg.account_list ++ Protox.Decode.parse_repeated_uint32([], delimited)
+                 error:
+                   Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
                ], rest}
 
             {2, _, bytes} ->
-              {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[account_list: msg.account_list ++ [value]], rest}
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 list:
+                   msg.list ++
+                     [
+                       Soulless.Game.Lq.ResGetFriendVillageData.FriendVillageData.decode!(
+                         delimited
+                       )
+                     ]
+               ], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -165,7 +164,7 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ReqFetchFriendFeedActivityData,
+        Soulless.Game.Lq.ResGetFriendVillageData,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -192,7 +191,12 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:activity_id, {:scalar, 0}, :uint32}, 2 => {:account_list, :packed, :uint32}}
+      %{
+        1 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        2 =>
+          {:list, :unpacked,
+           {:message, Soulless.Game.Lq.ResGetFriendVillageData.FriendVillageData}}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -200,7 +204,11 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{account_list: {2, :packed, :uint32}, activity_id: {1, {:scalar, 0}, :uint32}}
+      %{
+        error: {1, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        list:
+          {2, :unpacked, {:message, Soulless.Game.Lq.ResGetFriendVillageData.FriendVillageData}}
+      }
     end
   )
 
@@ -210,21 +218,21 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "activityId",
-          kind: {:scalar, 0},
+          json_name: "error",
+          kind: {:scalar, nil},
           label: :optional,
-          name: :activity_id,
+          name: :error,
           tag: 1,
-          type: :uint32
+          type: {:message, Soulless.Game.Lq.Error}
         },
         %{
           __struct__: Protox.Field,
-          json_name: "accountList",
-          kind: :packed,
+          json_name: "list",
+          kind: :unpacked,
           label: :repeated,
-          name: :account_list,
+          name: :list,
           tag: 2,
-          type: :uint32
+          type: {:message, Soulless.Game.Lq.ResGetFriendVillageData.FriendVillageData}
         }
       ]
     end
@@ -232,84 +240,62 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:activity_id) do
+        def field_def(:error) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "activityId",
-             kind: {:scalar, 0},
+             json_name: "error",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :activity_id,
+             name: :error,
              tag: 1,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.Error}
            }}
         end
 
-        def field_def("activityId") do
+        def field_def("error") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "activityId",
-             kind: {:scalar, 0},
+             json_name: "error",
+             kind: {:scalar, nil},
              label: :optional,
-             name: :activity_id,
+             name: :error,
              tag: 1,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.Error}
            }}
         end
 
-        def field_def("activity_id") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "activityId",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :activity_id,
-             tag: 1,
-             type: :uint32
-           }}
-        end
+        []
       ),
       (
-        def field_def(:account_list) do
+        def field_def(:list) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "accountList",
-             kind: :packed,
+             json_name: "list",
+             kind: :unpacked,
              label: :repeated,
-             name: :account_list,
+             name: :list,
              tag: 2,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.ResGetFriendVillageData.FriendVillageData}
            }}
         end
 
-        def field_def("accountList") do
+        def field_def("list") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "accountList",
-             kind: :packed,
+             json_name: "list",
+             kind: :unpacked,
              label: :repeated,
-             name: :account_list,
+             name: :list,
              tag: 2,
-             type: :uint32
+             type: {:message, Soulless.Game.Lq.ResGetFriendVillageData.FriendVillageData}
            }}
         end
 
-        def field_def("account_list") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "accountList",
-             kind: :packed,
-             label: :repeated,
-             name: :account_list,
-             tag: 2,
-             type: :uint32
-           }}
-        end
+        []
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -350,10 +336,10 @@ defmodule Soulless.Game.Lq.ReqFetchFriendFeedActivityData do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:activity_id) do
-      {:ok, 0}
+    def default(:error) do
+      {:ok, nil}
     end,
-    def default(:account_list) do
+    def default(:list) do
       {:error, :no_default_value}
     end,
     def default(_) do

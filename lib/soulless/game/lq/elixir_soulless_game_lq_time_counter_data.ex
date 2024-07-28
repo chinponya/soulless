@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
-defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
+defmodule Soulless.Game.Lq.TimeCounterData do
   @moduledoc false
-  defstruct buff_id: 0, level: 0, __uf__: []
+  defstruct count: 0, update_time: 0, __uf__: []
 
   (
     (
@@ -16,35 +16,35 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_buff_id(msg) |> encode_level(msg) |> encode_unknown_fields(msg)
+        [] |> encode_count(msg) |> encode_update_time(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_buff_id(acc, msg) do
+      defp encode_count(acc, msg) do
         try do
-          if msg.buff_id == 0 do
+          if msg.count == 0 do
             acc
           else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.buff_id)]
+            [acc, "\b", Protox.Encode.encode_uint32(msg.count)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:buff_id, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:count, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_level(acc, msg) do
+      defp encode_update_time(acc, msg) do
         try do
-          if msg.level == 0 do
+          if msg.update_time == 0 do
             acc
           else
-            [acc, "\x10", Protox.Encode.encode_uint32(msg.level)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.update_time)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:update_time, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -84,7 +84,7 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
       (
         @spec decode!(binary) :: struct | no_return
         def decode!(bytes) do
-          parse_key_value(bytes, struct(Soulless.Game.Lq.ResActivityBuff.ActivityBuffData))
+          parse_key_value(bytes, struct(Soulless.Game.Lq.TimeCounterData))
         end
       )
     )
@@ -103,11 +103,11 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
 
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[buff_id: value], rest}
+              {[count: value], rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[level: value], rest}
+              {[update_time: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -142,7 +142,7 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
 
       Protox.JsonDecode.decode!(
         input,
-        Soulless.Game.Lq.ResActivityBuff.ActivityBuffData,
+        Soulless.Game.Lq.TimeCounterData,
         &json_library_wrapper.decode!(json_library, &1)
       )
     end
@@ -169,7 +169,7 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:buff_id, {:scalar, 0}, :uint32}, 2 => {:level, {:scalar, 0}, :uint32}}
+      %{1 => {:count, {:scalar, 0}, :uint32}, 2 => {:update_time, {:scalar, 0}, :uint32}}
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -177,7 +177,7 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{buff_id: {1, {:scalar, 0}, :uint32}, level: {2, {:scalar, 0}, :uint32}}
+      %{count: {1, {:scalar, 0}, :uint32}, update_time: {2, {:scalar, 0}, :uint32}}
     end
   )
 
@@ -187,19 +187,19 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "buffId",
+          json_name: "count",
           kind: {:scalar, 0},
           label: :optional,
-          name: :buff_id,
+          name: :count,
           tag: 1,
           type: :uint32
         },
         %{
           __struct__: Protox.Field,
-          json_name: "level",
+          json_name: "updateTime",
           kind: {:scalar, 0},
           label: :optional,
-          name: :level,
+          name: :update_time,
           tag: 2,
           type: :uint32
         }
@@ -209,73 +209,73 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:buff_id) do
+        def field_def(:count) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "buffId",
+             json_name: "count",
              kind: {:scalar, 0},
              label: :optional,
-             name: :buff_id,
+             name: :count,
              tag: 1,
              type: :uint32
            }}
         end
 
-        def field_def("buffId") do
+        def field_def("count") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "buffId",
+             json_name: "count",
              kind: {:scalar, 0},
              label: :optional,
-             name: :buff_id,
+             name: :count,
              tag: 1,
-             type: :uint32
-           }}
-        end
-
-        def field_def("buff_id") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "buffId",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :buff_id,
-             tag: 1,
-             type: :uint32
-           }}
-        end
-      ),
-      (
-        def field_def(:level) do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "level",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :level,
-             tag: 2,
-             type: :uint32
-           }}
-        end
-
-        def field_def("level") do
-          {:ok,
-           %{
-             __struct__: Protox.Field,
-             json_name: "level",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :level,
-             tag: 2,
              type: :uint32
            }}
         end
 
         []
+      ),
+      (
+        def field_def(:update_time) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "updateTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :update_time,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("updateTime") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "updateTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :update_time,
+             tag: 2,
+             type: :uint32
+           }}
+        end
+
+        def field_def("update_time") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "updateTime",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :update_time,
+             tag: 2,
+             type: :uint32
+           }}
+        end
       ),
       def field_def(_) do
         {:error, :no_such_field}
@@ -316,10 +316,10 @@ defmodule Soulless.Game.Lq.ResActivityBuff.ActivityBuffData do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:buff_id) do
+    def default(:count) do
       {:ok, 0}
     end,
-    def default(:level) do
+    def default(:update_time) do
       {:ok, 0}
     end,
     def default(_) do

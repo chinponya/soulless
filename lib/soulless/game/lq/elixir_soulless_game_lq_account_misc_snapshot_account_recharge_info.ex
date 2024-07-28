@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo do
   @moduledoc false
-  defstruct level: 0, recharge_time: 0, __uf__: []
+  defstruct records: [], has_data: 0, __uf__: []
 
   (
     (
@@ -16,36 +16,42 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_level(msg) |> encode_recharge_time(msg) |> encode_unknown_fields(msg)
+        [] |> encode_records(msg) |> encode_has_data(msg) |> encode_unknown_fields(msg)
       end
     )
 
     []
 
     [
-      defp encode_level(acc, msg) do
+      defp encode_records(acc, msg) do
         try do
-          if msg.level == 0 do
-            acc
-          else
-            [acc, "\b", Protox.Encode.encode_uint32(msg.level)]
+          case msg.records do
+            [] ->
+              acc
+
+            values ->
+              [
+                acc,
+                Enum.reduce(values, [], fn value, acc ->
+                  [acc, "\n", Protox.Encode.encode_message(value)]
+                end)
+              ]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:level, "invalid field value"), __STACKTRACE__
+            reraise Protox.EncodingError.new(:records, "invalid field value"), __STACKTRACE__
         end
       end,
-      defp encode_recharge_time(acc, msg) do
+      defp encode_has_data(acc, msg) do
         try do
-          if msg.recharge_time == 0 do
+          if msg.has_data == 0 do
             acc
           else
-            [acc, "\x10", Protox.Encode.encode_uint32(msg.recharge_time)]
+            [acc, "\x10", Protox.Encode.encode_uint32(msg.has_data)]
           end
         rescue
           ArgumentError ->
-            reraise Protox.EncodingError.new(:recharge_time, "invalid field value"),
-                    __STACKTRACE__
+            reraise Protox.EncodingError.new(:has_data, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -103,12 +109,22 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo do
               raise %Protox.IllegalTagError{}
 
             {1, _, bytes} ->
-              {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[level: value], rest}
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 records:
+                   msg.records ++
+                     [
+                       Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.RechargeRecord.decode!(
+                         delimited
+                       )
+                     ]
+               ], rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
-              {[recharge_time: value], rest}
+              {[has_data: value], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -170,7 +186,12 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:level, {:scalar, 0}, :uint32}, 2 => {:recharge_time, {:scalar, 0}, :uint32}}
+      %{
+        1 =>
+          {:records, :unpacked,
+           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.RechargeRecord}},
+        2 => {:has_data, {:scalar, 0}, :uint32}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -178,7 +199,12 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{level: {1, {:scalar, 0}, :uint32}, recharge_time: {2, {:scalar, 0}, :uint32}}
+      %{
+        has_data: {2, {:scalar, 0}, :uint32},
+        records:
+          {1, :unpacked,
+           {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.RechargeRecord}}
+      }
     end
   )
 
@@ -188,19 +214,20 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo do
       [
         %{
           __struct__: Protox.Field,
-          json_name: "level",
-          kind: {:scalar, 0},
-          label: :optional,
-          name: :level,
+          json_name: "records",
+          kind: :unpacked,
+          label: :repeated,
+          name: :records,
           tag: 1,
-          type: :uint32
+          type:
+            {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.RechargeRecord}
         },
         %{
           __struct__: Protox.Field,
-          json_name: "rechargeTime",
+          json_name: "hasData",
           kind: {:scalar, 0},
           label: :optional,
-          name: :recharge_time,
+          name: :has_data,
           tag: 2,
           type: :uint32
         }
@@ -210,69 +237,71 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo do
     [
       @spec(field_def(atom) :: {:ok, Protox.Field.t()} | {:error, :no_such_field}),
       (
-        def field_def(:level) do
+        def field_def(:records) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "level",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :level,
+             json_name: "records",
+             kind: :unpacked,
+             label: :repeated,
+             name: :records,
              tag: 1,
-             type: :uint32
+             type:
+               {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.RechargeRecord}
            }}
         end
 
-        def field_def("level") do
+        def field_def("records") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "level",
-             kind: {:scalar, 0},
-             label: :optional,
-             name: :level,
+             json_name: "records",
+             kind: :unpacked,
+             label: :repeated,
+             name: :records,
              tag: 1,
-             type: :uint32
+             type:
+               {:message, Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo.RechargeRecord}
            }}
         end
 
         []
       ),
       (
-        def field_def(:recharge_time) do
+        def field_def(:has_data) do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "rechargeTime",
+             json_name: "hasData",
              kind: {:scalar, 0},
              label: :optional,
-             name: :recharge_time,
+             name: :has_data,
              tag: 2,
              type: :uint32
            }}
         end
 
-        def field_def("rechargeTime") do
+        def field_def("hasData") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "rechargeTime",
+             json_name: "hasData",
              kind: {:scalar, 0},
              label: :optional,
-             name: :recharge_time,
+             name: :has_data,
              tag: 2,
              type: :uint32
            }}
         end
 
-        def field_def("recharge_time") do
+        def field_def("has_data") do
           {:ok,
            %{
              __struct__: Protox.Field,
-             json_name: "rechargeTime",
+             json_name: "hasData",
              kind: {:scalar, 0},
              label: :optional,
-             name: :recharge_time,
+             name: :has_data,
              tag: 2,
              type: :uint32
            }}
@@ -317,10 +346,10 @@ defmodule Soulless.Game.Lq.AccountMiscSnapshot.AccountRechargeInfo do
 
   [
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
-    def default(:level) do
-      {:ok, 0}
+    def default(:records) do
+      {:error, :no_default_value}
     end,
-    def default(:recharge_time) do
+    def default(:has_data) do
       {:ok, 0}
     end,
     def default(_) do

@@ -1,7 +1,12 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.AccountResourceSnapshot do
   @moduledoc false
-  defstruct bag_item: [], currency: [], title: nil, used_title: nil, __uf__: []
+  defstruct bag_item: [],
+            currency: [],
+            title: nil,
+            used_title: nil,
+            currency_convert: 0,
+            __uf__: []
 
   (
     (
@@ -21,6 +26,7 @@ defmodule Soulless.Game.Lq.AccountResourceSnapshot do
         |> encode_currency(msg)
         |> encode_title(msg)
         |> encode_used_title(msg)
+        |> encode_currency_convert(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -88,6 +94,19 @@ defmodule Soulless.Game.Lq.AccountResourceSnapshot do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:used_title, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_currency_convert(acc, msg) do
+        try do
+          if msg.currency_convert == 0 do
+            acc
+          else
+            [acc, "(", Protox.Encode.encode_uint32(msg.currency_convert)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:currency_convert, "invalid field value"),
+                    __STACKTRACE__
         end
       end
     ]
@@ -192,6 +211,10 @@ defmodule Soulless.Game.Lq.AccountResourceSnapshot do
                    )
                ], rest}
 
+            {5, _, bytes} ->
+              {value, rest} = Protox.Decode.parse_uint32(bytes)
+              {[currency_convert: value], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -264,7 +287,8 @@ defmodule Soulless.Game.Lq.AccountResourceSnapshot do
            {:message, Soulless.Game.Lq.AccountResourceSnapshot.TitleSnapshot}},
         4 =>
           {:used_title, {:scalar, nil},
-           {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}}
+           {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}},
+        5 => {:currency_convert, {:scalar, 0}, :uint32}
       }
     end
 
@@ -278,6 +302,7 @@ defmodule Soulless.Game.Lq.AccountResourceSnapshot do
           {1, :unpacked, {:message, Soulless.Game.Lq.AccountResourceSnapshot.BagItemSnapshot}},
         currency:
           {2, :unpacked, {:message, Soulless.Game.Lq.AccountResourceSnapshot.CurrencySnapshot}},
+        currency_convert: {5, {:scalar, 0}, :uint32},
         title:
           {3, {:scalar, nil}, {:message, Soulless.Game.Lq.AccountResourceSnapshot.TitleSnapshot}},
         used_title:
@@ -326,6 +351,15 @@ defmodule Soulless.Game.Lq.AccountResourceSnapshot do
           name: :used_title,
           tag: 4,
           type: {:message, Soulless.Game.Lq.AccountResourceSnapshot.UsedTitleSnapshot}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "currencyConvert",
+          kind: {:scalar, 0},
+          label: :optional,
+          name: :currency_convert,
+          tag: 5,
+          type: :uint32
         }
       ]
     end
@@ -470,6 +504,46 @@ defmodule Soulless.Game.Lq.AccountResourceSnapshot do
            }}
         end
       ),
+      (
+        def field_def(:currency_convert) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "currencyConvert",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :currency_convert,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("currencyConvert") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "currencyConvert",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :currency_convert,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+
+        def field_def("currency_convert") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "currencyConvert",
+             kind: {:scalar, 0},
+             label: :optional,
+             name: :currency_convert,
+             tag: 5,
+             type: :uint32
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -520,6 +594,9 @@ defmodule Soulless.Game.Lq.AccountResourceSnapshot do
     end,
     def default(:used_title) do
       {:ok, nil}
+    end,
+    def default(:currency_convert) do
+      {:ok, 0}
     end,
     def default(_) do
       {:error, :no_such_field}

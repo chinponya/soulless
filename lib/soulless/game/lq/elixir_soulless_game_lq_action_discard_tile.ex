@@ -16,6 +16,7 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
             scores: [],
             liqibang: 0,
             yongchang: nil,
+            hun_zhi_yi_ji_info: nil,
             __uf__: []
 
   (
@@ -47,6 +48,7 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
         |> encode_scores(msg)
         |> encode_liqibang(msg)
         |> encode_yongchang(msg)
+        |> encode_hun_zhi_yi_ji_info(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -261,6 +263,19 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
           ArgumentError ->
             reraise Protox.EncodingError.new(:yongchang, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_hun_zhi_yi_ji_info(acc, msg) do
+        try do
+          if msg.hun_zhi_yi_ji_info == nil do
+            acc
+          else
+            [acc, "\xD2\x01", Protox.Encode.encode_message(msg.hun_zhi_yi_ji_info)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:hun_zhi_yi_ji_info, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -410,6 +425,18 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
                    )
                ], rest}
 
+            {26, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 hun_zhi_yi_ji_info:
+                   Protox.MergeMessage.merge(
+                     msg.hun_zhi_yi_ji_info,
+                     Soulless.Game.Lq.HunZhiYiJiBuffInfo.decode!(delimited)
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -485,7 +512,9 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
         12 => {:revealed, {:scalar, false}, :bool},
         13 => {:scores, :packed, :int32},
         14 => {:liqibang, {:scalar, 0}, :uint32},
-        25 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}}
+        25 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}},
+        26 =>
+          {:hun_zhi_yi_ji_info, {:scalar, nil}, {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}}
       }
     end
 
@@ -496,6 +525,7 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
     def defs_by_name() do
       %{
         doras: {8, :unpacked, :string},
+        hun_zhi_yi_ji_info: {26, {:scalar, nil}, {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}},
         is_liqi: {3, {:scalar, false}, :bool},
         is_wliqi: {9, {:scalar, false}, :bool},
         liqibang: {14, {:scalar, 0}, :uint32},
@@ -652,6 +682,15 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
           name: :yongchang,
           tag: 25,
           type: {:message, Soulless.Game.Lq.YongchangInfo}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "hunZhiYiJiInfo",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :hun_zhi_yi_ji_info,
+          tag: 26,
+          type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
         }
       ]
     end
@@ -1126,6 +1165,46 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
 
         []
       ),
+      (
+        def field_def(:hun_zhi_yi_ji_info) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 26,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+
+        def field_def("hunZhiYiJiInfo") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 26,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+
+        def field_def("hun_zhi_yi_ji_info") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 26,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1208,6 +1287,9 @@ defmodule Soulless.Game.Lq.ActionDiscardTile do
       {:ok, 0}
     end,
     def default(:yongchang) do
+      {:ok, nil}
+    end,
+    def default(:hun_zhi_yi_ji_info) do
       {:ok, nil}
     end,
     def default(_) do

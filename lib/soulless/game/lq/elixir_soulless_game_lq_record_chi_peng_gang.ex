@@ -13,6 +13,7 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
             scores: [],
             liqibang: 0,
             yongchang: nil,
+            hun_zhi_yi_ji_info: nil,
             __uf__: []
 
   (
@@ -41,6 +42,7 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
         |> encode_scores(msg)
         |> encode_liqibang(msg)
         |> encode_yongchang(msg)
+        |> encode_hun_zhi_yi_ji_info(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -254,6 +256,19 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
           ArgumentError ->
             reraise Protox.EncodingError.new(:yongchang, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_hun_zhi_yi_ji_info(acc, msg) do
+        try do
+          if msg.hun_zhi_yi_ji_info == nil do
+            acc
+          else
+            [acc, "r", Protox.Encode.encode_message(msg.hun_zhi_yi_ji_info)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:hun_zhi_yi_ji_info, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -414,6 +429,18 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
                    )
                ], rest}
 
+            {14, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 hun_zhi_yi_ji_info:
+                   Protox.MergeMessage.merge(
+                     msg.hun_zhi_yi_ji_info,
+                     Soulless.Game.Lq.HunZhiYiJiBuffInfo.decode!(delimited)
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -486,7 +513,9 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
         10 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         11 => {:scores, :packed, :int32},
         12 => {:liqibang, {:scalar, 0}, :uint32},
-        13 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}}
+        13 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}},
+        14 =>
+          {:hun_zhi_yi_ji_info, {:scalar, nil}, {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}}
       }
     end
 
@@ -497,6 +526,7 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
     def defs_by_name() do
       %{
         froms: {4, :packed, :uint32},
+        hun_zhi_yi_ji_info: {14, {:scalar, nil}, {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}},
         liqi: {5, {:scalar, nil}, {:message, Soulless.Game.Lq.LiQiSuccess}},
         liqibang: {12, {:scalar, 0}, :uint32},
         muyu: {10, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
@@ -623,6 +653,15 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
           name: :yongchang,
           tag: 13,
           type: {:message, Soulless.Game.Lq.YongchangInfo}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "hunZhiYiJiInfo",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :hun_zhi_yi_ji_info,
+          tag: 14,
+          type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
         }
       ]
     end
@@ -988,6 +1027,46 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
 
         []
       ),
+      (
+        def field_def(:hun_zhi_yi_ji_info) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 14,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+
+        def field_def("hunZhiYiJiInfo") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 14,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+
+        def field_def("hun_zhi_yi_ji_info") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 14,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1061,6 +1140,9 @@ defmodule Soulless.Game.Lq.RecordChiPengGang do
       {:ok, 0}
     end,
     def default(:yongchang) do
+      {:ok, nil}
+    end,
+    def default(:hun_zhi_yi_ji_info) do
       {:ok, nil}
     end,
     def default(_) do

@@ -10,6 +10,7 @@ defmodule Soulless.Game.Lq.RecordHule do
             doras: [],
             muyu: nil,
             baopai: 0,
+            hun_zhi_yi_ji_info: nil,
             __uf__: []
 
   (
@@ -35,6 +36,7 @@ defmodule Soulless.Game.Lq.RecordHule do
         |> encode_doras(msg)
         |> encode_muyu(msg)
         |> encode_baopai(msg)
+        |> encode_hun_zhi_yi_ji_info(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -205,6 +207,19 @@ defmodule Soulless.Game.Lq.RecordHule do
           ArgumentError ->
             reraise Protox.EncodingError.new(:baopai, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_hun_zhi_yi_ji_info(acc, msg) do
+        try do
+          if msg.hun_zhi_yi_ji_info == nil do
+            acc
+          else
+            [acc, "R", Protox.Encode.encode_message(msg.hun_zhi_yi_ji_info)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:hun_zhi_yi_ji_info, "invalid field value"),
+                    __STACKTRACE__
+        end
       end
     ]
 
@@ -335,6 +350,18 @@ defmodule Soulless.Game.Lq.RecordHule do
               {value, rest} = Protox.Decode.parse_int32(bytes)
               {[baopai: value], rest}
 
+            {10, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 hun_zhi_yi_ji_info:
+                   Protox.MergeMessage.merge(
+                     msg.hun_zhi_yi_ji_info,
+                     Soulless.Game.Lq.HunZhiYiJiBuffInfo.decode!(delimited)
+                   )
+               ], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -404,7 +431,9 @@ defmodule Soulless.Game.Lq.RecordHule do
         6 => {:gameend, {:scalar, nil}, {:message, Soulless.Game.Lq.GameEnd}},
         7 => {:doras, :unpacked, :string},
         8 => {:muyu, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
-        9 => {:baopai, {:scalar, 0}, :int32}
+        9 => {:baopai, {:scalar, 0}, :int32},
+        10 =>
+          {:hun_zhi_yi_ji_info, {:scalar, nil}, {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}}
       }
     end
 
@@ -419,6 +448,7 @@ defmodule Soulless.Game.Lq.RecordHule do
         doras: {7, :unpacked, :string},
         gameend: {6, {:scalar, nil}, {:message, Soulless.Game.Lq.GameEnd}},
         hules: {1, :unpacked, {:message, Soulless.Game.Lq.HuleInfo}},
+        hun_zhi_yi_ji_info: {10, {:scalar, nil}, {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}},
         muyu: {8, {:scalar, nil}, {:message, Soulless.Game.Lq.MuyuInfo}},
         old_scores: {2, :packed, :int32},
         scores: {5, :packed, :int32},
@@ -511,6 +541,15 @@ defmodule Soulless.Game.Lq.RecordHule do
           name: :baopai,
           tag: 9,
           type: :int32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "hunZhiYiJiInfo",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :hun_zhi_yi_ji_info,
+          tag: 10,
+          type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
         }
       ]
     end
@@ -811,6 +850,46 @@ defmodule Soulless.Game.Lq.RecordHule do
 
         []
       ),
+      (
+        def field_def(:hun_zhi_yi_ji_info) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 10,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+
+        def field_def("hunZhiYiJiInfo") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 10,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+
+        def field_def("hun_zhi_yi_ji_info") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "hunZhiYiJiInfo",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :hun_zhi_yi_ji_info,
+             tag: 10,
+             type: {:message, Soulless.Game.Lq.HunZhiYiJiBuffInfo}
+           }}
+        end
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -876,6 +955,9 @@ defmodule Soulless.Game.Lq.RecordHule do
     end,
     def default(:baopai) do
       {:ok, 0}
+    end,
+    def default(:hun_zhi_yi_ji_info) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

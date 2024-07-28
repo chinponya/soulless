@@ -1,7 +1,7 @@
 # credo:disable-for-this-file
 defmodule Soulless.Game.Lq.ResServerTime do
   @moduledoc false
-  defstruct server_time: 0, __uf__: []
+  defstruct server_time: 0, error: nil, __uf__: []
 
   (
     (
@@ -16,7 +16,7 @@ defmodule Soulless.Game.Lq.ResServerTime do
 
       @spec encode!(struct) :: iodata | no_return
       def encode!(msg) do
-        [] |> encode_server_time(msg) |> encode_unknown_fields(msg)
+        [] |> encode_server_time(msg) |> encode_error(msg) |> encode_unknown_fields(msg)
       end
     )
 
@@ -33,6 +33,18 @@ defmodule Soulless.Game.Lq.ResServerTime do
         rescue
           ArgumentError ->
             reraise Protox.EncodingError.new(:server_time, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_error(acc, msg) do
+        try do
+          if msg.error == nil do
+            acc
+          else
+            [acc, "\x12", Protox.Encode.encode_message(msg.error)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:error, "invalid field value"), __STACKTRACE__
         end
       end
     ]
@@ -92,6 +104,15 @@ defmodule Soulless.Game.Lq.ResServerTime do
             {1, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
               {[server_time: value], rest}
+
+            {2, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+
+              {[
+                 error:
+                   Protox.MergeMessage.merge(msg.error, Soulless.Game.Lq.Error.decode!(delimited))
+               ], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -153,7 +174,10 @@ defmodule Soulless.Game.Lq.ResServerTime do
             required(non_neg_integer) => {atom, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs() do
-      %{1 => {:server_time, {:scalar, 0}, :uint32}}
+      %{
+        1 => {:server_time, {:scalar, 0}, :uint32},
+        2 => {:error, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}}
+      }
     end
 
     @deprecated "Use fields_defs()/0 instead"
@@ -161,7 +185,10 @@ defmodule Soulless.Game.Lq.ResServerTime do
             required(atom) => {non_neg_integer, Protox.Types.kind(), Protox.Types.type()}
           }
     def defs_by_name() do
-      %{server_time: {1, {:scalar, 0}, :uint32}}
+      %{
+        error: {2, {:scalar, nil}, {:message, Soulless.Game.Lq.Error}},
+        server_time: {1, {:scalar, 0}, :uint32}
+      }
     end
   )
 
@@ -177,6 +204,15 @@ defmodule Soulless.Game.Lq.ResServerTime do
           name: :server_time,
           tag: 1,
           type: :uint32
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "error",
+          kind: {:scalar, nil},
+          label: :optional,
+          name: :error,
+          tag: 2,
+          type: {:message, Soulless.Game.Lq.Error}
         }
       ]
     end
@@ -223,6 +259,35 @@ defmodule Soulless.Game.Lq.ResServerTime do
            }}
         end
       ),
+      (
+        def field_def(:error) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "error",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :error,
+             tag: 2,
+             type: {:message, Soulless.Game.Lq.Error}
+           }}
+        end
+
+        def field_def("error") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "error",
+             kind: {:scalar, nil},
+             label: :optional,
+             name: :error,
+             tag: 2,
+             type: {:message, Soulless.Game.Lq.Error}
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -264,6 +329,9 @@ defmodule Soulless.Game.Lq.ResServerTime do
     @spec(default(atom) :: {:ok, boolean | integer | String.t() | float} | {:error, atom}),
     def default(:server_time) do
       {:ok, 0}
+    end,
+    def default(:error) do
+      {:ok, nil}
     end,
     def default(_) do
       {:error, :no_such_field}

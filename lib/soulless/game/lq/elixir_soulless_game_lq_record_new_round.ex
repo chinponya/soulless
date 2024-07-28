@@ -24,6 +24,8 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             field_spell: 0,
             sha256: "",
             yongchang: nil,
+            saltSha256: "",
+            salt: "",
             __uf__: []
 
   (
@@ -63,6 +65,8 @@ defmodule Soulless.Game.Lq.RecordNewRound do
         |> encode_field_spell(msg)
         |> encode_sha256(msg)
         |> encode_yongchang(msg)
+        |> encode_saltSha256(msg)
+        |> encode_salt(msg)
         |> encode_unknown_fields(msg)
       end
     )
@@ -416,6 +420,30 @@ defmodule Soulless.Game.Lq.RecordNewRound do
           ArgumentError ->
             reraise Protox.EncodingError.new(:yongchang, "invalid field value"), __STACKTRACE__
         end
+      end,
+      defp encode_saltSha256(acc, msg) do
+        try do
+          if msg.saltSha256 == "" do
+            acc
+          else
+            [acc, "\xC2\x01", Protox.Encode.encode_string(msg.saltSha256)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:saltSha256, "invalid field value"), __STACKTRACE__
+        end
+      end,
+      defp encode_salt(acc, msg) do
+        try do
+          if msg.salt == "" do
+            acc
+          else
+            [acc, "\xCA\x01", Protox.Encode.encode_string(msg.salt)]
+          end
+        rescue
+          ArgumentError ->
+            reraise Protox.EncodingError.new(:salt, "invalid field value"), __STACKTRACE__
+        end
       end
     ]
 
@@ -614,6 +642,16 @@ defmodule Soulless.Game.Lq.RecordNewRound do
                    )
                ], rest}
 
+            {24, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[saltSha256: delimited], rest}
+
+            {25, _, bytes} ->
+              {len, bytes} = Protox.Varint.decode(bytes)
+              {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
+              {[salt: delimited], rest}
+
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
 
@@ -697,7 +735,9 @@ defmodule Soulless.Game.Lq.RecordNewRound do
         20 => {:ju_count, {:scalar, 0}, :uint32},
         21 => {:field_spell, {:scalar, 0}, :uint32},
         22 => {:sha256, {:scalar, ""}, :string},
-        23 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}}
+        23 => {:yongchang, {:scalar, nil}, {:message, Soulless.Game.Lq.YongchangInfo}},
+        24 => {:saltSha256, {:scalar, ""}, :string},
+        25 => {:salt, {:scalar, ""}, :string}
       }
     end
 
@@ -722,6 +762,8 @@ defmodule Soulless.Game.Lq.RecordNewRound do
         operation: {12, {:scalar, nil}, {:message, Soulless.Game.Lq.OptionalOperationList}},
         operations: {19, :unpacked, {:message, Soulless.Game.Lq.OptionalOperationList}},
         paishan: {14, {:scalar, ""}, :string},
+        salt: {25, {:scalar, ""}, :string},
+        saltSha256: {24, {:scalar, ""}, :string},
         scores: {5, :packed, :int32},
         sha256: {22, {:scalar, ""}, :string},
         tiles0: {7, :unpacked, :string},
@@ -944,6 +986,24 @@ defmodule Soulless.Game.Lq.RecordNewRound do
           name: :yongchang,
           tag: 23,
           type: {:message, Soulless.Game.Lq.YongchangInfo}
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "saltSha256",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :saltSha256,
+          tag: 24,
+          type: :string
+        },
+        %{
+          __struct__: Protox.Field,
+          json_name: "salt",
+          kind: {:scalar, ""},
+          label: :optional,
+          name: :salt,
+          tag: 25,
+          type: :string
         }
       ]
     end
@@ -1650,6 +1710,64 @@ defmodule Soulless.Game.Lq.RecordNewRound do
 
         []
       ),
+      (
+        def field_def(:saltSha256) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "saltSha256",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :saltSha256,
+             tag: 24,
+             type: :string
+           }}
+        end
+
+        def field_def("saltSha256") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "saltSha256",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :saltSha256,
+             tag: 24,
+             type: :string
+           }}
+        end
+
+        []
+      ),
+      (
+        def field_def(:salt) do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "salt",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :salt,
+             tag: 25,
+             type: :string
+           }}
+        end
+
+        def field_def("salt") do
+          {:ok,
+           %{
+             __struct__: Protox.Field,
+             json_name: "salt",
+             kind: {:scalar, ""},
+             label: :optional,
+             name: :salt,
+             tag: 25,
+             type: :string
+           }}
+        end
+
+        []
+      ),
       def field_def(_) do
         {:error, :no_such_field}
       end
@@ -1757,6 +1875,12 @@ defmodule Soulless.Game.Lq.RecordNewRound do
     end,
     def default(:yongchang) do
       {:ok, nil}
+    end,
+    def default(:saltSha256) do
+      {:ok, ""}
+    end,
+    def default(:salt) do
+      {:ok, ""}
     end,
     def default(_) do
       {:error, :no_such_field}
