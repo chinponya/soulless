@@ -1,15 +1,15 @@
 {
+  inputs = { nixpkgs.url = "nixpkgs/nixos-unstable"; };
+
   outputs = { self, nixpkgs }: {
     devShell.x86_64-linux = let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+      beam = pkgs.beam.packages.erlang_27;
+      elixir = beam.elixir_1_17;
+      elixir-ls = (beam.elixir-ls.override { inherit elixir; });
     in pkgs.mkShell {
-      buildInputs = with pkgs; [
-        git
-        elixir
-        elixir_ls
-        erlang
-        protobuf
-      ];
+      buildInputs = [ elixir elixir-ls pkgs.protobuf ];
       shellHook = ''
         # this allows mix to work on the local directory
         mkdir -p .state/mix .state/hex
