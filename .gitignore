@@ -31,4 +31,5 @@ grpc_playground-*.tar
 .direnv
 .vscode
 .envrc.private
+result
 lib/example.ex

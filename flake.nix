@@ -19,7 +19,7 @@
         # TODO: not sure how to make hex available without installing it afterwards.
         mix local.hex --if-missing --force
         export LANG=en_US.UTF-8
-        export ERL_AFLAGS="-kernel shell_history enabled"
+        export ERL_AFLAGS="-kernel shell_history enabled -kernel shell_history_path '\"$PWD/.state\"' -kernel shell_history_file_bytes 1024000"
 
         export MIX_ENV=dev
       '';

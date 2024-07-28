@@ -92,7 +92,7 @@ defmodule Soulless.Game.Lq.ReqModifySignature do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[signature: delimited], rest}
+              {[signature: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -259,4 +259,11 @@ defmodule Soulless.Game.Lq.ReqModifySignature do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

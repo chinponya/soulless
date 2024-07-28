@@ -11,7 +11,7 @@ defmodule Soulless.Game.Lq.ErrorCode do
       end
     )
 
-    @spec encode(atom()) :: integer() | atom()
+    @spec encode(atom() | String.t()) :: integer() | atom()
     [
       (
         def encode(:OK) do
@@ -1452,263 +1452,188 @@ defmodule Soulless.Game.Lq.ErrorCode do
 
     @spec decode(integer()) :: atom() | integer()
     [
-      def decode(2501) do
-        :CONTEST_NOT_FOUND
-      end,
-      def decode(1303) do
-        :UNSUPPORT_MATCH_MODE
-      end,
-      def decode(107) do
-        :GIFT_CODE_GAIN_USAGEID
-      end,
-      def decode(115) do
-        :FREQUENT_PHONE_CODE
-      end,
-      def decode(501) do
-        :RESOURCE_NOT_ENOUGH
-      end,
-      def decode(1302) do
-        :MATCH_NOT_IN_MATCHING
-      end,
-      def decode(5) do
-        :SYSTEM_COMMUNICATION
-      end,
-      def decode(1206) do
-        :GAME_ALREADY_FINISH
-      end,
-      def decode(118) do
-        :BIND_SAME_PHONE
-      end,
-      def decode(114) do
-        :GIFT_CODE_DISCARDED
-      end,
-      def decode(2007) do
-        :COMMENT_WHEN_GAMING
-      end,
-      def decode(101) do
-        :EMPTY_INPUT
-      end,
-      def decode(1004) do
-        :ACC_NOT_LOGIN
-      end,
-      def decode(106) do
-        :GIFT_CODE_ALREADY_USED
-      end,
-      def decode(1107) do
-        :ROOM_TARGET_NOT_JOIN
-      end,
-      def decode(1502) do
-        :BAG_NOT_ENOUGH_ITEM
-      end,
-      def decode(2517) do
-        :CONTEST_SETTING_PARAM
-      end,
-      def decode(1904) do
-        :PAYMENT_GOODS_NOT_FOUND
-      end,
-      def decode(1611) do
-        :TASK_DAILY_NOT_FOUND
-      end,
-      def decode(2301) do
-        :ITEM_CANNOT_SELL
-      end,
-      def decode(1408) do
-        :FRIEND_ADD_SELF
-      end,
-      def decode(2507) do
-        :CONTEST_NOT_START
-      end,
-      def decode(2003) do
-        :TITLE_NOT_UNLOCK
-      end,
-      def decode(105) do
-        :GIFT_CODE_NOT_VALID
-      end,
-      def decode(2401) do
-        :SHOP_GOODS_NOT_FOUND
-      end,
-      def decode(1100) do
-        :ROOM_NOT_EXIST
-      end,
-      def decode(1901) do
-        :PAYMENT_ORDER_NOT_FOUND
-      end,
-      def decode(1204) do
-        :GAME_REFUSED
+      def decode(2525) do
+        :CONTEST_DISABLE_CREATE
       end,
       def decode(2510) do
         :CONTEST_LOCK_BY_OTHER
       end,
-      def decode(102) do
-        :INVALID_INPUT
-      end,
-      def decode(2519) do
-        :CONTEST_GAME_COUNT_LIMIT
-      end,
-      def decode(2530) do
-        :CONTEST_BLACK_LIST
-      end,
-      def decode(1971) do
-        :PAYMENT_ALI_TYPE_UNSUP
-      end,
-      def decode(2506) do
-        :CONTEST_MGR_NO_PRIVILEGE
-      end,
-      def decode(1008) do
-        :ACC_CHAR_ALREADY_LOCK
-      end,
-      def decode(2513) do
-        :CONTEST_NOT_CREATOR
+      def decode(1015) do
+        :ACC_NEED_NICKNAME_ITEM
       end,
       def decode(2522) do
         :CONTEST_IS_IN_QUEUE
       end,
-      def decode(2505) do
-        :CONTEST_MGR_NOT_LOGIN
+      def decode(2502) do
+        :CONTEST_MAX_ACTIVE
       end,
-      def decode(1016) do
-        :ACC_MOD_NICKNAME_CD
-      end,
-      def decode(1902) do
-        :PAYMENT_ORDER_HANDLED
-      end,
-      def decode(119) do
-        :PHONE_SEND_FAILED
-      end,
-      def decode(2531) do
-        :CONTEST_CREATE_COUNT_LIMIT
+      def decode(1402) do
+        :FRIEND_IS_FRIEND
       end,
       def decode(4) do
         :NOT_DEVELOPMENT_MODE
       end,
-      def decode(1010) do
-        :ACC_NICKNAME_USED
-      end,
-      def decode(2512) do
-        :CONTEST_NO_PRIV_CHAT
-      end,
-      def decode(1503) do
-        :BAG_ITEM_NOT_USABLE
-      end,
-      def decode(1017) do
-        :ACC_ALREADY_REG_REALNAME
-      end,
-      def decode(1702) do
-        :MAIL_NO_ATTACHMENT
-      end,
-      def decode(1403) do
-        :SEARCH_TIMEOUT
-      end,
-      def decode(111) do
-        :OAUTH2_ALREADY_SIGNUP
-      end,
-      def decode(2008) do
-        :COMMENT_NO_PRIV_DELETE
-      end,
-      def decode(1005) do
-        :ACC_ALREADY_LOGIN
-      end,
-      def decode(1006) do
-        :ACC_NOT_EXIST
-      end,
-      def decode(2527) do
-        :CONTEST_DISABLE_EDIT_NOTICE
-      end,
-      def decode(1207) do
-        :GAME_CAN_NOT_MANUAL_TER
-      end,
-      def decode(1208) do
-        :GAME_CREATE_FAILED
-      end,
       def decode(2002) do
         :REVIVE_COIN_LIMIT
       end,
-      def decode(1002) do
-        :ACC_NOT_SIGN_UP
+      def decode(1304) do
+        :MATCH_GOLD_LIMIT
       end,
-      def decode(1401) do
-        :FRIEND_NOT_FRIEND
+      def decode(1016) do
+        :ACC_MOD_NICKNAME_CD
       end,
-      def decode(2502) do
-        :CONTEST_MAX_ACTIVE
+      def decode(2529) do
+        :CONTEST_NOT_SUPPORT_OB
       end,
-      def decode(151) do
-        :CLIENT_OUTDATED
-      end,
-      def decode(3) do
-        :CLIENT_PACKET_PARAM
-      end,
-      def decode(1112) do
-        :ROOM_MODE_INVALID
-      end,
-      def decode(104) do
-        :CONFIG_NOT_FOUND
-      end,
-      def decode(1601) do
-        :ACHIEVEMENT_NOT_ACHIEVED
-      end,
-      def decode(1) do
-        :UNKNOWN
-      end,
-      def decode(1406) do
-        :FRIEND_MAX_APPLY
-      end,
-      def decode(2432) do
-        :SHOP_ZHP_REFRESH_LIMIT
-      end,
-      def decode(112) do
-        :GIFT_CODE_PROCESSING
-      end,
-      def decode(1961) do
-        :PAYMENT_WECHAT_POST_FAILED
-      end,
-      def decode(2503) do
-        :CONTEST_RANDOM_CID
-      end,
-      def decode(2201) do
-        :CHARACTER_UNLOCK
-      end,
-      def decode(1801) do
-        :LIVE_GAME_NOT_FOUND
-      end,
-      def decode(1003) do
-        :ACC_PASSWORD
-      end,
-      def decode(2010) do
-        :CHEST_NOT_FOUND
-      end,
-      def decode(2203) do
-        :CHARACTER_GIFT_COUNT_MAX
-      end,
-      def decode(103) do
-        :SERVER_MAINTENANCE
-      end,
-      def decode(2508) do
-        :CONTEST_ALREADY_END
-      end,
-      def decode(1201) do
-        :TOKEN_NOT_EXIST
-      end,
-      def decode(1109) do
-        :ACC_IS_PLAYING
-      end,
-      def decode(2) do
-        :SYSTEM_ERROR
-      end,
-      def decode(108) do
-        :UNSUPPORT_OAUTH2
-      end,
-      def decode(2520) do
-        :CONTEST_PROLONG_LIMIT
-      end,
-      def decode(1703) do
-        :MAIL_ALREADY_TAKE
+      def decode(503) do
+        :ACCOUNT_BANNED
       end,
       def decode(2204) do
         :CHARACTER_SKIN_UNLOCK
       end,
-      def decode(2514) do
-        :CONTEST_MANAGER_COUNT_LIMIT
+      def decode(1408) do
+        :FRIEND_ADD_SELF
+      end,
+      def decode(1201) do
+        :TOKEN_NOT_EXIST
+      end,
+      def decode(2520) do
+        :CONTEST_PROLONG_LIMIT
+      end,
+      def decode(2008) do
+        :COMMENT_NO_PRIV_DELETE
+      end,
+      def decode(2528) do
+        :CONTEST_DISABLE_CHAT
+      end,
+      def decode(1503) do
+        :BAG_ITEM_NOT_USABLE
+      end,
+      def decode(2524) do
+        :CONTEST_BANNED_ZONE
+      end,
+      def decode(2001) do
+        :REVIVE_COIN_TIME
+      end,
+      def decode(1009) do
+        :ACC_TICK_BY_SAME
+      end,
+      def decode(1407) do
+        :FRIEND_MAX
+      end,
+      def decode(1109) do
+        :ACC_IS_PLAYING
+      end,
+      def decode(2508) do
+        :CONTEST_ALREADY_END
+      end,
+      def decode(2526) do
+        :CONTEST_DISABLE_EDIT_NAME
+      end,
+      def decode(2516) do
+        :CONTEST_BAN_CREATE
+      end,
+      def decode(110) do
+        :OAUTH2_FAILED
+      end,
+      def decode(1403) do
+        :SEARCH_TIMEOUT
+      end,
+      def decode(1102) do
+        :ROOM_ALREADY_LEAVE
+      end,
+      def decode(2506) do
+        :CONTEST_MGR_NO_PRIVILEGE
+      end,
+      def decode(114) do
+        :GIFT_CODE_DISCARDED
+      end,
+      def decode(2530) do
+        :CONTEST_BLACK_LIST
+      end,
+      def decode(2) do
+        :SYSTEM_ERROR
+      end,
+      def decode(2207) do
+        :CHARACTER_CANNOT_MARRY
+      end,
+      def decode(2431) do
+        :SHOP_ZHP_UNAVAILABLE
+      end,
+      def decode(1104) do
+        :ROOM_NOT_ALL_READY
+      end,
+      def decode(1003) do
+        :ACC_PASSWORD
+      end,
+      def decode(1106) do
+        :ROOM_NOT_JOIN
+      end,
+      def decode(113) do
+        :GIFT_CODE_DURATION
+      end,
+      def decode(1105) do
+        :ROOM_ALREADY_JOIN
+      end,
+      def decode(104) do
+        :CONFIG_NOT_FOUND
+      end,
+      def decode(2201) do
+        :CHARACTER_UNLOCK
+      end,
+      def decode(105) do
+        :GIFT_CODE_NOT_VALID
+      end,
+      def decode(115) do
+        :FREQUENT_PHONE_CODE
+      end,
+      def decode(1902) do
+        :PAYMENT_ORDER_HANDLED
+      end,
+      def decode(1002) do
+        :ACC_NOT_SIGN_UP
+      end,
+      def decode(2206) do
+        :CHARACTER_LEVEL
+      end,
+      def decode(2402) do
+        :SHOP_GOODS_BUY_LIMIT
+      end,
+      def decode(1611) do
+        :TASK_DAILY_NOT_FOUND
+      end,
+      def decode(1701) do
+        :MAIL_NOT_FOUND
+      end,
+      def decode(1112) do
+        :ROOM_MODE_INVALID
+      end,
+      def decode(116) do
+        :PHONE_CODE_EXPIRED
+      end,
+      def decode(1202) do
+        :TOKEN_INVALID
+      end,
+      def decode(1208) do
+        :GAME_CREATE_FAILED
+      end,
+      def decode(111) do
+        :OAUTH2_ALREADY_SIGNUP
+      end,
+      def decode(1801) do
+        :LIVE_GAME_NOT_FOUND
+      end,
+      def decode(1014) do
+        :ACC_TARGET_ACCOUNT_USED
+      end,
+      def decode(101) do
+        :EMPTY_INPUT
+      end,
+      def decode(112) do
+        :GIFT_CODE_PROCESSING
+      end,
+      def decode(2202) do
+        :CHARACTER_GIFT_TYPE
       end,
       def decode(2518) do
         :CONTEST_LEVEL_LIMIT
@@ -1716,218 +1641,293 @@ defmodule Soulless.Game.Lq.ErrorCode do
       def decode(502) do
         :TEXT_FORBIDDEN_WORD
       end,
-      def decode(1110) do
-        :ROOM_NO_AVAILABLE_ID
-      end,
-      def decode(1007) do
-        :ACC_CHAR_NOT_LOCK
-      end,
-      def decode(116) do
-        :PHONE_CODE_EXPIRED
-      end,
-      def decode(1900) do
-        :PAYMENT_CLOSED
-      end,
-      def decode(0) do
-        :OK
-      end,
-      def decode(110) do
-        :OAUTH2_FAILED
-      end,
-      def decode(1103) do
-        :ROOM_NOT_OWNER
-      end,
-      def decode(2004) do
-        :COMMENT_ONLY_FRIEND
-      end,
-      def decode(1101) do
-        :ROOM_IS_FULL
-      end,
-      def decode(2528) do
-        :CONTEST_DISABLE_CHAT
-      end,
-      def decode(2005) do
-        :COMMENT_FORBID
-      end,
-      def decode(109) do
-        :OAUTH2_EXPIRED
-      end,
-      def decode(2431) do
-        :SHOP_ZHP_UNAVAILABLE
-      end,
-      def decode(2206) do
-        :CHARACTER_LEVEL
-      end,
-      def decode(1202) do
-        :TOKEN_INVALID
-      end,
-      def decode(1106) do
-        :ROOM_NOT_JOIN
-      end,
-      def decode(6) do
-        :METHOD_NOT_FOUND
-      end,
-      def decode(2515) do
-        :CONTEST_CREATE_TIME_LIMIT
-      end,
-      def decode(1111) do
-        :ROOM_NO_ENOUGH_SLOT
-      end,
-      def decode(2521) do
-        :CONTEST_AUTO_MATCHING
-      end,
-      def decode(1011) do
-        :ACC_NO_NICKNAME
-      end,
-      def decode(504) do
-        :RESOURCE_UNIQUE
-      end,
-      def decode(2524) do
-        :CONTEST_BANNED_ZONE
-      end,
-      def decode(1105) do
-        :ROOM_ALREADY_JOIN
-      end,
-      def decode(1014) do
-        :ACC_TARGET_ACCOUNT_USED
-      end,
-      def decode(2207) do
-        :CHARACTER_CANNOT_MARRY
-      end,
-      def decode(503) do
-        :ACCOUNT_BANNED
-      end,
-      def decode(2205) do
-        :CHARACTER_IS_UPGRADE
-      end,
-      def decode(1012) do
-        :ACC_HAS_NICKNAME
-      end,
-      def decode(2509) do
-        :CONTEST_PLAYER_NOT_MATCHING
-      end,
-      def decode(1405) do
-        :FRIEND_APPLY_METHOD
-      end,
-      def decode(1009) do
-        :ACC_TICK_BY_SAME
-      end,
-      def decode(2006) do
-        :COMMENT_SELF
-      end,
-      def decode(2011) do
-        :CHEST_INVALID_COUNT
-      end,
-      def decode(1102) do
-        :ROOM_ALREADY_LEAVE
-      end,
-      def decode(1013) do
-        :ACC_HAS_BIND_ACCOUNT
-      end,
-      def decode(1504) do
-        :BAG_ITEM_NOT_COMPOSE
-      end,
-      def decode(1701) do
-        :MAIL_NOT_FOUND
-      end,
-      def decode(1612) do
-        :TASK_DAILY_NO_REFRESH
-      end,
-      def decode(2525) do
-        :CONTEST_DISABLE_CREATE
-      end,
-      def decode(1015) do
-        :ACC_NEED_NICKNAME_ITEM
-      end,
-      def decode(1970) do
-        :PAYMENT_ALI_DISABLE
-      end,
       def decode(1409) do
         :FRIEND_MAX_TARGET
       end,
-      def decode(2001) do
-        :REVIVE_COIN_TIME
+      def decode(1303) do
+        :UNSUPPORT_MATCH_MODE
       end,
-      def decode(2529) do
-        :CONTEST_NOT_SUPPORT_OB
+      def decode(2519) do
+        :CONTEST_GAME_COUNT_LIMIT
       end,
-      def decode(1903) do
-        :PAYMENT_PLATFORM
+      def decode(2203) do
+        :CHARACTER_GIFT_COUNT_MAX
       end,
-      def decode(1404) do
-        :SEARCH_INVALID
-      end,
-      def decode(2504) do
-        :CONTEST_MGR_HAS_LOGINED
+      def decode(1601) do
+        :ACHIEVEMENT_NOT_ACHIEVED
       end,
       def decode(1305) do
         :MATCH_LEVEL_LIMIT
       end,
-      def decode(2009) do
-        :COMMENT_CD
+      def decode(2004) do
+        :COMMENT_ONLY_FRIEND
       end,
-      def decode(113) do
-        :GIFT_CODE_DURATION
+      def decode(103) do
+        :SERVER_MAINTENANCE
       end,
-      def decode(2202) do
-        :CHARACTER_GIFT_TYPE
+      def decode(118) do
+        :BIND_SAME_PHONE
       end,
-      def decode(1304) do
-        :MATCH_GOLD_LIMIT
+      def decode(1405) do
+        :FRIEND_APPLY_METHOD
       end,
-      def decode(2402) do
-        :SHOP_GOODS_BUY_LIMIT
+      def decode(1904) do
+        :PAYMENT_GOODS_NOT_FOUND
       end,
-      def decode(1104) do
-        :ROOM_NOT_ALL_READY
+      def decode(109) do
+        :OAUTH2_EXPIRED
       end,
-      def decode(1501) do
-        :BAG_NO_ITEM
-      end,
-      def decode(2526) do
-        :CONTEST_DISABLE_EDIT_NAME
-      end,
-      def decode(1306) do
-        :MATCH_MODE_NOT_OPEN
-      end,
-      def decode(1203) do
-        :GAME_NOT_EXIST
+      def decode(106) do
+        :GIFT_CODE_ALREADY_USED
       end,
       def decode(1301) do
         :MATCH_IN_MATCHING
       end,
-      def decode(1001) do
-        :ACC_DUPLICATE_SIGN_UP
+      def decode(1006) do
+        :ACC_NOT_EXIST
       end,
-      def decode(2516) do
-        :CONTEST_BAN_CREATE
+      def decode(117) do
+        :SECURE_OPERATION_EXPIRED
       end,
-      def decode(2523) do
-        :CONTEST_NO_AUTH
+      def decode(2006) do
+        :COMMENT_SELF
       end,
-      def decode(1108) do
-        :ROOM_KICK_SELF
+      def decode(1401) do
+        :FRIEND_NOT_FRIEND
       end,
-      def decode(1960) do
-        :PAYMENT_WECHAT_DISABLE
+      def decode(1012) do
+        :ACC_HAS_NICKNAME
       end,
-      def decode(1951) do
-        :PAYMENT_GP_VERIFY
+      def decode(1306) do
+        :MATCH_MODE_NOT_OPEN
+      end,
+      def decode(1004) do
+        :ACC_NOT_LOGIN
+      end,
+      def decode(1008) do
+        :ACC_CHAR_ALREADY_LOCK
+      end,
+      def decode(1107) do
+        :ROOM_TARGET_NOT_JOIN
+      end,
+      def decode(2401) do
+        :SHOP_GOODS_NOT_FOUND
+      end,
+      def decode(1007) do
+        :ACC_CHAR_NOT_LOCK
+      end,
+      def decode(1101) do
+        :ROOM_IS_FULL
+      end,
+      def decode(2517) do
+        :CONTEST_SETTING_PARAM
+      end,
+      def decode(151) do
+        :CLIENT_OUTDATED
+      end,
+      def decode(1203) do
+        :GAME_NOT_EXIST
+      end,
+      def decode(2007) do
+        :COMMENT_WHEN_GAMING
+      end,
+      def decode(1900) do
+        :PAYMENT_CLOSED
+      end,
+      def decode(2515) do
+        :CONTEST_CREATE_TIME_LIMIT
+      end,
+      def decode(1) do
+        :UNKNOWN
+      end,
+      def decode(2501) do
+        :CONTEST_NOT_FOUND
+      end,
+      def decode(1970) do
+        :PAYMENT_ALI_DISABLE
+      end,
+      def decode(2003) do
+        :TITLE_NOT_UNLOCK
+      end,
+      def decode(1703) do
+        :MAIL_ALREADY_TAKE
+      end,
+      def decode(2432) do
+        :SHOP_ZHP_REFRESH_LIMIT
       end,
       def decode(2511) do
         :CONTEST_NO_ACCESS_MATCH
       end,
+      def decode(107) do
+        :GIFT_CODE_GAIN_USAGEID
+      end,
+      def decode(1207) do
+        :GAME_CAN_NOT_MANUAL_TER
+      end,
+      def decode(108) do
+        :UNSUPPORT_OAUTH2
+      end,
+      def decode(6) do
+        :METHOD_NOT_FOUND
+      end,
+      def decode(1100) do
+        :ROOM_NOT_EXIST
+      end,
+      def decode(504) do
+        :RESOURCE_UNIQUE
+      end,
+      def decode(1204) do
+        :GAME_REFUSED
+      end,
+      def decode(1961) do
+        :PAYMENT_WECHAT_POST_FAILED
+      end,
+      def decode(1502) do
+        :BAG_NOT_ENOUGH_ITEM
+      end,
+      def decode(2009) do
+        :COMMENT_CD
+      end,
+      def decode(1903) do
+        :PAYMENT_PLATFORM
+      end,
+      def decode(1011) do
+        :ACC_NO_NICKNAME
+      end,
+      def decode(1501) do
+        :BAG_NO_ITEM
+      end,
+      def decode(2505) do
+        :CONTEST_MGR_NOT_LOGIN
+      end,
+      def decode(1960) do
+        :PAYMENT_WECHAT_DISABLE
+      end,
+      def decode(2503) do
+        :CONTEST_RANDOM_CID
+      end,
+      def decode(2010) do
+        :CHEST_NOT_FOUND
+      end,
+      def decode(2301) do
+        :ITEM_CANNOT_SELL
+      end,
+      def decode(2205) do
+        :CHARACTER_IS_UPGRADE
+      end,
+      def decode(119) do
+        :PHONE_SEND_FAILED
+      end,
+      def decode(1302) do
+        :MATCH_NOT_IN_MATCHING
+      end,
+      def decode(1504) do
+        :BAG_ITEM_NOT_COMPOSE
+      end,
+      def decode(2507) do
+        :CONTEST_NOT_START
+      end,
+      def decode(1013) do
+        :ACC_HAS_BIND_ACCOUNT
+      end,
+      def decode(1971) do
+        :PAYMENT_ALI_TYPE_UNSUP
+      end,
+      def decode(2523) do
+        :CONTEST_NO_AUTH
+      end,
+      def decode(2504) do
+        :CONTEST_MGR_HAS_LOGINED
+      end,
+      def decode(3) do
+        :CLIENT_PACKET_PARAM
+      end,
+      def decode(2509) do
+        :CONTEST_PLAYER_NOT_MATCHING
+      end,
+      def decode(1108) do
+        :ROOM_KICK_SELF
+      end,
+      def decode(2514) do
+        :CONTEST_MANAGER_COUNT_LIMIT
+      end,
+      def decode(501) do
+        :RESOURCE_NOT_ENOUGH
+      end,
+      def decode(1702) do
+        :MAIL_NO_ATTACHMENT
+      end,
+      def decode(2521) do
+        :CONTEST_AUTO_MATCHING
+      end,
+      def decode(1111) do
+        :ROOM_NO_ENOUGH_SLOT
+      end,
+      def decode(2513) do
+        :CONTEST_NOT_CREATOR
+      end,
+      def decode(5) do
+        :SYSTEM_COMMUNICATION
+      end,
+      def decode(0) do
+        :OK
+      end,
+      def decode(1951) do
+        :PAYMENT_GP_VERIFY
+      end,
+      def decode(2531) do
+        :CONTEST_CREATE_COUNT_LIMIT
+      end,
+      def decode(2005) do
+        :COMMENT_FORBID
+      end,
+      def decode(1612) do
+        :TASK_DAILY_NO_REFRESH
+      end,
+      def decode(2512) do
+        :CONTEST_NO_PRIV_CHAT
+      end,
+      def decode(1017) do
+        :ACC_ALREADY_REG_REALNAME
+      end,
+      def decode(1206) do
+        :GAME_ALREADY_FINISH
+      end,
+      def decode(102) do
+        :INVALID_INPUT
+      end,
+      def decode(1010) do
+        :ACC_NICKNAME_USED
+      end,
+      def decode(1406) do
+        :FRIEND_MAX_APPLY
+      end,
       def decode(1205) do
         :GAME_NOT_PLAYING
       end,
-      def decode(1402) do
-        :FRIEND_IS_FRIEND
+      def decode(1901) do
+        :PAYMENT_ORDER_NOT_FOUND
       end,
-      def decode(1407) do
-        :FRIEND_MAX
+      def decode(2011) do
+        :CHEST_INVALID_COUNT
       end,
-      def decode(117) do
-        :SECURE_OPERATION_EXPIRED
+      def decode(1103) do
+        :ROOM_NOT_OWNER
+      end,
+      def decode(1005) do
+        :ACC_ALREADY_LOGIN
+      end,
+      def decode(1001) do
+        :ACC_DUPLICATE_SIGN_UP
+      end,
+      def decode(1404) do
+        :SEARCH_INVALID
+      end,
+      def decode(1110) do
+        :ROOM_NO_AVAILABLE_ID
+      end,
+      def decode(2527) do
+        :CONTEST_DISABLE_EDIT_NOTICE
       end
     ]
 

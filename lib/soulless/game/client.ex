@@ -54,7 +54,7 @@ defmodule Soulless.Game.Client do
            |> Map.put(:version, version)}
         else
           {:error, :maintenance} ->
-            Logger.warn(
+            Logger.warning(
               "#{__MODULE__} Server is under maintenance. Retrying in #{state.reconnect_after / 1000}s"
             )
 

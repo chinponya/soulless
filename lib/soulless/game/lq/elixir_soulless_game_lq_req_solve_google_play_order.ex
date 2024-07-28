@@ -109,12 +109,12 @@ defmodule Soulless.Game.Lq.ReqSolveGooglePlayOrder do
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[inapp_purchase_data: delimited], rest}
+              {[inapp_purchase_data: Protox.Decode.validate_string(delimited)], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[inapp_data_signature: delimited], rest}
+              {[inapp_data_signature: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -350,4 +350,11 @@ defmodule Soulless.Game.Lq.ReqSolveGooglePlayOrder do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

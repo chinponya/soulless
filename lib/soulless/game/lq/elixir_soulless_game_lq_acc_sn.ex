@@ -630,4 +630,11 @@ defmodule Soulless.Game.Lq.AccSn do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

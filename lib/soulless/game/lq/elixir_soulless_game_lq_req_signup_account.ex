@@ -180,17 +180,17 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[account: delimited], rest}
+              {[account: Protox.Decode.validate_string(delimited)], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[password: delimited], rest}
+              {[password: Protox.Decode.validate_string(delimited)], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[code: delimited], rest}
+              {[code: Protox.Decode.validate_string(delimited)], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -211,12 +211,12 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
             {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[client_version_string: delimited], rest}
+              {[client_version_string: Protox.Decode.validate_string(delimited)], rest}
 
             {7, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tag: delimited], rest}
+              {[tag: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -656,4 +656,11 @@ defmodule Soulless.Game.Lq.ReqSignupAccount do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

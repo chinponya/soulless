@@ -100,7 +100,9 @@ defmodule Soulless.Game.Lq.AccountGiftCodeRecord do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[used_gift_code: msg.used_gift_code ++ [delimited]], rest}
+
+              {[used_gift_code: msg.used_gift_code ++ [Protox.Decode.validate_string(delimited)]],
+               rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -278,4 +280,11 @@ defmodule Soulless.Game.Lq.AccountGiftCodeRecord do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

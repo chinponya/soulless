@@ -308,7 +308,7 @@ defmodule Soulless.Game.Lq.ResLogin do
             {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[access_token: delimited], rest}
+              {[access_token: Protox.Decode.validate_string(delimited)], rest}
 
             {7, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -321,7 +321,7 @@ defmodule Soulless.Game.Lq.ResLogin do
             {9, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[country: delimited], rest}
+              {[country: Protox.Decode.validate_string(delimited)], rest}
 
             {10, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -1036,4 +1036,11 @@ defmodule Soulless.Game.Lq.ResLogin do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

@@ -202,12 +202,12 @@ defmodule Soulless.Game.Lq.RPGActivity do
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[last_show_uuid: delimited], rest}
+              {[last_show_uuid: Protox.Decode.validate_string(delimited)], rest}
 
             {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[last_played_uuid: delimited], rest}
+              {[last_played_uuid: Protox.Decode.validate_string(delimited)], rest}
 
             {7, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -754,4 +754,11 @@ defmodule Soulless.Game.Lq.RPGActivity do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

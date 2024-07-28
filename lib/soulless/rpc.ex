@@ -30,7 +30,7 @@ defmodule Soulless.RPC do
     function = Keyword.get(rpc, :function)
     request_module = Module.safe_concat([namespace, String.capitalize(package), request_type])
     function_name = function |> Macro.underscore() |> String.to_atom()
-    is_empty = Enum.empty?(request_module.fields_defs)
+    is_empty = Enum.empty?(request_module.fields_defs())
 
     message =
       if is_empty do

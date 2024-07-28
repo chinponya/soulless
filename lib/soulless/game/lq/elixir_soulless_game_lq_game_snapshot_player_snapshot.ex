@@ -172,7 +172,7 @@ defmodule Soulless.Game.Lq.GameSnapshot.PlayerSnapshot do
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[qipais: msg.qipais ++ [delimited]], rest}
+              {[qipais: msg.qipais ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -525,4 +525,11 @@ defmodule Soulless.Game.Lq.GameSnapshot.PlayerSnapshot do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

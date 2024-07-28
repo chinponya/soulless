@@ -308,7 +308,7 @@ defmodule Soulless.Game.Lq.RecordRevealTile do
             {9, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tile: delimited], rest}
+              {[tile: Protox.Decode.validate_string(delimited)], rest}
 
             {10, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -897,4 +897,11 @@ defmodule Soulless.Game.Lq.RecordRevealTile do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

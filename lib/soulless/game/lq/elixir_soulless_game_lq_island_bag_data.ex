@@ -131,7 +131,7 @@ defmodule Soulless.Game.Lq.IslandBagData do
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[matrix: delimited], rest}
+              {[matrix: Protox.Decode.validate_string(delimited)], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -395,4 +395,11 @@ defmodule Soulless.Game.Lq.IslandBagData do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

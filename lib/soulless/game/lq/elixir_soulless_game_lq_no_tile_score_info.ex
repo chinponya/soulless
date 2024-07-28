@@ -305,17 +305,17 @@ defmodule Soulless.Game.Lq.NoTileScoreInfo do
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[hand: msg.hand ++ [delimited]], rest}
+              {[hand: msg.hand ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[ming: msg.ming ++ [delimited]], rest}
+              {[ming: msg.ming ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[doras: msg.doras ++ [delimited]], rest}
+              {[doras: msg.doras ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {7, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -333,7 +333,7 @@ defmodule Soulless.Game.Lq.NoTileScoreInfo do
             {9, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[lines: msg.lines ++ [delimited]], rest}
+              {[lines: msg.lines ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -870,4 +870,11 @@ defmodule Soulless.Game.Lq.NoTileScoreInfo do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

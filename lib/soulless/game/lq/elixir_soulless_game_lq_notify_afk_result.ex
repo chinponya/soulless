@@ -128,7 +128,7 @@ defmodule Soulless.Game.Lq.NotifyAFKResult do
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[game_uuid: delimited], rest}
+              {[game_uuid: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -407,4 +407,11 @@ defmodule Soulless.Game.Lq.NotifyAFKResult do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

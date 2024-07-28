@@ -121,17 +121,17 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[nickname: delimited], rest}
+              {[nickname: Protox.Decode.validate_string(delimited)], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[advertise_str: delimited], rest}
+              {[advertise_str: Protox.Decode.validate_string(delimited)], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tag: delimited], rest}
+              {[tag: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -399,4 +399,11 @@ defmodule Soulless.Game.Lq.ReqCreateNickname do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

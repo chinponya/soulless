@@ -11,7 +11,7 @@ defmodule Soulless.Game.Lq.GamePlayerState do
       end
     )
 
-    @spec encode(atom()) :: integer() | atom()
+    @spec encode(atom() | String.t()) :: integer() | atom()
     [
       (
         def encode(:NULL) do

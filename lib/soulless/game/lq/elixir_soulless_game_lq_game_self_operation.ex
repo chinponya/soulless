@@ -251,7 +251,7 @@ defmodule Soulless.Game.Lq.GameSelfOperation do
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tile: delimited], rest}
+              {[tile: Protox.Decode.validate_string(delimited)], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_bool(bytes)
@@ -272,7 +272,9 @@ defmodule Soulless.Game.Lq.GameSelfOperation do
             {8, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[change_tiles: msg.change_tiles ++ [delimited]], rest}
+
+              {[change_tiles: msg.change_tiles ++ [Protox.Decode.validate_string(delimited)]],
+               rest}
 
             {9, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -901,4 +903,11 @@ defmodule Soulless.Game.Lq.GameSelfOperation do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

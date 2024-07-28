@@ -203,37 +203,37 @@ defmodule Soulless.Game.Lq.ResCreateDmmOrder do
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[order_id: delimited], rest}
+              {[order_id: Protox.Decode.validate_string(delimited)], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[transaction_id: delimited], rest}
+              {[transaction_id: Protox.Decode.validate_string(delimited)], rest}
 
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[dmm_user_id: delimited], rest}
+              {[dmm_user_id: Protox.Decode.validate_string(delimited)], rest}
 
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[token: delimited], rest}
+              {[token: Protox.Decode.validate_string(delimited)], rest}
 
             {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[callback_url: delimited], rest}
+              {[callback_url: Protox.Decode.validate_string(delimited)], rest}
 
             {9, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[request_time: delimited], rest}
+              {[request_time: Protox.Decode.validate_string(delimited)], rest}
 
             {10, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[dmm_app_id: delimited], rest}
+              {[dmm_app_id: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -771,4 +771,11 @@ defmodule Soulless.Game.Lq.ResCreateDmmOrder do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

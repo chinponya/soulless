@@ -244,7 +244,7 @@ defmodule Soulless.Game.Lq.CustomizedContestAbstract do
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[contest_name: delimited], rest}
+              {[contest_name: Protox.Decode.validate_string(delimited)], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -273,7 +273,7 @@ defmodule Soulless.Game.Lq.CustomizedContestAbstract do
             {10, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[public_notice: delimited], rest}
+              {[public_notice: Protox.Decode.validate_string(delimited)], rest}
 
             {11, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -977,4 +977,11 @@ defmodule Soulless.Game.Lq.CustomizedContestAbstract do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

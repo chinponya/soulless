@@ -252,7 +252,7 @@ defmodule Soulless.Game.Lq.ActionLockTile do
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tile: delimited], rest}
+              {[tile: Protox.Decode.validate_string(delimited)], rest}
 
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -280,7 +280,7 @@ defmodule Soulless.Game.Lq.ActionLockTile do
             {8, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[doras: msg.doras ++ [delimited]], rest}
+              {[doras: msg.doras ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {9, _, bytes} ->
               {value, rest} = Protox.Decode.parse_int32(bytes)
@@ -810,4 +810,11 @@ defmodule Soulless.Game.Lq.ActionLockTile do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

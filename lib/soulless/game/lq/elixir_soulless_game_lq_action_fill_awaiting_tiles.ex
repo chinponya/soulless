@@ -142,7 +142,9 @@ defmodule Soulless.Game.Lq.ActionFillAwaitingTiles do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[awaiting_tiles: msg.awaiting_tiles ++ [delimited]], rest}
+
+              {[awaiting_tiles: msg.awaiting_tiles ++ [Protox.Decode.validate_string(delimited)]],
+               rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -492,4 +494,11 @@ defmodule Soulless.Game.Lq.ActionFillAwaitingTiles do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

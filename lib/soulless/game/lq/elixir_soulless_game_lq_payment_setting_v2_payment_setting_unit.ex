@@ -204,7 +204,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[platform: delimited], rest}
+              {[platform: Protox.Decode.validate_string(delimited)], rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_bool(bytes)
@@ -217,7 +217,7 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[goods_click_text: delimited], rest}
+              {[goods_click_text: Protox.Decode.validate_string(delimited)], rest}
 
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -238,12 +238,16 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
             {7, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[extra_data: delimited], rest}
+              {[extra_data: Protox.Decode.validate_string(delimited)], rest}
 
             {8, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[enabled_channel: msg.enabled_channel ++ [delimited]], rest}
+
+              {[
+                 enabled_channel:
+                   msg.enabled_channel ++ [Protox.Decode.validate_string(delimited)]
+               ], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -784,4 +788,11 @@ defmodule Soulless.Game.Lq.PaymentSettingV2.PaymentSettingUnit do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

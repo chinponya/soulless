@@ -124,7 +124,7 @@ defmodule Soulless.Game.Lq.CustomizedContestGameEnd.Item do
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[nickname: delimited], rest}
+              {[nickname: Protox.Decode.validate_string(delimited)], rest}
 
             {3, _, bytes} ->
               {value, rest} = Protox.Decode.parse_int32(bytes)
@@ -407,4 +407,11 @@ defmodule Soulless.Game.Lq.CustomizedContestGameEnd.Item do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

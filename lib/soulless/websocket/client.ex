@@ -31,7 +31,7 @@ defmodule Soulless.Websocket.Client do
 
   @impl true
   def handle_disconnect(disconnect_map, %{parent_pid: parent_pid} = state) do
-    Logger.warn("#{__MODULE__} disconnected: #{inspect(disconnect_map)}")
+    Logger.warning("#{__MODULE__} disconnected: #{inspect(disconnect_map)}")
     GenServer.cast(parent_pid, :disconnected)
     Process.sleep(60_000)
     {:reconnect, state}
@@ -102,7 +102,7 @@ defmodule Soulless.Websocket.Client do
       {:ok, new_state}
     else
       {:error, reason} ->
-        Logger.warn("#{__MODULE__} Could not decode packet: #{inspect(reason)}")
+        Logger.warning("#{__MODULE__} Could not decode packet: #{inspect(reason)}")
 
         {:ok, state}
     end
@@ -110,7 +110,7 @@ defmodule Soulless.Websocket.Client do
 
   @impl true
   def handle_frame(response, state) do
-    Logger.warn("#{__MODULE__} Unhandled message: #{inspect(response)}")
+    Logger.warning("#{__MODULE__} Unhandled message: #{inspect(response)}")
     {:ok, state}
   end
 

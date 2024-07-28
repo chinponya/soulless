@@ -182,37 +182,37 @@ defmodule Soulless.Game.Lq.ResCreateWechatAppOrder.CallWechatAppParam do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[appid: delimited], rest}
+              {[appid: Protox.Decode.validate_string(delimited)], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[partnerid: delimited], rest}
+              {[partnerid: Protox.Decode.validate_string(delimited)], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[prepayid: delimited], rest}
+              {[prepayid: Protox.Decode.validate_string(delimited)], rest}
 
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[package: delimited], rest}
+              {[package: Protox.Decode.validate_string(delimited)], rest}
 
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[noncestr: delimited], rest}
+              {[noncestr: Protox.Decode.validate_string(delimited)], rest}
 
             {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[timestamp: delimited], rest}
+              {[timestamp: Protox.Decode.validate_string(delimited)], rest}
 
             {7, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[sign: delimited], rest}
+              {[sign: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -641,4 +641,11 @@ defmodule Soulless.Game.Lq.ResCreateWechatAppOrder.CallWechatAppParam do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

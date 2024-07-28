@@ -179,17 +179,17 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[alipay_trade_type: delimited], rest}
+              {[alipay_trade_type: Protox.Decode.validate_string(delimited)], rest}
 
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[return_url: delimited], rest}
+              {[return_url: Protox.Decode.validate_string(delimited)], rest}
 
             {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[client_version_string: delimited], rest}
+              {[client_version_string: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -641,4 +641,11 @@ defmodule Soulless.Game.Lq.ReqCreateAlipayOrder do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

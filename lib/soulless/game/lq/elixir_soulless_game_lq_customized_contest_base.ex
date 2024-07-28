@@ -273,7 +273,7 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[contest_name: delimited], rest}
+              {[contest_name: Protox.Decode.validate_string(delimited)], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -306,7 +306,7 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
             {11, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[public_notice: delimited], rest}
+              {[public_notice: Protox.Decode.validate_string(delimited)], rest}
 
             {12, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -315,7 +315,7 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
             {13, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[checking_name: delimited], rest}
+              {[checking_name: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -1123,4 +1123,11 @@ defmodule Soulless.Game.Lq.CustomizedContestBase do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

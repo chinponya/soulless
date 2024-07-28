@@ -264,17 +264,17 @@ defmodule Soulless.Game.Lq.HuInfoXueZhanMid do
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[hand: msg.hand ++ [delimited]], rest}
+              {[hand: msg.hand ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[ming: msg.ming ++ [delimited]], rest}
+              {[ming: msg.ming ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {5, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[hu_tile: delimited], rest}
+              {[hu_tile: Protox.Decode.validate_string(delimited)], rest}
 
             {6, _, bytes} ->
               {value, rest} = Protox.Decode.parse_bool(bytes)
@@ -933,4 +933,11 @@ defmodule Soulless.Game.Lq.HuInfoXueZhanMid do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

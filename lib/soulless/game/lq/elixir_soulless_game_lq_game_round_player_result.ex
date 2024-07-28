@@ -212,12 +212,12 @@ defmodule Soulless.Game.Lq.GameRoundPlayerResult do
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[hands: msg.hands ++ [delimited]], rest}
+              {[hands: msg.hands ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[ming: msg.ming ++ [delimited]], rest}
+              {[ming: msg.ming ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -761,4 +761,11 @@ defmodule Soulless.Game.Lq.GameRoundPlayerResult do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

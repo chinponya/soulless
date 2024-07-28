@@ -476,17 +476,17 @@ defmodule Soulless.Game.Lq.HuleInfo do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[hand: msg.hand ++ [delimited]], rest}
+              {[hand: msg.hand ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[ming: msg.ming ++ [delimited]], rest}
+              {[ming: msg.ming ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {3, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[hu_tile: delimited], rest}
+              {[hu_tile: Protox.Decode.validate_string(delimited)], rest}
 
             {4, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -507,12 +507,12 @@ defmodule Soulless.Game.Lq.HuleInfo do
             {8, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[doras: msg.doras ++ [delimited]], rest}
+              {[doras: msg.doras ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {9, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[li_doras: msg.li_doras ++ [delimited]], rest}
+              {[li_doras: msg.li_doras ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {10, _, bytes} ->
               {value, rest} = Protox.Decode.parse_bool(bytes)
@@ -534,7 +534,7 @@ defmodule Soulless.Game.Lq.HuleInfo do
             {14, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[title: delimited], rest}
+              {[title: Protox.Decode.validate_string(delimited)], rest}
 
             {15, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -580,7 +580,7 @@ defmodule Soulless.Game.Lq.HuleInfo do
             {23, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[lines: msg.lines ++ [delimited]], rest}
+              {[lines: msg.lines ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {24, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -1843,4 +1843,11 @@ defmodule Soulless.Game.Lq.HuleInfo do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

@@ -514,7 +514,7 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             {4, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[dora: delimited], rest}
+              {[dora: Protox.Decode.validate_string(delimited)], rest}
 
             {5, 2, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -532,22 +532,22 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             {7, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tiles0: msg.tiles0 ++ [delimited]], rest}
+              {[tiles0: msg.tiles0 ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {8, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tiles1: msg.tiles1 ++ [delimited]], rest}
+              {[tiles1: msg.tiles1 ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {9, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tiles2: msg.tiles2 ++ [delimited]], rest}
+              {[tiles2: msg.tiles2 ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {10, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[tiles3: msg.tiles3 ++ [delimited]], rest}
+              {[tiles3: msg.tiles3 ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {11, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -573,12 +573,12 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             {13, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[md5: delimited], rest}
+              {[md5: Protox.Decode.validate_string(delimited)], rest}
 
             {14, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[paishan: delimited], rest}
+              {[paishan: Protox.Decode.validate_string(delimited)], rest}
 
             {15, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -587,7 +587,7 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             {16, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[doras: msg.doras ++ [delimited]], rest}
+              {[doras: msg.doras ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {17, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -628,7 +628,7 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             {22, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[sha256: delimited], rest}
+              {[sha256: Protox.Decode.validate_string(delimited)], rest}
 
             {23, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
@@ -645,12 +645,12 @@ defmodule Soulless.Game.Lq.RecordNewRound do
             {24, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[saltSha256: delimited], rest}
+              {[saltSha256: Protox.Decode.validate_string(delimited)], rest}
 
             {25, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[salt: delimited], rest}
+              {[salt: Protox.Decode.validate_string(delimited)], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -1886,4 +1886,11 @@ defmodule Soulless.Game.Lq.RecordNewRound do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

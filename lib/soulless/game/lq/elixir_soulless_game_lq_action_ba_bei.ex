@@ -223,7 +223,7 @@ defmodule Soulless.Game.Lq.ActionBaBei do
             {6, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[doras: msg.doras ++ [delimited]], rest}
+              {[doras: msg.doras ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {7, _, bytes} ->
               {value, rest} = Protox.Decode.parse_bool(bytes)
@@ -737,4 +737,11 @@ defmodule Soulless.Game.Lq.ActionBaBei do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

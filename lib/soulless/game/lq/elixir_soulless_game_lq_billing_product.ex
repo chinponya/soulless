@@ -147,7 +147,7 @@ defmodule Soulless.Game.Lq.BillingProduct do
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[currency_code: delimited], rest}
+              {[currency_code: Protox.Decode.validate_string(delimited)], rest}
 
             {3, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -488,4 +488,11 @@ defmodule Soulless.Game.Lq.BillingProduct do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

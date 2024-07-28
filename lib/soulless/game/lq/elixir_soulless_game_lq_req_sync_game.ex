@@ -104,7 +104,7 @@ defmodule Soulless.Game.Lq.ReqSyncGame do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[round_id: delimited], rest}
+              {[round_id: Protox.Decode.validate_string(delimited)], rest}
 
             {2, _, bytes} ->
               {value, rest} = Protox.Decode.parse_uint32(bytes)
@@ -327,4 +327,11 @@ defmodule Soulless.Game.Lq.ReqSyncGame do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end

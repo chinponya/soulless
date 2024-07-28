@@ -111,12 +111,12 @@ defmodule Soulless.Game.Lq.NotifyNewGame do
             {1, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[game_uuid: delimited], rest}
+              {[game_uuid: Protox.Decode.validate_string(delimited)], rest}
 
             {2, _, bytes} ->
               {len, bytes} = Protox.Varint.decode(bytes)
               {delimited, rest} = Protox.Decode.parse_delimited(bytes, len)
-              {[player_list: msg.player_list ++ [delimited]], rest}
+              {[player_list: msg.player_list ++ [Protox.Decode.validate_string(delimited)]], rest}
 
             {tag, wire_type, rest} ->
               {value, rest} = Protox.Decode.parse_unknown(tag, wire_type, rest)
@@ -346,4 +346,11 @@ defmodule Soulless.Game.Lq.NotifyNewGame do
       {:error, :no_such_field}
     end
   ]
+
+  (
+    @spec file_options() :: nil
+    def file_options() do
+      nil
+    end
+  )
 end
